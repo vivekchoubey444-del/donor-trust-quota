@@ -1,0 +1,53 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Applicant Cover Letter</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header><div class="container">
+<h1>Applicant Cover Letter</h1>
+<div class="status">INDEPENDENT PROPOSAL -- NOT OFFICIAL</div>
+</div></header>
+<main class="container">
+<p>Editable cover letter to accompany applicant-prepared documents. Confirm the correct recipient before use.</p>
+<div class="grid">
+  <div><label>Recipient</label><input id="recipient" value="The Concerned Admissions Authority"></div>
+  <div><label>Date</label><input id="date" type="date"></div>
+  <div class="full"><label>Subject</label><input id="subject" value="Request for consideration under the applicable category"></div>
+  <div><label>Applicant name</label><input id="name"></div>
+  <div><label>Requested institution</label><input id="institution"></div>
+  <div class="full"><label>Letter text</label>
+  <textarea id="message">Respected Sir / Madam,
+
+I respectfully submit the accompanying applicant information and supporting documents for consideration under the applicable rules and current official notice.
+
+I understand that the competent authority determines eligibility, applicable process and any decision. This letter does not presume that a category or seat is available.
+
+Yours faithfully,</textarea></div>
+</div>
+<div class="actions">
+  <a class="btn" href="index.html">Home</a>
+  <button class="primary" onclick="print()">Print / Save as PDF</button>
+</div>
+<div id="letter"></div>
+</main>
+<script>
+date.value=new Date().toISOString().slice(0,10);
+const d=(()=>{
+  try{return JSON.parse(localStorage.getItem("donorTrustQuotaDraft_v3")||"{}")}
+  catch(e){return {}}
+})();
+name.value=d.fullName||"";
+institution.value=d.institution||"";
+function update(){
+  letter.textContent=recipient.value+"\n"+date.value+"\n\nSubject: "+subject.value+"\n\n"+message.value+"\n\n"+name.value;
+}
+document.querySelectorAll("input,textarea").forEach(e=>e.addEventListener("input",update));
+update();
+</script>
+</body>
+</html>

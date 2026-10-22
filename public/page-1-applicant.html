@@ -1,0 +1,71 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Step 1 -- Applicant details</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header><div class="container">
+<p class="eyebrow">Donor / Trust Quota Application</p>
+<h1>Step 1 -- Applicant and Scheme Details</h1>
+<div class="status">INDEPENDENT PROPOSAL -- NOT OFFICIAL</div>
+</div></header>
+<main class="container">
+<p>Enter details as shown on original records. Verify current rules and institution information independently.</p>
+<form id="stepForm">
+<h2>Application details</h2>
+<div class="grid">
+  <div><label>Academic session *</label><input name="academicSession" data-field required value="2026–27"></div>
+  <div><label>Course *</label><select name="course" data-field required><option value="">Select</option><option>MBBS</option><option>BDS</option><option>Other -- verify availability</option></select></div>
+  <div><label>Application route *</label><select name="applicationRoute" data-field required><option value="">Select</option><option>Donor -- verify rules</option><option>Trust -- verify rules</option><option>Other / to be confirmed</option></select></div>
+  <div><label>Donor / trust name</label><input name="trustName" data-field></div>
+  <div class="full"><label>Requested college / institution *</label><input name="institution" data-field required></div>
+  <div class="full"><label>Other institution details</label><textarea name="otherInstitution" data-field></textarea></div>
+  <div><label>Official notice / memo number</label><input name="memoNumber" data-field></div>
+  <div><label>Notice date</label><input type="date" name="noticeDate" data-field></div>
+  <div class="full"><label>Trust recommendation reference, if issued</label><input name="trustReference" data-field></div>
+</div>
+<h2>Candidate identity</h2>
+<div class="grid">
+  <div class="full"><label>Full name as recorded for NEET *</label><input name="fullName" data-field required></div>
+  <div><label>Date of birth *</label><input type="date" name="dob" data-field required></div>
+  <div><label>Gender (optional)</label><select name="gender" data-field><option value="">Prefer not to say</option><option>Female</option><option>Male</option><option>Other</option></select></div>
+  <div><label>Nationality</label><input name="nationality" data-field value="Indian"></div>
+  <div><label>NEET UG year *</label><input type="number" name="neetYear" data-field required min="2000" max="2100"></div>
+  <div><label>NEET roll number *</label><input name="neetRoll" data-field required></div>
+  <div><label>NEET application number</label><input name="neetApplication" data-field></div>
+  <div><label>NEET score / percentile</label><input name="neetScore" data-field></div>
+  <div><label>NEET All India Rank</label><input name="neetRank" data-field></div>
+  <div><label>Category if applicable</label><select name="category" data-field><option value="">Not stated</option><option>General</option><option>SC</option><option>ST</option><option>OBC</option><option>EWS</option><option>Other</option></select></div>
+  <div class="full"><label>Class XII board, year and PCB marks</label><textarea name="classXII" data-field></textarea></div>
+</div>
+<div class="actions">
+  <button type="button" onclick="saveDraft()">Save</button>
+  <a class="btn" href="index.html">Home</a>
+  <a class="btn primary" href="page-2-contact.html">Next page →</a>
+</div>
+</form>
+</main>
+<footer><div class="container">No print or submission action on this step. Those actions are reserved for the final page.</div></footer>
+<script>
+const KEY="donorTrustQuotaDraft_v3";
+function draft(){try{return JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){return {}}}
+let d=draft();
+document.querySelectorAll("[data-field]").forEach(e=>{
+  if(d[e.name]!=null)e.value=d[e.name];
+  e.addEventListener("input",()=>{
+    d[e.name]=e.value;
+    localStorage.setItem(KEY,JSON.stringify(d));
+  });
+});
+function saveDraft(){
+  document.querySelectorAll("[data-field]").forEach(e=>d[e.name]=e.value);
+  localStorage.setItem(KEY,JSON.stringify(d));
+  alert("Draft saved in this browser.");
+}
+</script>
+</body>
+</html>

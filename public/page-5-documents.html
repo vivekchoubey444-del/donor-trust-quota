@@ -1,0 +1,70 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Step 5 -- Documents</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header><div class="container">
+<p class="eyebrow">Donor / Trust Quota Application</p>
+<h1>Step 5 -- Supporting Documents</h1>
+<div class="status">INDEPENDENT PROPOSAL -- NOT OFFICIAL</div>
+</div></header>
+<main class="container">
+<div class="notice"><strong>Instructions:</strong> Select only documents required for your case. Check current official instructions for certifications, file formats and file-size limits.</div>
+<label>Supporting documents (PDF, JPEG or PNG) *</label>
+<input id="docs" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" multiple>
+<p class="muted">Prototype limits: up to 20 files, 8 MB per file. Files are kept as browser draft data when storage permits; they are not uploaded to the server.</p>
+<ul id="list"></ul>
+<p id="status" role="status"></p>
+<div class="actions">
+  <button type="button" onclick="saveDraft()">Save</button>
+  <a class="btn" href="index.html">Home</a>
+  <a class="btn" href="page-4-photo.html">← Previous</a>
+  <a class="btn primary" href="page-6-consent.html">Next page →</a>
+</div>
+</main>
+<footer><div class="container">Supporting document contents will not be merged into the summary PDF; filenames will be listed.</div></footer>
+<script>
+const KEY="donorTrustQuotaDraft_v3";
+let d={};try{d=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}
+const input=document.getElementById("docs"),list=document.getElementById("list"),status=document.getElementById("status");
+function save(){
+  try{localStorage.setItem(KEY,JSON.stringify(d));return true}
+  catch(e){status.textContent="Browser storage is full or unavailable. Use fewer/smaller files; keep originals and backups.";return false}
+}
+function render(){
+  list.replaceChildren();
+  (d.supportingFiles||[]).forEach(f=>{
+    const li=document.createElement("li");
+    li.textContent=f.name+" -- "+(f.size/1048576).toFixed(2)+" MB";
+    list.append(li);
+  });
+  status.textContent=(d.supportingFiles||[]).length+" file(s) in current browser draft.";
+}
+input.addEventListener("change",async()=>{
+  const files=Array.from(input.files||[]);
+  if(files.length>20){alert("Select up to 20 files.");return}
+  const allowed=["application/pdf","image/jpeg","image/png"];
+  if(files.some(f=>!allowed.includes(f.type)||f.size>8*1048576)){
+    alert("Files must be PDF/JPEG/PNG and no larger than 8 MB each.");return;
+  }
+  d.supportingFiles=[];
+  for(const f of files){
+    const data=await new Promise((res,rej)=>{
+      const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f);
+    });
+    d.supportingFiles.push({name:f.name,type:f.type,size:f.size,data});
+  }
+  save();render();
+});
+function saveDraft(){
+  if(save())alert("Document selections saved in this browser where storage permits.");
+}
+render();
+</script>
+</body>
+</html>

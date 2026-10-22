@@ -1,0 +1,124 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Step 4 -- Photos and signature</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header><div class="container">
+<p class="eyebrow">Donor / Trust Quota Application</p>
+<h1>Step 4 -- Photograph and Signature</h1>
+<div class="status">INDEPENDENT PROPOSAL -- NOT OFFICIAL</div>
+</div></header>
+<main class="container">
+<div class="notice"><strong>Photo instruction:</strong> Provide a clear passport-size photograph and capture a current live photo with the camera. The current official notice takes precedence over any suggested image size.</div>
+<div class="grid">
+  <div>
+    <label>Passport-size photograph *</label>
+    <input id="passportPhoto" type="file" accept="image/jpeg,image/png">
+    <img id="passportPreview" class="preview" hidden alt="Passport photo preview">
+    <p id="passportStatus" class="muted"></p>
+  </div>
+  <div>
+    <label>Signature image *</label>
+    <input id="signatureImage" type="file" accept="image/jpeg,image/png">
+    <img id="signaturePreview" class="preview" hidden alt="Signature preview">
+    <p id="signatureStatus" class="muted"></p>
+  </div>
+  <div class="full">
+    <h2>Live student photo capture *</h2>
+    <p>Camera access requires permission and usually HTTPS. If camera capture is unavailable, try another supported browser. This prototype stores the capture locally; it does not upload it to an authority.</p>
+    <button id="startCamera" type="button">Start camera</button>
+    <button id="capture" type="button" disabled>Capture live photo</button>
+    <button id="stopCamera" type="button" disabled>Stop camera</button>
+    <video id="video" hidden autoplay playsinline style="width:min(100%,400px);display:block;margin-top:12px;border:1px solid #000"></video>
+    <canvas id="canvas" hidden></canvas>
+    <img id="livePreview" class="preview" hidden alt="Live photo preview">
+    <p id="liveStatus" class="muted"></p>
+  </div>
+</div>
+<div class="actions">
+  <button type="button" onclick="saveDraft()">Save</button>
+  <a class="btn" href="index.html">Home</a>
+  <a class="btn" href="page-3-eligibility.html">← Previous</a>
+  <a class="btn primary" href="page-5-documents.html">Next page →</a>
+</div>
+</main>
+<footer><div class="container">Photo capture cannot prevent screenshots or recording by the device operating system.</div></footer>
+<script>
+const KEY="donorTrustQuotaDraft_v3";
+let d={};try{d=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}
+let stream=null;
+
+function save(){localStorage.setItem(KEY,JSON.stringify(d))}
+function loadImage(id,preview,status){
+  if(d[id]){
+    document.getElementById(preview).src=d[id];
+    document.getElementById(preview).hidden=false;
+    document.getElementById(status).textContent="Previously selected image saved in this browser.";
+  }
+}
+function imageInput(id,preview,status){
+  document.getElementById(id).addEventListener("change",e=>{
+    const f=e.target.files[0];if(!f)return;
+    if(!["image/jpeg","image/png"].includes(f.type)||f.size>5*1024*1024){
+      alert("Choose a JPEG or PNG image no larger than 5 MB.");
+      e.target.value="";return;
+    }
+    const r=new FileReader();
+    r.onload=()=>{
+      d[id]=r.result;
+      document.getElementById(preview).src=r.result;
+      document.getElementById(preview).hidden=false;
+      document.getElementById(status).textContent="Image saved in browser draft.";
+      save();
+    };
+    r.readAsDataURL(f);
+  });
+}
+imageInput("passportPhoto","passportPreview","passportStatus");
+imageInput("signatureImage","signaturePreview","signatureStatus");
+loadImage("passportPhoto","passportPreview","passportStatus");
+loadImage("signatureImage","signaturePreview","signatureStatus");
+
+if(d.livePhoto){
+  livePreview.src=d.livePhoto;
+  livePreview.hidden=false;
+  liveStatus.textContent="Previously captured live photo saved.";
+}
+startCamera.onclick=async()=>{
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"},audio:false});
+    video.srcObject=stream;video.hidden=false;
+    capture.disabled=false;stopCamera.disabled=false;
+    liveStatus.textContent="Camera is active.";
+  }catch(e){
+    liveStatus.textContent="Camera unavailable or permission denied. You may retry.";
+  }
+};
+capture.onclick=()=>{
+  if(!stream)return;
+  canvas.width=video.videoWidth;canvas.height=video.videoHeight;
+  canvas.getContext("2d").drawImage(video,0,0);
+  d.livePhoto=canvas.toDataURL("image/jpeg",.9);
+  livePreview.src=d.livePhoto;livePreview.hidden=false;
+  liveStatus.textContent="Live photo captured and saved in browser draft.";
+  save();stop();
+};
+function stop(){
+  if(stream)stream.getTracks().forEach(t=>t.stop());
+  stream=null;video.srcObject=null;video.hidden=true;
+  capture.disabled=true;stopCamera.disabled=true;
+}
+stopCamera.onclick=stop;
+window.addEventListener("pagehide",stop);
+function saveDraft(){
+  save();
+  alert("Photo selections saved in this browser where storage permits.");
+}
+</script>
+</body>
+</html>

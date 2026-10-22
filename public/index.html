@@ -1,0 +1,67 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Donor / Trust Quota Application Form</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <div class="container">
+    <p class="eyebrow">Independent application-preparation system</p>
+    <h1>Donor / Trust Quota Application Form</h1>
+    <p class="subtitle">Black-and-white applicant information and document workflow.</p>
+    <div class="status">NOT AN OFFICIAL WBMCC FORM</div>
+  </div>
+</header>
+<main class="container">
+  <div class="notice">
+    <strong>Important</strong>
+    <p>This is an independent proposal, not an official WBMCC form. It does not establish eligibility, confirm seat availability, guarantee admission or submit an application to WBMCC.</p>
+  </div>
+  <section id="gate">
+    <h2>Access the form</h2>
+    <p>Enter the access token provided through the authorized application process. Do not enter an administrator token here.</p>
+    <form id="accessForm">
+      <label for="accessToken">Applicant access token *</label>
+      <input id="accessToken" autocomplete="off" required>
+      <div class="actions">
+        <button class="primary" type="submit">Verify access and continue</button>
+      </div>
+    </form>
+    <p id="gateStatus" role="status"></p>
+  </section>
+  <section id="welcome" hidden>
+    <h2>Instructions</h2>
+    <p>Complete all seven steps. The Save, Previous and Next controls appear at the bottom of each page. Validation, submission, print and PDF actions are only on the final page.</p>
+    <p><a href="applicant-instructions.html">Applicant instructions</a> · <a href="privacy-notice.html">Privacy notice</a> · <a href="cover-letter.html">Separate cover letter</a></p>
+    <a class="btn primary" href="page-1-applicant.html">Start application</a>
+  </section>
+</main>
+<footer><div class="container">Independent proposal. No official affiliation or endorsement.</div></footer>
+<script>
+document.getElementById("accessForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const out=document.getElementById("gateStatus");
+  out.textContent="Checking access…";
+  try{
+    const r=await fetch("/api/access",{
+      method:"POST",
+      headers:{"content-type":"application/json"},
+      body:JSON.stringify({token:document.getElementById("accessToken").value})
+    });
+    const j=await r.json();
+    if(!r.ok)throw Error(j.error||"Access denied");
+    sessionStorage.setItem("applicationAccess","granted");
+    document.getElementById("gate").hidden=true;
+    document.getElementById("welcome").hidden=false;
+    out.textContent="";
+  }catch(err){
+    out.textContent=err.message||"Could not verify access. Check your token and try again.";
+  }
+});
+</script>
+</body>
+</html>

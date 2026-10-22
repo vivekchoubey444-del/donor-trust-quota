@@ -1,0 +1,54 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Step 3 -- Eligibility and request</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header><div class="container">
+<p class="eyebrow">Donor / Trust Quota Application</p>
+<h1>Step 3 -- Eligibility and Request</h1>
+<div class="status">INDEPENDENT PROPOSAL -- NOT OFFICIAL</div>
+</div></header>
+<main class="container">
+<p>Record facts only. This form cannot determine eligibility or whether any quota is available.</p>
+<form>
+<div class="grid">
+  <div><label>NEET-UG qualification status *</label><select name="neetQualified" data-field required><option value="">Select</option><option>Qualified</option><option>Not qualified</option><option>Awaiting result</option></select></div>
+  <div><label>NEET scorecard available? *</label><select name="neetScoreProof" data-field required><option value="">Select</option><option>Yes</option><option>No</option></select></div>
+  <div><label>Class XII/equivalent passed? *</label><select name="class12Qualified" data-field required><option value="">Select</option><option>Yes</option><option>No</option></select></div>
+  <div><label>Relevant documents available? *</label><select name="documentsReady" data-field required><option value="">Select</option><option>Yes</option><option>Some pending</option><option>No</option></select></div>
+  <div class="full"><label>Basis of donor / trust request, if applicable</label><textarea name="basis" data-field></textarea></div>
+  <div class="full"><label>Request to the competent authority *</label><textarea name="request" data-field required></textarea></div>
+  <div class="full"><label>Additional information</label><textarea name="additionalInfo" data-field></textarea></div>
+</div>
+<div class="actions">
+  <button type="button" onclick="saveDraft()">Save</button>
+  <a class="btn" href="index.html">Home</a>
+  <a class="btn" href="page-2-contact.html">← Previous</a>
+  <a class="btn primary" href="page-4-photo.html">Next page →</a>
+</div>
+</form>
+</main>
+<footer><div class="container">No print or submission action on this step.</div></footer>
+<script>
+const KEY="donorTrustQuotaDraft_v3";
+let d={};try{d=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}
+document.querySelectorAll("[data-field]").forEach(e=>{
+  if(d[e.name]!=null)e.value=d[e.name];
+  e.addEventListener("input",()=>{
+    d[e.name]=e.value;
+    localStorage.setItem(KEY,JSON.stringify(d));
+  });
+});
+function saveDraft(){
+  document.querySelectorAll("[data-field]").forEach(e=>d[e.name]=e.value);
+  localStorage.setItem(KEY,JSON.stringify(d));
+  alert("Draft saved in this browser.");
+}
+</script>
+</body>
+</html>

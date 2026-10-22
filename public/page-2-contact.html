@@ -1,0 +1,60 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Step 2 -- Contact</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header><div class="container">
+<p class="eyebrow">Donor / Trust Quota Application</p>
+<h1>Step 2 -- Contact and Address</h1>
+<div class="status">INDEPENDENT PROPOSAL -- NOT OFFICIAL</div>
+</div></header>
+<main class="container">
+<p>Use contact details that the applicant or guardian can access. Do not enter unrelated sensitive information.</p>
+<form>
+<div class="grid">
+  <div><label>Candidate mobile number *</label><input name="phone" data-field required type="tel"></div>
+  <div><label>Candidate email *</label><input name="email" data-field required type="email"></div>
+  <div class="full"><label>Residential address *</label><textarea name="address" data-field required></textarea></div>
+  <div><label>City / town *</label><input name="city" data-field required></div>
+  <div><label>District *</label><input name="district" data-field required></div>
+  <div><label>State *</label><input name="state" data-field required></div>
+  <div><label>PIN code *</label><input name="pin" data-field required pattern="[0-9]{6}" maxlength="6"></div>
+  <div class="full"><h2>Parent / guardian</h2></div>
+  <div><label>Full name *</label><input name="guardianName" data-field required></div>
+  <div><label>Relationship *</label><select name="relationship" data-field required><option value="">Select</option><option>Father</option><option>Mother</option><option>Legal guardian</option><option>Other</option></select></div>
+  <div><label>Guardian mobile *</label><input name="guardianPhone" data-field required type="tel"></div>
+  <div><label>Guardian email</label><input name="guardianEmail" data-field type="email"></div>
+  <div class="full"><label>Guardian address if different</label><textarea name="guardianAddress" data-field></textarea></div>
+</div>
+<div class="actions">
+  <button type="button" onclick="saveDraft()">Save</button>
+  <a class="btn" href="index.html">Home</a>
+  <a class="btn" href="page-1-applicant.html">← Previous</a>
+  <a class="btn primary" href="page-3-eligibility.html">Next page →</a>
+</div>
+</form>
+</main>
+<footer><div class="container">Validation, print and submit are on the final page only.</div></footer>
+<script>
+const KEY="donorTrustQuotaDraft_v3";
+let d={};try{d=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}
+document.querySelectorAll("[data-field]").forEach(e=>{
+  if(d[e.name]!=null)e.value=d[e.name];
+  e.addEventListener("input",()=>{
+    d[e.name]=e.value;
+    localStorage.setItem(KEY,JSON.stringify(d));
+  });
+});
+function saveDraft(){
+  document.querySelectorAll("[data-field]").forEach(e=>d[e.name]=e.value);
+  localStorage.setItem(KEY,JSON.stringify(d));
+  alert("Draft saved in this browser.");
+}
+</script>
+</body>
+</html>

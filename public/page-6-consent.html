@@ -1,0 +1,67 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Step 6 -- Declarations</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header><div class="container">
+<p class="eyebrow">Donor / Trust Quota Application</p>
+<h1>Step 6 -- Declarations and Privacy</h1>
+<div class="status">INDEPENDENT PROPOSAL -- NOT OFFICIAL</div>
+</div></header>
+<main class="container">
+<p>Read the declarations carefully. Do not confirm a statement unless it is true. These are acknowledgements for this independent preparation tool, not an official WBMCC declaration.</p>
+<form id="consentForm">
+<div class="check">
+  <input type="checkbox" id="consentTruth" data-field required>
+  <label for="consentTruth">I confirm that the information I entered is accurate to the best of my knowledge. *</label>
+</div>
+<div class="check">
+  <input type="checkbox" id="consentAuthority" data-field required>
+  <label for="consentAuthority">I understand that eligibility, quota availability, deadlines and requirements must be verified against current official instructions. This website does not guarantee admission. *</label>
+</div>
+<div class="check">
+  <input type="checkbox" id="consentPrivacy" data-field required>
+  <label for="consentPrivacy">I have read the privacy notice and understand that browser storage is not a secure database and this static website does not itself submit data to WBMCC. *</label>
+</div>
+<div class="grid">
+  <div><label>Applicant / authorized guardian full name *</label><input name="typedName" data-field required></div>
+  <div><label>Date *</label><input name="signedDate" data-field type="date" required></div>
+  <div class="full"><label>Relationship to applicant, if signing for them</label><input name="signingRelationship" data-field></div>
+</div>
+<p><a href="privacy-notice.html">Read the full privacy notice</a></p>
+<div class="actions">
+  <button type="button" onclick="saveDraft()">Save</button>
+  <a class="btn" href="index.html">Home</a>
+  <a class="btn" href="page-5-documents.html">← Previous</a>
+  <a class="btn primary" href="page-7-review.html">Next page →</a>
+</div>
+</form>
+</main>
+<footer><div class="container">Final validation, submission, print and download actions are on the last page only.</div></footer>
+<script>
+const KEY="donorTrustQuotaDraft_v3";
+let d={};try{d=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}
+document.querySelectorAll("[data-field]").forEach(e=>{
+  const k=e.name||e.id;
+  if(d[k]!==undefined){if(e.type==="checkbox")e.checked=!!d[k];else e.value=d[k]}
+  e.addEventListener("input",()=>saveField(e));
+  e.addEventListener("change",()=>saveField(e));
+});
+signedDate.value ||= new Date().toISOString().slice(0,10);
+function saveField(e){
+  d[e.name||e.id]=e.type==="checkbox"?e.checked:e.value;
+  try{localStorage.setItem(KEY,JSON.stringify(d))}catch(err){}
+}
+function saveDraft(){
+  document.querySelectorAll("[data-field]").forEach(e=>d[e.name||e.id]=e.type==="checkbox"?e.checked:e.value);
+  localStorage.setItem(KEY,JSON.stringify(d));
+  alert("Declarations saved in this browser.");
+}
+</script>
+</body>
+</html>

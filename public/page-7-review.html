@@ -1,0 +1,189 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Step 7 -- Final Review and Submit</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+</head>
+<body>
+<header><div class="container">
+<p class="eyebrow">Donor / Trust Quota Application</p>
+<h1>Step 7 -- Final Review, Validate and Submit</h1>
+<div class="status">INDEPENDENT PROPOSAL -- NOT OFFICIAL</div>
+</div></header>
+<main class="container">
+<div class="notice"><strong>Final stage:</strong> Review all data. Validation, submit, preview, print and download controls are located only on this page. Submission to this prototype creates a local/server reference record; it is not a submission to WBMCC.</div>
+<h2>Application summary</h2>
+<table><tbody id="summary"></tbody></table>
+<h2>Selected files</h2>
+<ul id="fileSummary"></ul>
+<div class="error" id="validation" role="alert"></div>
+<p id="submissionStatus" role="status"></p>
+
+<div id="submittedPanel" hidden>
+  <h2>Submission receipt</h2>
+  <p>Your reference number: <strong id="reference"></strong></p>
+  <p>Keep this number. It is a prototype receipt, not an official WBMCC acknowledgement.</p>
+  <h2>Preview</h2>
+  <div id="previewText"></div>
+  <h2>Encrypted export</h2>
+  <p>After an administrator issues a separate encryption phrase for this reference, enter it below. It encrypts a JSON export in your browser; the phrase is not sent to the server.</p>
+  <label>Admin-issued export encryption phrase</label>
+  <input id="encryptPhrase" type="password" autocomplete="off">
+  <button id="encryptedDownload" type="button">Download encrypted submitted data</button>
+  <div class="actions">
+    <button id="printReceipt" type="button">Print receipt / Save as PDF</button>
+    <button id="downloadPDF" class="primary" type="button">Download application PDF</button>
+  </div>
+</div>
+
+<div class="actions" id="finalActions">
+  <button type="button" id="saveDraft">Save</button>
+  <a class="btn" href="index.html">Home</a>
+  <a class="btn" href="page-6-consent.html">← Previous</a>
+  <button type="button" id="validate" class="primary">Validate application</button>
+  <button type="button" id="submit" class="primary">Submit application</button>
+</div>
+</main>
+<footer><div class="container">This independent prototype is not affiliated with WBMCC. Screenshot and screen recording cannot be reliably blocked by a website.</div></footer>
+
+<script>
+const KEY="donorTrustQuotaDraft_v3";
+let d={};try{d=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}
+const required=[
+["academicSession","Academic session"],["course","Course"],["applicationRoute","Application route"],
+["institution","Institution"],["fullName","Candidate name"],["dob","Date of birth"],
+["neetYear","NEET year"],["neetRoll","NEET roll number"],["phone","Mobile"],
+["email","Email"],["address","Address"],["city","City"],["district","District"],
+["state","State"],["pin","PIN code"],["guardianName","Guardian name"],
+["relationship","Guardian relationship"],["guardianPhone","Guardian mobile"],
+["neetQualified","NEET qualification"],["neetScoreProof","NEET scorecard status"],
+["class12Qualified","Class XII status"],["documentsReady","Document status"],
+["request","Request"],["typedName","Declaration name"],["signedDate","Declaration date"],
+["consentTruth","Accuracy declaration"],["consentPrivacy","Privacy acknowledgement"],
+["consentAuthority","Authority acknowledgement"]
+];
+const labels={};required.forEach(([k,v])=>labels[k]=v);
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function draw(){
+  const tb=document.getElementById("summary");tb.replaceChildren();
+  Object.keys(d).filter(k=>!["passportPhoto","signatureImage","livePhoto","supportingFiles"].includes(k)&&!k.startsWith("_")).forEach(k=>{
+    if(d[k]===""||d[k]===undefined)return;
+    const tr=document.createElement("tr"),th=document.createElement("th"),td=document.createElement("td");
+    th.textContent=labels[k]||k;
+    td.textContent=typeof d[k]==="boolean"?(d[k]?"Confirmed":"Not confirmed"):String(d[k]);
+    tr.append(th,td);tb.append(tr);
+  });
+  const ul=document.getElementById("fileSummary");ul.replaceChildren();
+  ["passportPhoto","signatureImage","livePhoto"].forEach(k=>{
+    if(d[k]){const li=document.createElement("li");li.textContent=({passportPhoto:"Passport-size photo",signatureImage:"Signature image",livePhoto:"Live photo"})[k]+" -- available in draft";ul.append(li)}
+  });
+  (d.supportingFiles||[]).forEach(f=>{
+    const li=document.createElement("li");li.textContent=f.name+" ("+(f.size/1048576).toFixed(2)+" MB)";ul.append(li);
+  });
+  if(!ul.children.length){const li=document.createElement("li");li.textContent="No image/document files saved";ul.append(li)}
+}
+function errors(){
+  const e=[];
+  required.forEach(([k,l])=>{const v=d[k];if(v===true)return;if(v===false||v===undefined||v===null||String(v).trim()==="")e.push(l)});
+  ["passportPhoto","signatureImage","livePhoto"].forEach(k=>{if(!d[k])e.push(({passportPhoto:"Passport-size photograph",signatureImage:"Signature image",livePhoto:"Live student photo"})[k])});
+  if(!(d.supportingFiles||[]).length)e.push("At least one supporting document");
+  if(d.pin&&!/^[0-9]{6}$/.test(d.pin))e.push("PIN code must contain six digits");
+  if(d.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email))e.push("Valid email address");
+  return e;
+}
+document.getElementById("saveDraft").onclick=()=>{
+  localStorage.setItem(KEY,JSON.stringify(d));
+  document.getElementById("submissionStatus").textContent="Draft saved in this browser.";
+};
+document.getElementById("validate").onclick=()=>{
+  const es=errors(),box=document.getElementById("validation");box.replaceChildren();
+  if(es.length){
+    const p=document.createElement("p");p.textContent="Complete these required items before submission:";
+    const ul=document.createElement("ul");
+    es.forEach(x=>{const li=document.createElement("li");li.textContent=x;ul.append(li)});
+    box.append(p,ul);box.className="error show";
+  }else{
+    box.textContent="All required fields and selected-file checks passed. Review every entry before submission.";
+    box.className="notice";
+  }
+};
+document.getElementById("submit").onclick=async()=>{
+  document.getElementById("validate").click();
+  if(errors().length)return;
+  const status=document.getElementById("submissionStatus");status.textContent="Submitting…";
+  try{
+    const r=await fetch("/api/submit",{
+      method:"POST",headers:{"content-type":"application/json"},
+      body:JSON.stringify({payload:d})
+    });
+    const j=await r.json();
+    if(!r.ok)throw Error(j.error||"Submission failed");
+    d._reference=j.reference;d._submittedAt=j.createdAt;
+    localStorage.setItem(KEY,JSON.stringify(d));
+    document.getElementById("reference").textContent=j.reference;
+    document.getElementById("submittedPanel").hidden=false;
+    document.getElementById("finalActions").hidden=true;
+    document.getElementById("previewText").innerHTML="<p><strong>Applicant:</strong> "+esc(d.fullName)+"</p><p><strong>Course:</strong> "+esc(d.course)+"</p><p><strong>Institution:</strong> "+esc(d.institution)+"</p><p><strong>Reference:</strong> "+esc(j.reference)+"</p>";
+    status.textContent="Submission recorded by this independent prototype. This is not a WBMCC submission receipt.";
+    draw();
+  }catch(e){status.textContent="Could not submit to the configured backend: "+e.message+". Verify deployment and D1 setup."}
+};
+document.getElementById("printReceipt").onclick=()=>window.print();
+async function pdf(){
+  if(!window.jspdf){alert("PDF library did not load. Check your connection.");return}
+  const {jsPDF}=window.jspdf,doc=new jsPDF({unit:"mm",format:"a4"});
+  let y=17;const m=15,w=180;
+  function ensure(h){if(y+h>280){doc.addPage();y=17}}
+  function line(k,v){
+    if(!v||typeof v==="object")return;
+    ensure(9);doc.setFont("helvetica","bold");doc.setFontSize(9);doc.text(String(k)+":",m,y);
+    doc.setFont("helvetica","normal");
+    const lines=doc.splitTextToSize(String(v),w-38);
+    doc.text(lines,m+38,y);y+=Math.max(5,lines.length*4.5)+2;
+  }
+  doc.setFont("helvetica","bold");doc.setFontSize(15);
+  doc.text("DONOR / TRUST QUOTA APPLICATION",m,y);y+=8;
+  doc.setFontSize(9);doc.setFont("helvetica","normal");
+  doc.text("Independent proposal -- not an official WBMCC form",m,y);y+=9;
+  line("Reference",d._reference);line("Submitted at",d._submittedAt);
+  Object.entries(d).forEach(([k,v])=>{
+    if(["passportPhoto","signatureImage","livePhoto","supportingFiles"].includes(k)||k.startsWith("_")||typeof v==="object")return;
+    line(labels[k]||k,v===true?"Confirmed":v===false?"Not confirmed":v);
+  });
+  for(const [k,title] of [["passportPhoto","Passport-size photograph"],["livePhoto","Live student photo"],["signatureImage","Signature image"]]){
+    if(d[k]){
+      try{
+        const img=new Image();img.src=d[k];
+        await new Promise((res,rej)=>{img.onload=res;img.onerror=rej});
+        ensure(45);doc.setFont("helvetica","bold");doc.text(title,m,y);y+=3;
+        doc.addImage(d[k],d[k].startsWith("data:image/png")?"PNG":"JPEG",m,y,k==="signatureImage"?48:30,k==="signatureImage"?18:35);y+=40;
+      }catch(e){}
+    }
+  }
+  ensure(15);doc.setFontSize(8);
+  doc.text("Supporting document files are listed by filename only; their contents are not merged into this PDF.",m,y);y+=6;
+  (d.supportingFiles||[]).forEach(f=>{ensure(7);doc.text("- "+f.name,m,y);y+=5});
+  doc.save("donor-trust-quota-application.pdf");
+}
+document.getElementById("downloadPDF").onclick=pdf;
+async function encryptedExport(){
+  const phrase=document.getElementById("encryptPhrase").value;
+  if(phrase.length<12){alert("Use the separate admin-issued encryption phrase (at least 12 characters).");return}
+  const enc=new TextEncoder(),salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));
+  const material=await crypto.subtle.importKey("raw",enc.encode(phrase),"PBKDF2",false,["deriveKey"]);
+  const key=await crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:250000,hash:"SHA-256"},material,{name:"AES-GCM",length:256},false,["encrypt"]);
+  const cipher=await crypto.subtle.encrypt({name:"AES-GCM",iv},key,enc.encode(JSON.stringify(d)));
+  const bytes=new Uint8Array(salt.length+iv.length+cipher.byteLength);
+  bytes.set(salt,0);bytes.set(iv,salt.length);bytes.set(new Uint8Array(cipher),salt.length+iv.length);
+  const blob=new Blob([bytes],{type:"application/octet-stream"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download=(d._reference||"application")+"-encrypted.bin";a.click();URL.revokeObjectURL(url);
+}
+document.getElementById("encryptedDownload").onclick=()=>encryptedExport().catch(e=>alert("Encryption failed: "+e.message));
+draw();
+</script>
+</body>
+</html>
