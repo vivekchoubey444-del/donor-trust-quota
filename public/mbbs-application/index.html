@@ -1,0 +1,315 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Draft Application Addressed to WBMCC</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#eef1f5;color:#171717;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5}
+.sheet{max-width:900px;margin:24px auto;background:#fff;padding:36px;border:1px solid #d6dbe2}
+.draft{border:2px solid #9b1c1c;color:#9b1c1c;text-align:center;padding:8px;font-weight:bold;letter-spacing:.5px;margin-bottom:20px}
+h1{text-align:center;font-size:22px;margin:8px 0}
+h2{font-size:16px;background:#edf2f7;border:1px solid #cbd5e1;padding:8px;margin:24px 0 12px}
+.subtitle{text-align:center;margin:0 0 18px;color:#444}
+.warning{background:#fff8e7;border:1px solid #e3c77c;padding:12px;margin:16px 0;font-size:12px}
+.address{margin:20px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{min-width:0}
+.full{grid-column:1/-1}
+label{display:block;font-weight:bold;margin-bottom:5px}
+input,select,textarea{width:100%;padding:9px;border:1px solid #9ca3af;border-radius:3px;background:#fff;font:inherit}
+textarea{min-height:75px;resize:vertical}
+input[type=file]{padding:6px}
+.help{font-size:11px;color:#555;margin-top:4px}
+.checklist{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.check{display:flex;gap:8px;align-items:flex-start}
+.check input{width:auto;margin-top:4px}
+.signature-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:30px}
+.signbox{border-top:1px solid #333;padding-top:8px;margin-top:55px}
+.actions{max-width:900px;margin:0 auto 30px;display:flex;flex-wrap:wrap;gap:10px}
+button{border:0;background:#124b8c;color:white;padding:11px 16px;border-radius:5px;font-weight:bold;cursor:pointer}
+button.secondary{background:#4b5563}
+@media(max-width:600px){.sheet{margin:0;padding:18px}.grid,.checklist,.signature-grid{grid-template-columns:1fr}.full{grid-column:auto}.actions{padding:0 12px}}
+@media print{
+body{background:#fff;font-size:11px}
+.sheet{max-width:none;margin:0;border:0;padding:12mm}
+.actions,.no-print{display:none!important}
+input,select,textarea{border:0;border-bottom:1px solid #888;border-radius:0;padding:4px 2px;appearance:none}
+input[type=file]{display:none}
+h2{break-after:avoid}
+.field,.check{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<main class="sheet">
+<div class="draft">DRAFT -- NOT AN OFFICIAL WBMCC FORM</div>
+
+<h1>APPLICATION / REPRESENTATION</h1>
+<p class="subtitle">For consideration by the competent authority, subject to applicable rules and procedures</p>
+
+<div class="warning">
+<strong>Important:</strong> This is an independently prepared draft, not a form issued or approved by WBMCC. It does not confirm that a donor quota, trust quota, or any particular admission route is available. Do not submit it as an official form without verifying the applicable process and authorized submission channel.
+</div>
+
+<div class="address">
+<strong>To,</strong><br>
+The Secretary / Competent Authority<br>
+West Bengal Medical Counselling Committee (WBMCC)<br>
+West Bengal
+</div>
+
+<p><strong>Subject:</strong> Request for guidance and consideration regarding MBBS admission and applicable counselling procedures.</p>
+
+<p>Respected Sir/Madam,</p>
+
+<p>
+I respectfully submit the following information for your guidance and consideration, subject to the eligibility criteria, admission regulations, counselling procedures, and decisions of the competent authority. I request clarification regarding the applicable official process for my circumstances. I understand that this representation does not create any entitlement to a seat or guarantee admission.
+</p>
+
+<h2>1. Applicant Information</h2>
+<div class="grid">
+<div class="field">
+<label for="name">Full name of applicant *</label>
+<input id="name" name="name" required autocomplete="name">
+</div>
+<div class="field">
+<label for="dob">Date of birth *</label>
+<input id="dob" name="dob" type="date" required>
+</div>
+<div class="field">
+<label for="mobile">Mobile number *</label>
+<input id="mobile" name="mobile" type="tel" required autocomplete="tel">
+</div>
+<div class="field">
+<label for="email">Email address</label>
+<input id="email" name="email" type="email" autocomplete="email">
+</div>
+<div class="field full">
+<label for="address">Full residential address *</label>
+<textarea id="address" name="address" required autocomplete="street-address"></textarea>
+</div>
+<div class="field">
+<label for="district">District</label>
+<input id="district" name="district">
+</div>
+<div class="field">
+<label for="state">State</label>
+<input id="state" name="state">
+</div>
+<div class="field">
+<label for="pincode">PIN code</label>
+<input id="pincode" name="pincode" inputmode="numeric" maxlength="6">
+</div>
+<div class="field">
+<label for="guardian">Parent / guardian name</label>
+<input id="guardian" name="guardian">
+</div>
+</div>
+
+<h2>2. NEET-UG and Academic Details</h2>
+<div class="grid">
+<div class="field">
+<label for="neetyear">NEET-UG examination year *</label>
+<input id="neetyear" name="neetyear" type="number" min="2000" max="2100" required>
+</div>
+<div class="field">
+<label for="neetroll">NEET-UG roll number *</label>
+<input id="neetroll" name="neetroll" required>
+</div>
+<div class="field">
+<label for="score">NEET-UG score *</label>
+<input id="score" name="score" type="number" min="0" max="720" required>
+</div>
+<div class="field">
+<label for="rank">All India Rank (if available)</label>
+<input id="rank" name="rank" type="number" min="1">
+</div>
+<div class="field">
+<label for="board">Class XII board</label>
+<input id="board" name="board">
+</div>
+<div class="field">
+<label for="passingyear">Class XII passing year</label>
+<input id="passingyear" name="passingyear" type="number" min="1990" max="2100">
+</div>
+<div class="field">
+<label for="percentage">Class XII aggregate percentage</label>
+<input id="percentage" name="percentage" type="number" min="0" max="100" step="0.01">
+</div>
+<div class="field">
+<label for="domicile">Domicile status</label>
+<select id="domicile" name="domicile">
+<option value="">Select</option>
+<option>West Bengal</option>
+<option>Other state</option>
+<option>To be verified</option>
+</select>
+</div>
+</div>
+
+<h2>3. Counselling and Request Details</h2>
+<div class="grid">
+<div class="field">
+<label for="registration">Counselling registration status</label>
+<select id="registration" name="registration">
+<option value="">Select</option>
+<option>Not registered</option>
+<option>Registration in progress</option>
+<option>Registered</option>
+<option>To be verified</option>
+</select>
+</div>
+<div class="field">
+<label for="category">Category, if applicable</label>
+<select id="category" name="category">
+<option value="">Select</option>
+<option>General</option>
+<option>EWS</option>
+<option>OBC</option>
+<option>SC</option>
+<option>ST</option>
+<option>PwD</option>
+<option>Other / to be verified</option>
+</select>
+</div>
+<div class="field full">
+<label for="request">Nature of request *</label>
+<select id="request" name="request" required>
+<option value="">Select the purpose of this representation</option>
+<option>Guidance on the applicable MBBS counselling process</option>
+<option>Clarification regarding eligibility or documentation</option>
+<option>Request for consideration under an officially applicable admission category</option>
+<option>Correction or clarification of application information</option>
+<option>Other request</option>
+</select>
+</div>
+<div class="field full">
+<label for="details">Detailed representation and grounds for request *</label>
+<textarea id="details" name="details" required style="min-height:140px" placeholder="Describe your request accurately. Refer to the relevant official notice or rule, if known. Do not include unsupported claims."></textarea>
+</div>
+<div class="field full">
+<label for="college">Institution(s) concerned, if applicable</label>
+<textarea id="college" name="college"></textarea>
+</div>
+<div class="field full">
+<label for="reference">Relevant official notice / application reference, if available</label>
+<input id="reference" name="reference">
+</div>
+</div>
+
+<h2>4. Supporting Documents Checklist</h2>
+<p>Tick the documents enclosed or prepared, where applicable. Check the latest instructions from the competent authority for the actual requirements.</p>
+<div class="checklist">
+<label class="check"><input type="checkbox" name="doc_neet"> NEET-UG scorecard</label>
+<label class="check"><input type="checkbox" name="doc10"> Class X certificate / date-of-birth proof</label>
+<label class="check"><input type="checkbox" name="doc12"> Class XII marksheet / certificate</label>
+<label class="check"><input type="checkbox" name="docid"> Identity proof, if required</label>
+<label class="check"><input type="checkbox" name="docdom"> Domicile certificate, if applicable</label>
+<label class="check"><input type="checkbox" name="doccat"> Category certificate, if applicable</label>
+<label class="check"><input type="checkbox" name="docphoto"> Recent photograph, if required</label>
+<label class="check"><input type="checkbox" name="docsign"> Signature, if required</label>
+<label class="check"><input type="checkbox" name="docother"> Other supporting documents</label>
+</div>
+
+<div class="grid" style="margin-top:18px">
+<div class="field full">
+<label for="otherdocs">List other documents enclosed</label>
+<textarea id="otherdocs" name="otherdocs"></textarea>
+</div>
+<div class="field full">
+<label for="attachments">Select supporting files for your own preparation copy</label>
+<input id="attachments" type="file" multiple accept=".pdf,image/*">
+<p class="help">Selecting files here does not upload or transmit them to WBMCC. Keep original documents safe and follow the authority's actual submission instructions.</p>
+<div id="filelist" class="help" aria-live="polite"></div>
+</div>
+</div>
+
+<h2>5. Declaration by Applicant</h2>
+<p>
+I declare that the information provided in this draft is true and accurate to the best of my knowledge. I understand that the competent authority may require additional documents or clarifications. I understand that this representation does not guarantee admission, establish eligibility, confirm seat availability, or replace any prescribed application or counselling procedure.
+</p>
+<div class="grid">
+<div class="field">
+<label for="declname">Applicant name *</label>
+<input id="declname" name="declname" required>
+</div>
+<div class="field">
+<label for="decldate">Date *</label>
+<input id="decldate" name="decldate" type="date" required>
+</div>
+<div class="field full">
+<label for="place">Place</label>
+<input id="place" name="place">
+</div>
+</div>
+
+<div class="signature-grid">
+<div><div class="signbox">Signature of applicant</div></div>
+<div><div class="signbox">Signature of parent / guardian, if applicable</div></div>
+</div>
+
+<h2>6. For Office Use Only</h2>
+<div class="grid">
+<div class="field">
+<label for="office_ref">Receipt / diary number</label>
+<input id="office_ref" name="office_ref">
+</div>
+<div class="field">
+<label for="office_date">Date received</label>
+<input id="office_date" name="office_date" type="date">
+</div>
+<div class="field full">
+<label for="office_remarks">Remarks by competent authority</label>
+<textarea id="office_remarks" name="office_remarks"></textarea>
+</div>
+</div>
+
+<div class="warning">
+<strong>Submission reminder:</strong> This browser form does not transmit information, submit an application, or create an official receipt. Verify the correct authority, application format, deadline, and submission channel before sending any representation. Do not make payments to an intermediary based solely on this document.
+</div>
+</main>
+
+<div class="actions">
+<button type="button" onclick="window.print()">Print / Save as PDF</button>
+<button type="button" class="secondary" onclick="downloadDraft()">Download blank HTML copy</button>
+<button type="button" class="secondary" onclick="clearForm()">Clear entered fields</button>
+</div>
+
+<script>
+document.getElementById("attachments").addEventListener("change", function () {
+  const files = Array.from(this.files || []);
+  document.getElementById("filelist").textContent = files.length
+    ? "Selected locally: " + files.map(f => f.name).join(", ")
+    : "No files selected.";
+});
+
+function clearForm() {
+  if (!confirm("Clear all entered fields and selected files?")) return;
+  document.querySelectorAll("main input, main select, main textarea").forEach(el => {
+    if (el.type === "checkbox") el.checked = false;
+    else el.value = "";
+  });
+  document.getElementById("filelist").textContent = "";
+}
+
+function downloadDraft() {
+  const html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "wbmcc-draft-application.html";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+document.getElementById("decldate").value =
+  new Date().toISOString().slice(0, 10);
+</script>
+</body>
+</html>
