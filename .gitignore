@@ -1,9 +1,194 @@
 
+# =========================================================
+# Donor Trust Quota Application
+# Secure, production-oriented Git ignore rules
+# =========================================================
+
+# 1. Dependencies
 node_modules/
+jspm_packages/
+bower_components/
+vendor/
+
+.npm/
+.pnpm-store/
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+
+# 2. Environment files and secrets
 .env
 .env.*
 !.env.example
-.DS_Store
-npm-debug.log*
-coverage/
+!.dev.vars.example
+
+.dev.vars
+.dev.vars.*
+
+secrets/
+.secret/
+.credentials/
+credentials.json
+service-account*.json
+*-service-account*.json
+
+# Private keys and certificates
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+*.jks
+
+# Local credentials and tokens
+.netrc
+.npmrc
+!.npmrc.example
+.claude/settings.local.json
+
+# 3. Private applicant files
 uploads/
+private-uploads/
+private-generated/
+generated-private/
+storage/private/
+data/private/
+
+.tmp-uploads/
+upload-tmp/
+applicant-exports/
+application-exports/
+document-exports/
+private-documents/
+generated-pdfs/
+
+# Generated applicant data
+*.applicant-data.json
+
+# Temporary or incomplete uploads
+*.part
+*.partial
+*.upload
+
+# 4. Local databases and backups
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.sqlite-journal
+*.sqlite3-journal
+*.dump
+*.bak
+*.backup
+
+# Keep schema.sql and reviewed database migrations tracked.
+
+# 5. Logs and runtime artifacts
+*.log
+logs/
+log/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+*.pid
+*.pid.lock
+pids/
+*.seed
+
+# 6. Build outputs and framework caches
+dist/
+build/
+out/
+.next/
+.nuxt/
+.nitro/
+.output/
+.svelte-kit/
+.angular/
+.parcel-cache/
+.turbo/
+.rpt2_cache/
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+
+# 7. Test output and coverage
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+blob-report/
+cypress/videos/
+cypress/screenshots/
+junit.xml
+*.lcov
+
+# 8. Hosting and infrastructure caches
+.wrangler/
+.vercel/
+.netlify/
+.serverless/
+.terraform/
+.terragrunt-cache/
+
+# Terraform state and real secret variable files
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+
+# 9. Operating system files
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+Thumbs.db:encryptable
+Desktop.ini
+$RECYCLE.BIN/
+
+# 10. Editor and IDE files
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+*.swp
+*.swo
+*~
+*.orig
+*.rej
+
+# 11. Temporary files and caches
+.cache/
+.temp/
+.tmp/
+temp/
+tmp/
+*.tmp
+*.temp
+*.bak~
+*.old
+
+# 12. Local-only certificates and reports
+certs/private/
+certificates/private/
+security-reports/private/
+
+# Do not blanket-ignore *.sarif:
+# reviewed security reports may belong in version control.
+
+# 13. Preserve essential project configuration
+# These files are not ignored by the rules above, so explicit
+# exceptions are unnecessary:
+# package.json
+# package-lock.json
+# pnpm-lock.yaml
+# yarn.lock
+# schema.sql
+# render.yml
+# README.md
+# .gitignore

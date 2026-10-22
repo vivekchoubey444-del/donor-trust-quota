@@ -1,0 +1,296 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Application Form Builder</title>
+<style>
+:root{font-family:Arial,Helvetica,sans-serif;color:#111;background:#f4f4f4}
+*{box-sizing:border-box}
+body{margin:0}
+header{background:#fff;border-bottom:1px solid #ddd;padding:20px 16px}
+header h1{font-size:26px;margin:0 0 8px}
+header p{margin:0;color:#555;line-height:1.5}
+main{max-width:960px;margin:20px auto;padding:0 14px 35px}
+.panel{background:#fff;border:1px solid #ddd;border-radius:10px;padding:18px;margin-bottom:16px}
+h2{font-size:19px;margin:0 0 15px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.full{grid-column:1/-1}
+label{font-weight:700;font-size:14px}
+input,select,textarea{width:100%;padding:11px;font:inherit;border:1px solid #aaa;border-radius:6px;background:#fff}
+textarea{min-height:90px;resize:vertical}
+button{font:inherit;font-weight:700;padding:12px 15px;border:1px solid #222;border-radius:7px;background:#fff;color:#111;cursor:pointer}
+.primary{background:#111;color:#fff}
+.actions{display:flex;gap:9px;flex-wrap:wrap}
+.hint{font-size:12px;line-height:1.5;color:#555}
+#status{overflow-wrap:anywhere;min-height:1.5em}
+#review{overflow-wrap:anywhere}
+.review-row{padding:9px 0;border-bottom:1px solid #ddd}
+.review-row strong{display:block;font-size:13px;color:#555;margin-bottom:4px}
+footer{max-width:960px;margin:auto;padding:0 14px 28px;color:#555;font-size:12px;line-height:1.5}
+@media(max-width:620px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.panel{padding:14px}}
+@media print{header,.no-print,footer{display:none!important}body{background:#fff}main{margin:0;padding:0}.panel{border:0;padding:8px}input,select,textarea{border:0;border-bottom:1px solid #777;padding:5px 0}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Application Form Builder</h1>
+  <p>Complete the fields, attach supporting documents, review the details, and export a copy.</p>
+</header>
+
+<main>
+<form id="applicationForm">
+  <section class="panel">
+    <h2>1. Applicant Details</h2>
+    <div class="grid">
+      <div class="field"><label for="fullName">Full name *</label><input id="fullName" name="Full name" autocomplete="name" required></div>
+      <div class="field"><label for="dob">Date of birth</label><input id="dob" name="Date of birth" type="date"></div>
+      <div class="field"><label for="neetRoll">NEET roll number</label><input id="neetRoll" name="NEET roll number"></div>
+      <div class="field"><label for="neetRank">NEET rank</label><input id="neetRank" name="NEET rank" inputmode="numeric"></div>
+      <div class="field"><label for="category">Category</label><select id="category" name="Category"><option value="">Select</option><option>General</option><option>SC</option><option>ST</option><option>OBC</option><option>EWS</option><option>Other</option></select></div>
+      <div class="field"><label for="year">Admission year</label><input id="year" name="Admission year" placeholder="e.g. 2026–27"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>2. Contact Details</h2>
+    <div class="grid">
+      <div class="field"><label for="email">Email address</label><input id="email" name="Email address" type="email" autocomplete="email"></div>
+      <div class="field"><label for="phone">Mobile number</label><input id="phone" name="Mobile number" type="tel" autocomplete="tel"></div>
+      <div class="field full"><label for="address">Full postal address</label><textarea id="address" name="Postal address" autocomplete="street-address"></textarea></div>
+      <div class="field"><label for="state">State</label><input id="state" name="State"></div>
+      <div class="field"><label for="pin">PIN code</label><input id="pin" name="PIN code" inputmode="numeric"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>3. Application Request</h2>
+    <div class="grid">
+      <div class="field"><label for="requestType">Request type *</label><select id="requestType" name="Request type" required><option value="">Select</option><option>Donor quota enquiry/request</option><option>Trust quota enquiry/request</option><option>Other admission enquiry</option></select></div>
+      <div class="field"><label for="college">Preferred college</label><input id="college" name="Preferred college"></div>
+      <div class="field full"><label for="request">Details of request</label><textarea id="request" name="Request details"></textarea></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>4. Supporting Documents</h2>
+    <p class="hint">Choose PDF or image files. Files are processed locally for export; this page does not upload them to a server.</p>
+    <div class="grid">
+      <div class="field"><label for="identity">Identity proof</label><input id="identity" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp"></div>
+      <div class="field"><label for="neet">NEET scorecard</label><input id="neet" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp"></div>
+      <div class="field"><label for="marksheets">Academic marksheets</label><input id="marksheets" type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp"></div>
+      <div class="field"><label for="photoSignature">Photo and signature</label><input id="photoSignature" type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp"></div>
+      <div class="field full"><label for="otherDocs">Other supporting documents</label><input id="otherDocs" type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp"></div>
+    </div>
+    <p id="fileSummary" class="hint" aria-live="polite">No files selected.</p>
+  </section>
+
+  <section class="panel">
+    <h2>5. Declaration and Consent</h2>
+    <div class="field"><label for="declaration">Additional declaration</label><textarea id="declaration" name="Additional declaration"></textarea></div>
+    <div class="field" style="margin-top:14px">
+      <label><input id="consent" type="checkbox" style="width:auto" required> I confirm that I have reviewed the information and understand that this tool prepares a copy; it does not submit an application to an authority.</label>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>6. Review Application</h2>
+    <div id="review" aria-live="polite">Tap "Review details" to check your entries.</div>
+    <div class="actions no-print" style="margin-top:14px">
+      <button type="button" id="reviewButton">Review details</button>
+      <button type="button" id="pdfButton">Print / Save as PDF</button>
+      <button type="button" class="primary" id="htmlButton">Download HTML copy</button>
+      <button type="button" id="linkButton">Convert to Shareable Link</button>
+    </div>
+    <p id="status" role="status" aria-live="polite"></p>
+    <p class="hint">A shareable link requires a working server endpoint. No applicant data will be placed in the URL itself.</p>
+  </section>
+</form>
+</main>
+
+<footer>
+Independent form-preparation tool; not an official government form or submission portal. Keep exported files secure, particularly when they contain identity documents or other personal information.
+</footer>
+
+<script>
+"use strict";
+(() => {
+  const form = document.getElementById("applicationForm");
+  const status = document.getElementById("status");
+  const review = document.getElementById("review");
+  const fileInputs = [...form.querySelectorAll('input[type="file"]')];
+
+  // Set this only after you deploy a real endpoint that stores submissions
+  // securely and returns a random, access-controlled share token.
+  const SHARE_ENDPOINT = ""; // Example: "/api/application/share"
+
+  const escapeHTML = value => String(value).replace(/[&<>"']/g, ch => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+  })[ch]);
+
+  function getData() {
+    const data = {};
+    [...form.elements].forEach(el => {
+      if (!el.name || el.type === "file" || ["button","reset","submit"].includes(el.type)) return;
+      data[el.name] = el.type === "checkbox" ? el.checked : el.value;
+    });
+    return data;
+  }
+
+  function getFiles() {
+    return fileInputs.flatMap(input => [...(input.files || [])].map(file => ({
+      field: input.id, file
+    })));
+  }
+
+  function updateFiles() {
+    const files = getFiles();
+    const total = files.reduce((n, item) => n + item.file.size, 0);
+    document.getElementById("fileSummary").textContent = files.length
+      ? `${files.length} file(s) selected -- ${(total / 1048576).toFixed(2)} MB total.`
+      : "No files selected.";
+  }
+
+  fileInputs.forEach(input => input.addEventListener("change", updateFiles));
+
+  function renderReview() {
+    if (!form.reportValidity()) return false;
+    const data = getData();
+    review.innerHTML = Object.entries(data).map(([key, value]) =>
+      `<div class="review-row"><strong>${escapeHTML(key)}</strong>${escapeHTML(value || "--")}</div>`
+    ).join("");
+    const files = getFiles();
+    if (files.length) {
+      review.insertAdjacentHTML("beforeend",
+        `<h3>Attachments</h3><ul>${files.map(({field,file}) =>
+          `<li>${escapeHTML(field)}: ${escapeHTML(file.name)} (${Math.ceil(file.size/1024)} KB)</li>`
+        ).join("")}</ul>`);
+    }
+    status.textContent = "Review updated. Check all information before exporting.";
+    return true;
+  }
+
+  function download(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  }
+
+  function readFile(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error(`Could not read ${file.name}`));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function exportHTML() {
+    if (!renderReview()) return;
+    const files = getFiles();
+    const totalBytes = files.reduce((n, item) => n + item.file.size, 0);
+    if (totalBytes > 15 * 1024 * 1024) {
+      status.textContent = "Attachments exceed 15 MB. Reduce file sizes before exporting.";
+      return;
+    }
+
+    try {
+      status.textContent = "Preparing HTML copy…";
+      const attachments = [];
+      for (const {field, file} of files) {
+        attachments.push({
+          field,
+          name: file.name,
+          type: file.type || "application/octet-stream",
+          dataURL: await readFile(file)
+        });
+      }
+
+      const data = getData();
+      const rows = Object.entries(data).map(([key, value]) =>
+        `<tr><th>${escapeHTML(key)}</th><td>${escapeHTML(value || "--")}</td></tr>`
+      ).join("");
+
+      const links = attachments.map((item, i) =>
+        `<li>${escapeHTML(item.field)} -- ${escapeHTML(item.name)}: ` +
+        `<a download="${escapeHTML(item.name)}" href="${item.dataURL}">Download attachment ${i + 1}</a></li>`
+      ).join("");
+
+      const output = `<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Application Copy</title>
+<style>
+body{font:16px Arial,sans-serif;max-width:900px;margin:24px auto;padding:0 16px;color:#111}
+table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:9px;text-align:left;overflow-wrap:anywhere}
+th{background:#f4f4f4;width:35%}li{margin:10px 0;overflow-wrap:anywhere}
+@media print{.no-print{display:none}}
+</style></head><body>
+<h1>Application Copy</h1>
+<p>This is a locally generated copy, not proof of official submission.</p>
+<h2>Entered information</h2><table>${rows}</table>
+<h2>Attachments</h2><ul>${links || "<li>No attachments</li>"}</ul>
+<p class="no-print"><button onclick="window.print()">Print / Save as PDF</button></p>
+</body></html>`;
+
+      download(new Blob([output], {type:"text/html;charset=utf-8"}), "application-copy.html");
+      status.textContent = "HTML copy created. Store it securely.";
+    } catch (error) {
+      status.textContent = error.message || "Could not create the HTML copy.";
+    }
+  }
+
+  async function createShareLink() {
+    if (!renderReview()) return;
+
+    if (!SHARE_ENDPOINT) {
+      status.textContent =
+        "Share link is not configured yet. Deploy a secure backend endpoint, then set SHARE_ENDPOINT in this file.";
+      return;
+    }
+
+    status.textContent = "Creating secure share link…";
+    try {
+      const response = await fetch(SHARE_ENDPOINT, {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        credentials: "same-origin",
+        body: JSON.stringify({data: getData()})
+      });
+
+      if (!response.ok) throw new Error("Server rejected the share request.");
+      const result = await response.json();
+
+      if (!result.url || typeof result.url !== "string") {
+        throw new Error("The server did not return a valid share URL.");
+      }
+
+      const link = document.createElement("a");
+      link.href = result.url;
+      link.textContent = result.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      status.replaceChildren(document.createTextNode("Share link created: "), link);
+    } catch (error) {
+      status.textContent = error.message || "Unable to create share link.";
+    }
+  }
+
+  document.getElementById("reviewButton").addEventListener("click", renderReview);
+  document.getElementById("pdfButton").addEventListener("click", () => {
+    if (renderReview()) window.print();
+  });
+  document.getElementById("htmlButton").addEventListener("click", exportHTML);
+  document.getElementById("linkButton").addEventListener("click", createShareLink);
+})();
+</script>
+</body>
+</html>

@@ -2,123 +2,1157 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Step 4 -- Photos and signature</title>
-<link rel="stylesheet" href="styles.css">
-</head>
-<body>
-<header><div class="container">
-<p class="eyebrow">Donor / Trust Quota Application</p>
-<h1>Step 4 -- Photograph and Signature</h1>
-<div class="status">INDEPENDENT PROPOSAL -- NOT OFFICIAL</div>
-</div></header>
-<main class="container">
-<div class="notice"><strong>Photo instruction:</strong> Provide a clear passport-size photograph and capture a current live photo with the camera. The current official notice takes precedence over any suggested image size.</div>
-<div class="grid">
-  <div>
-    <label>Passport-size photograph *</label>
-    <input id="passportPhoto" type="file" accept="image/jpeg,image/png">
-    <img id="passportPreview" class="preview" hidden alt="Passport photo preview">
-    <p id="passportStatus" class="muted"></p>
-  </div>
-  <div>
-    <label>Signature image *</label>
-    <input id="signatureImage" type="file" accept="image/jpeg,image/png">
-    <img id="signaturePreview" class="preview" hidden alt="Signature preview">
-    <p id="signatureStatus" class="muted"></p>
-  </div>
-  <div class="full">
-    <h2>Live student photo capture *</h2>
-    <p>Camera access requires permission and usually HTTPS. If camera capture is unavailable, try another supported browser. This prototype stores the capture locally; it does not upload it to an authority.</p>
-    <button id="startCamera" type="button">Start camera</button>
-    <button id="capture" type="button" disabled>Capture live photo</button>
-    <button id="stopCamera" type="button" disabled>Stop camera</button>
-    <video id="video" hidden autoplay playsinline style="width:min(100%,400px);display:block;margin-top:12px;border:1px solid #000"></video>
-    <canvas id="canvas" hidden></canvas>
-    <img id="livePreview" class="preview" hidden alt="Live photo preview">
-    <p id="liveStatus" class="muted"></p>
-  </div>
-</div>
-<div class="actions">
-  <button type="button" onclick="saveDraft()">Save</button>
-  <a class="btn" href="index.html">Home</a>
-  <a class="btn" href="page-3-eligibility.html">← Previous</a>
-  <a class="btn primary" href="page-5-documents.html">Next page →</a>
-</div>
-</main>
-<footer><div class="container">Photo capture cannot prevent screenshots or recording by the device operating system.</div></footer>
-<script>
-const KEY="donorTrustQuotaDraft_v3";
-let d={};try{d=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}
-let stream=null;
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Step 4 of an independent donor or trust quota application proposal -- WBMCC Authorised: passport photograph, signature and live photo.">
+  <title>Step 4 -- Photograph and Signature</title>
+  <link rel="stylesheet" href="styles.css">
 
-function save(){localStorage.setItem(KEY,JSON.stringify(d))}
-function loadImage(id,preview,status){
-  if(d[id]){
-    document.getElementById(preview).src=d[id];
-    document.getElementById(preview).hidden=false;
-    document.getElementById(status).textContent="Previously selected image saved in this browser.";
-  }
-}
-function imageInput(id,preview,status){
-  document.getElementById(id).addEventListener("change",e=>{
-    const f=e.target.files[0];if(!f)return;
-    if(!["image/jpeg","image/png"].includes(f.type)||f.size>5*1024*1024){
-      alert("Choose a JPEG or PNG image no larger than 5 MB.");
-      e.target.value="";return;
+  <style>
+    :root {
+      color-scheme: light;
+      --black: #111111;
+      --gray: #626262;
+      --line: #d5d5d5;
+      --soft: #f5f5f5;
+      --white: #ffffff;
+      --danger: #a00000;
+      --success: #185b2b;
+      --focus: #175fcc;
     }
-    const r=new FileReader();
-    r.onload=()=>{
-      d[id]=r.result;
-      document.getElementById(preview).src=r.result;
-      document.getElementById(preview).hidden=false;
-      document.getElementById(status).textContent="Image saved in browser draft.";
-      save();
-    };
-    r.readAsDataURL(f);
-  });
-}
-imageInput("passportPhoto","passportPreview","passportStatus");
-imageInput("signatureImage","signaturePreview","signatureStatus");
-loadImage("passportPhoto","passportPreview","passportStatus");
-loadImage("signatureImage","signaturePreview","signatureStatus");
 
-if(d.livePhoto){
-  livePreview.src=d.livePhoto;
-  livePreview.hidden=false;
-  liveStatus.textContent="Previously captured live photo saved.";
-}
-startCamera.onclick=async()=>{
-  try{
-    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"},audio:false});
-    video.srcObject=stream;video.hidden=false;
-    capture.disabled=false;stopCamera.disabled=false;
-    liveStatus.textContent="Camera is active.";
-  }catch(e){
-    liveStatus.textContent="Camera unavailable or permission denied. You may retry.";
-  }
-};
-capture.onclick=()=>{
-  if(!stream)return;
-  canvas.width=video.videoWidth;canvas.height=video.videoHeight;
-  canvas.getContext("2d").drawImage(video,0,0);
-  d.livePhoto=canvas.toDataURL("image/jpeg",.9);
-  livePreview.src=d.livePhoto;livePreview.hidden=false;
-  liveStatus.textContent="Live photo captured and saved in browser draft.";
-  save();stop();
-};
-function stop(){
-  if(stream)stream.getTracks().forEach(t=>t.stop());
-  stream=null;video.srcObject=null;video.hidden=true;
-  capture.disabled=true;stopCamera.disabled=true;
-}
-stopCamera.onclick=stop;
-window.addEventListener("pagehide",stop);
-function saveDraft(){
-  save();
-  alert("Photo selections saved in this browser where storage permits.");
-}
-</script>
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      color: var(--black);
+      background: var(--white);
+      font-family:
+        "Noto Sans",
+        "Noto Sans Devanagari",
+        "Noto Sans Bengali",
+        "Noto Sans Nepali",
+        "Nirmala UI",
+        "Mangal",
+        "Vrinda",
+        "Kohinoor Devanagari",
+        "Kohinoor Bangla",
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      line-height: 1.6;
+    }
+
+    button, input, select { font: inherit; }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    a:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .container {
+      width: min(100% - 32px, 900px);
+      margin-inline: auto;
+    }
+
+    header {
+      padding: 24px 0;
+      border-bottom: 2px solid var(--black);
+    }
+
+    .eyebrow {
+      margin: 0 0 5px;
+      color: var(--gray);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(25px, 4vw, 34px);
+      line-height: 1.25;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 21px;
+      line-height: 1.35;
+    }
+
+    .status {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 5px 10px;
+      border: 1px solid var(--black);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .04em;
+    }
+
+    main.container { padding-top: 20px; padding-bottom: 35px; }
+
+    .notice {
+      margin-bottom: 20px;
+      padding: 14px 16px;
+      border: 1px solid var(--black);
+      border-left-width: 5px;
+      background: var(--soft);
+      font-size: 14px;
+    }
+
+    .notice p { margin: 5px 0 0; }
+
+    .progress { margin: 20px 0; }
+
+    .progress-heading {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .progress-track {
+      height: 7px;
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 57.143%;
+      height: 100%;
+      background: var(--black);
+    }
+
+    .reference-panel {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 20px 0;
+      padding: 13px;
+      border: 1px solid var(--line);
+    }
+
+    .reference-panel small {
+      display: block;
+      color: var(--gray);
+      font-size: 12px;
+    }
+
+    .reference-panel strong { overflow-wrap: anywhere; }
+
+    .section {
+      margin: 20px 0;
+      padding: 19px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .section-intro {
+      margin: 0 0 16px;
+      color: var(--gray);
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .field {
+      min-width: 0;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 750;
+    }
+
+    .required { color: var(--danger); }
+
+    input[type="file"] {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      padding: 10px;
+      border: 1px solid #888;
+      border-radius: 4px;
+      background: var(--white);
+    }
+
+    .preview {
+      display: block;
+      max-width: 100%;
+      max-height: 320px;
+      margin-top: 14px;
+      border: 1px solid var(--line);
+      background: #ffffff;
+      object-fit: contain;
+    }
+
+    #passportPreview { width: 190px; }
+    #signaturePreview { width: min(100%, 360px); }
+    #livePreview { width: min(100%, 320px); }
+
+    video {
+      display: block;
+      width: min(100%, 400px);
+      max-height: 420px;
+      margin-top: 12px;
+      border: 1px solid var(--black);
+      background: #111;
+      object-fit: contain;
+    }
+
+    canvas { display: none; }
+
+    .muted, .help-text {
+      color: var(--gray);
+      font-size: 13px;
+      overflow-wrap: anywhere;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 22px 0;
+    }
+
+    .btn, button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 44px;
+      padding: 9px 15px;
+      border: 1px solid var(--black);
+      border-radius: 4px;
+      background: var(--white);
+      color: var(--black);
+      font-weight: 750;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .btn.primary, button.primary {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    button:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .status-message {
+      display: none;
+      margin: 16px 0;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      overflow-wrap: anywhere;
+    }
+
+    .status-message.visible { display: block; }
+    .status-message.error { color: var(--danger); border-color: var(--danger); }
+    .status-message.success { color: var(--success); border-color: var(--success); }
+
+    footer {
+      padding: 18px 0;
+      border-top: 1px solid var(--line);
+      color: var(--gray);
+      font-size: 12px;
+    }
+
+    footer p { margin: 5px 0; }
+
+    @media (max-width: 620px) {
+      .container { width: min(100% - 22px, 900px); }
+      .grid, .reference-panel { grid-template-columns: 1fr; }
+      .section { padding: 14px; }
+      .actions { flex-direction: column; }
+      .actions .btn, .actions button { width: 100%; }
+    }
+
+    @media print {
+      .actions, input[type="file"], #startCamera, #capture, #stopCamera { display: none !important; }
+      .container { width: 100%; }
+      .section, .field, .notice { break-inside: avoid; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <p class="eyebrow" data-i18n="eyebrow">Independent proposal · Donor / Trust Quota Application</p>
+      <h1 data-i18n="title">Step 4 -- Photograph and Signature</h1>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="notice">
+      <strong data-i18n="noticeTitle">Photo instructions</strong>
+      <p data-i18n="noticeText">
+        Provide a clear passport-size photograph, a signature image and a current live photo.
+        The current applicable official notice takes precedence over any suggested image size.
+      </p>
+    </div>
+
+    <div class="progress" aria-label="Application progress">
+      <div class="progress-heading">
+        <strong data-i18n="progressTitle">Application progress</strong>
+        <span data-i18n="progressValue">Step 4 of 7 · 57%</span>
+      </div>
+      <div class="progress-track" role="progressbar" aria-valuemin="1" aria-valuemax="7" aria-valuenow="4">
+        <div class="progress-fill"></div>
+      </div>
+    </div>
+
+    <section class="reference-panel" aria-label="Draft reference">
+      <div>
+        <small data-i18n="referenceLabel">Draft reference</small>
+        <strong id="applicationReference">Not generated</strong>
+      </div>
+      <div>
+        <small data-i18n="savedLabel">Draft status</small>
+        <strong id="draftStatus">Loading…</strong>
+      </div>
+      <div>
+        <label for="language" data-i18n="languageLabel">Language</label>
+        <select id="language">
+          <option value="en">English</option>
+          <option value="hi">हिन्दी</option>
+          <option value="bn">বাংলা</option>
+          <option value="ne">नेपाली</option>
+        </select>
+      </div>
+    </section>
+
+    <div id="statusMessage" class="status-message" role="status" aria-live="polite" tabindex="-1"></div>
+
+    <section class="section">
+      <h2 data-i18n="imagesHeading">4.1 Applicant images</h2>
+      <p class="section-intro" data-i18n="imagesIntro">
+        Choose clear JPEG or PNG images. Files are processed in this browser and stored in the local draft if browser storage permits.
+      </p>
+
+      <div class="grid">
+        <div class="field">
+          <label for="passportPhoto">
+            <span data-i18n="passportLabel">Passport-size photograph</span>
+            <span class="required">*</span>
+          </label>
+          <input id="passportPhoto" type="file" accept="image/jpeg,image/png" required>
+          <p class="help-text" data-i18n="passportHelp">JPEG or PNG, maximum 5 MB before processing.</p>
+          <img id="passportPreview" class="preview" hidden alt="Passport photograph preview">
+          <p id="passportStatus" class="muted" aria-live="polite"></p>
+          <button type="button" id="removePassport" hidden data-i18n="removeImage">Remove image</button>
+        </div>
+
+        <div class="field">
+          <label for="signatureImage">
+            <span data-i18n="signatureLabel">Signature image</span>
+            <span class="required">*</span>
+          </label>
+          <input id="signatureImage" type="file" accept="image/jpeg,image/png" required>
+          <p class="help-text" data-i18n="signatureHelp">Use a clear image of the applicant's signature, maximum 5 MB before processing.</p>
+          <img id="signaturePreview" class="preview" hidden alt="Signature image preview">
+          <p id="signatureStatus" class="muted" aria-live="polite"></p>
+          <button type="button" id="removeSignature" hidden data-i18n="removeImage">Remove image</button>
+        </div>
+
+        <div class="field full">
+          <h2 data-i18n="liveHeading">4.2 Live student photo capture</h2>
+          <p class="section-intro" data-i18n="liveIntro">
+            Camera access requires permission and usually HTTPS. Check the browser's permission prompt.
+            Capturing a photo here does not prove identity or prevent screenshots.
+          </p>
+
+          <div class="actions">
+            <button type="button" id="startCamera" class="primary" data-i18n="startCamera">Start camera</button>
+            <button type="button" id="capture" disabled data-i18n="capturePhoto">Capture live photo</button>
+            <button type="button" id="stopCamera" disabled data-i18n="stopCamera">Stop camera</button>
+            <button type="button" id="removeLive" hidden data-i18n="removeImage">Remove image</button>
+          </div>
+
+          <video id="video" hidden autoplay playsinline muted></video>
+          <canvas id="canvas" hidden></canvas>
+          <img id="livePreview" class="preview" hidden alt="Live student photo preview">
+          <p id="liveStatus" class="muted" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-i18n="storageHeading">Local storage and privacy</h2>
+      <ul>
+  </section>
+
+    <div class="actions">
+      <button type="button" id="saveButton" data-i18n="saveButton">Save draft</button>
+      <a class="btn" href="index.html" data-i18n="homeButton">Home</a>
+      <a class="btn" href="page-3-eligibility.html" data-i18n="previousButton">← Previous: Eligibility</a>
+      <a class="btn primary" href="page-5-documents.html" data-i18n="nextButton">Next: Documents →</a>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+    </div>
+  </footer>
+
+  <script>
+    "use strict";
+
+    (() => {
+      const KEY = "donorTrustQuotaDraft_v3";
+      const REFERENCE_KEY = "donorTrustQuotaReference_v1";
+      const CREATED_KEY = "donorTrustQuotaCreated_v1";
+      const LANGUAGE_KEY = "donorTrustQuotaLanguage_v1";
+
+      const MAX_INPUT_BYTES = 5 * 1024 * 1024;
+      const MAX_DIMENSION = 1400;
+      const JPEG_QUALITY = 0.84;
+
+      const $ = (id) => document.getElementById(id);
+
+      let draft = null;
+      let stream = null;
+      let language = "en";
+      let busy = false;
+
+      const translations = {
+        en: {
+          eyebrow: "Independent proposal · Donor / Trust Quota Application",
+          title: "Step 4 -- Photograph and Signature",
+          independentStatus: "INDEPENDENT PROPOSAL -- NOT OFFICIAL",
+          noticeTitle: "Photo instructions",
+          noticeText: "Provide a clear passport-size photograph, a signature image and a current live photo. The current applicable official notice takes precedence over any suggested image size.",
+          progressTitle: "Application progress",
+          progressValue: "Step 4 of 7 · 57%",
+          referenceLabel: "Draft reference",
+          savedLabel: "Draft status",
+          languageLabel: "Language",
+          imagesHeading: "4.1 Applicant images",
+          imagesIntro: "Choose clear JPEG or PNG images. Files are processed in this browser and stored in the local draft if browser storage permits.",
+          passportLabel: "Passport-size photograph",
+          passportHelp: "JPEG or PNG, maximum 5 MB before processing.",
+          signatureLabel: "Signature image",
+          signatureHelp: "Use a clear image of the applicant's signature, maximum 5 MB before processing.",
+          liveHeading: "4.2 Live student photo capture",
+          liveIntro: "Camera access requires permission and usually HTTPS. Check the browser's permission prompt. Capturing a photo here does not prove identity or prevent screenshots.",
+          startCamera: "Start camera",
+          capturePhoto: "Capture live photo",
+          stopCamera: "Stop camera",
+          removeImage: "Remove image",
+          storageHeading: "Local storage and privacy",
+          privacy1: "Images are stored in the browser's local draft, not uploaded to an authority by this page.",
+          privacy2: "Browser storage can be cleared or unavailable, and it may be accessible to other people using the same device profile.",
+          privacy3: "If storage is full, saving may fail. Do not assume an image is saved until the page confirms it.",
+          privacy4: "This prototype does not provide server-side document storage, identity verification or malware scanning.",
+          saveButton: "Save draft",
+          homeButton: "Home",
+          previousButton: "← Previous: Eligibility",
+          nextButton: "Next: Documents →",
+          footer1: "Independent proposal only -- not an official WBMCC application service.",
+          footer2: "Photo capture cannot prevent screenshots or recording by the device operating system.",
+          notGenerated: "Not generated",
+          draftLoaded: "Draft loaded",
+          noDraft: "No existing draft found",
+          fileSaved: "Image saved in the local draft.",
+          fileLoaded: "Previously saved image loaded from this browser.",
+          noImage: "No image selected.",
+          liveSaved: "Live photo captured and saved in the local draft.",
+          cameraActive: "Camera is active. Position the student in the frame.",
+          cameraUnavailable: "Camera unavailable or permission denied. Use HTTPS and check browser permissions.",
+          cameraUnsupported: "This browser does not provide camera access.",
+          processing: "Processing image…",
+          invalidType: "Choose a JPEG or PNG image.",
+          tooLarge: "The selected file exceeds the 5 MB input limit.",
+          imageReadError: "The image could not be read. Try another image.",
+          saveSuccess: "Draft saved in this browser.",
+          saveError: "Draft could not be saved. Browser storage may be full or unavailable.",
+          noReference: "No draft reference found. Return to Step 1 and create or restore the draft before saving.",
+          removeConfirm: "Remove this image from the local draft?",
+          removed: "Image removed from the local draft.",
+          cameraStopped: "Camera stopped.",
+          captureError: "Could not capture the photo. Check camera permission and try again.",
+          storageWarning: "The draft reference is missing. Your image preview is temporary until a valid draft is available."
+        },
+        hi: {
+          eyebrow: "स्वतंत्र प्रस्ताव · डोनर / ट्रस्ट कोटा आवेदन",
+          title: "चरण 4 -- फोटो और हस्ताक्षर",
+          independentStatus: "स्वतंत्र प्रस्ताव -- आधिकारिक नहीं",
+          noticeTitle: "फोटो निर्देश",
+          noticeText: "स्पष्ट पासपोर्ट आकार का फोटो, हस्ताक्षर की छवि और वर्तमान लाइव फोटो दें। लागू आधिकारिक सूचना में दिए गए निर्देश किसी भी सुझाए गए आकार से ऊपर होंगे।",
+          progressTitle: "आवेदन की प्रगति",
+          progressValue: "चरण 4 / 7 · 57%",
+          referenceLabel: "ड्राफ़्ट संदर्भ",
+          savedLabel: "ड्राफ़्ट स्थिति",
+          languageLabel: "भाषा",
+          imagesHeading: "4.1 आवेदक की छवियाँ",
+          imagesIntro: "स्पष्ट JPEG या PNG छवियाँ चुनें। फ़ाइलें इसी ब्राउज़र में संसाधित होंगी और स्टोरेज उपलब्ध होने पर स्थानीय ड्राफ़्ट में सहेजी जाएँगी।",
+          passportLabel: "पासपोर्ट आकार का फोटो",
+          passportHelp: "JPEG या PNG, संसाधन से पहले अधिकतम 5 MB।",
+          signatureLabel: "हस्ताक्षर की छवि",
+          signatureHelp: "आवेदक के हस्ताक्षर की स्पष्ट छवि चुनें, संसाधन से पहले अधिकतम 5 MB।",
+          liveHeading: "4.2 छात्र का लाइव फोटो",
+          liveIntro: "कैमरे के लिए अनुमति और आमतौर पर HTTPS आवश्यक है। ब्राउज़र की अनुमति जाँचें। यहाँ फोटो लेने से पहचान प्रमाणित नहीं होती और स्क्रीनशॉट नहीं रोके जा सकते।",
+          startCamera: "कैमरा शुरू करें",
+          capturePhoto: "लाइव फोटो लें",
+          stopCamera: "कैमरा बंद करें",
+          removeImage: "छवि हटाएँ",
+          storageHeading: "स्थानीय स्टोरेज और गोपनीयता",
+          privacy1: "छवियाँ ब्राउज़र के स्थानीय ड्राफ़्ट में सहेजी जाती हैं; यह पृष्ठ उन्हें किसी प्राधिकरण को अपलोड नहीं करता।",
+          privacy2: "ब्राउज़र स्टोरेज मिट सकता है या उपलब्ध नहीं हो सकता और उसी डिवाइस प्रोफ़ाइल का उपयोग करने वाले अन्य लोग इसे देख सकते हैं।",
+          privacy3: "स्टोरेज भरने पर सहेजना विफल हो सकता है। पुष्टि मिलने तक छवि को सहेजा हुआ न मानें।",
+          privacy4: "यह प्रोटोटाइप सर्वर-साइड दस्तावेज़ स्टोरेज, पहचान सत्यापन या मैलवेयर जाँच प्रदान नहीं करता।",
+          saveButton: "ड्राफ़्ट सहेजें",
+          homeButton: "होम",
+          previousButton: "← पिछला: पात्रता",
+          nextButton: "अगला: दस्तावेज़ →",
+          footer1: "केवल स्वतंत्र प्रस्ताव -- आधिकारिक WBMCC आवेदन सेवा नहीं।",
+          footer2: "डिवाइस का ऑपरेटिंग सिस्टम स्क्रीनशॉट या रिकॉर्डिंग रोकने नहीं देता।",
+          notGenerated: "बनाया नहीं गया",
+          draftLoaded: "ड्राफ़्ट लोड हुआ",
+          noDraft: "कोई मौजूदा ड्राफ़्ट नहीं मिला",
+          fileSaved: "छवि स्थानीय ड्राफ़्ट में सहेजी गई।",
+          fileLoaded: "इस ब्राउज़र से पहले सहेजी गई छवि लोड हुई।",
+          noImage: "कोई छवि नहीं चुनी गई।",
+          liveSaved: "लाइव फोटो लेकर स्थानीय ड्राफ़्ट में सहेजा गया।",
+          cameraActive: "कैमरा चालू है। छात्र को फ्रेम में रखें।",
+          cameraUnavailable: "कैमरा उपलब्ध नहीं है या अनुमति नहीं मिली। HTTPS और ब्राउज़र अनुमति जाँचें।",
+          cameraUnsupported: "इस ब्राउज़र में कैमरा सुविधा उपलब्ध नहीं है।",
+          processing: "छवि संसाधित हो रही है…",
+          invalidType: "JPEG या PNG छवि चुनें।",
+          tooLarge: "चुनी गई फ़ाइल 5 MB की सीमा से बड़ी है।",
+          imageReadError: "छवि पढ़ी नहीं जा सकी। दूसरी छवि आज़माएँ।",
+          saveSuccess: "ड्राफ़्ट इस ब्राउज़र में सहेजा गया।",
+          saveError: "ड्राफ़्ट सहेजा नहीं जा सका। ब्राउज़र स्टोरेज भरा हुआ या अनुपलब्ध हो सकता है।",
+          noReference: "ड्राफ़्ट संदर्भ नहीं मिला। सहेजने से पहले चरण 1 पर जाकर ड्राफ़्ट बनाएँ या पुनः प्राप्त करें।",
+          removeConfirm: "इस छवि को स्थानीय ड्राफ़्ट से हटाएँ?",
+          removed: "छवि स्थानीय ड्राफ़्ट से हटाई गई।",
+          cameraStopped: "कैमरा बंद कर दिया गया।",
+          captureError: "फोटो नहीं लिया जा सका। कैमरा अनुमति जाँचें और पुनः प्रयास करें।",
+          storageWarning: "ड्राफ़्ट संदर्भ नहीं मिला। वैध ड्राफ़्ट मिलने तक छवि का पूर्वावलोकन अस्थायी है।"
+        },
+        bn: {
+          eyebrow: "স্বতন্ত্র প্রস্তাব · ডোনার / ট্রাস্ট কোটা আবেদন",
+          title: "ধাপ ৪ -- ছবি ও স্বাক্ষর",
+          independentStatus: "স্বতন্ত্র প্রস্তাব -- সরকারি নয়",
+          noticeTitle: "ছবির নির্দেশনা",
+          noticeText: "স্পষ্ট পাসপোর্ট-সাইজ ছবি, স্বাক্ষরের ছবি এবং বর্তমান লাইভ ছবি দিন। প্রযোজ্য সরকারি বিজ্ঞপ্তির নির্দেশ যেকোনও প্রস্তাবিত ছবির মাপের চেয়ে অগ্রাধিকার পাবে।",
+          progressTitle: "আবেদনের অগ্রগতি",
+          progressValue: "ধাপ ৪ / ৭ · ৫৭%",
+          referenceLabel: "খসড়া রেফারেন্স",
+          savedLabel: "খসড়ার অবস্থা",
+          languageLabel: "ভাষা",
+          imagesHeading: "৪.১ আবেদনকারীর ছবি",
+          imagesIntro: "স্পষ্ট JPEG বা PNG ছবি বেছে নিন। ফাইলগুলি এই ব্রাউজারে প্রক্রিয়াকরণ করা হবে এবং স্টোরেজ উপলব্ধ থাকলে স্থানীয় খসড়ায় রাখা হবে।",
+          passportLabel: "পাসপোর্ট-সাইজ ছবি",
+          passportHelp: "JPEG বা PNG, প্রক্রিয়াকরণের আগে সর্বোচ্চ ৫ MB।",
+          signatureLabel: "স্বাক্ষরের ছবি",
+          signatureHelp: "আবেদনকারীর স্বাক্ষরের স্পষ্ট ছবি দিন, প্রক্রিয়াকরণের আগে সর্বোচ্চ ৫ MB।",
+          liveHeading: "৪.২ শিক্ষার্থীর লাইভ ছবি",
+          liveIntro: "ক্যামেরার অনুমতি এবং সাধারণত HTTPS প্রয়োজন। ব্রাউজারের অনুমতি পরীক্ষা করুন। এখানে ছবি তুললে পরিচয় প্রমাণিত হয় না বা স্ক্রিনশট আটকানো যায় না।",
+          startCamera: "ক্যামেরা চালু করুন",
+          capturePhoto: "লাইভ ছবি তুলুন",
+          stopCamera: "ক্যামেরা বন্ধ করুন",
+          removeImage: "ছবি সরান",
+          storageHeading: "স্থানীয় স্টোরেজ ও গোপনীয়তা",
+          privacy1: "ছবিগুলি ব্রাউজারের স্থানীয় খসড়ায় রাখা হয়; এই পৃষ্ঠা কোনও কর্তৃপক্ষের কাছে আপলোড করে না।",
+          privacy2: "ব্রাউজারের স্টোরেজ মুছে যেতে পারে বা অনুপলব্ধ হতে পারে এবং একই ডিভাইস প্রোফাইল ব্যবহারকারী অন্য কেউ এটি দেখতে পারেন।",
+          privacy3: "স্টোরেজ পূর্ণ হলে সংরক্ষণ ব্যর্থ হতে পারে। নিশ্চিত বার্তা না পাওয়া পর্যন্ত ছবি সংরক্ষিত হয়েছে বলে ধরে নেবেন না।",
+          privacy4: "এই প্রোটোটাইপ সার্ভার-সাইড নথি সংরক্ষণ, পরিচয় যাচাই বা ম্যালওয়্যার পরীক্ষা দেয় না।",
+          saveButton: "খসড়া সংরক্ষণ",
+          homeButton: "হোম",
+          previousButton: "← আগের ধাপ: যোগ্যতা",
+          nextButton: "পরের ধাপ: নথি →",
+          footer1: "শুধু স্বতন্ত্র প্রস্তাব -- সরকারি WBMCC আবেদন পরিষেবা নয়।",
+          footer2: "ডিভাইসের অপারেটিং সিস্টেম স্ক্রিনশট বা রেকর্ডিং আটকাতে পারে না।",
+          notGenerated: "তৈরি হয়নি",
+          draftLoaded: "খসড়া লোড হয়েছে",
+          noDraft: "কোনও বিদ্যমান খসড়া পাওয়া যায়নি",
+          fileSaved: "ছবি স্থানীয় খসড়ায় সংরক্ষিত হয়েছে।",
+          fileLoaded: "এই ব্রাউজার থেকে আগে সংরক্ষিত ছবি লোড হয়েছে।",
+          noImage: "কোনও ছবি নির্বাচন করা হয়নি।",
+          liveSaved: "লাইভ ছবি তোলা হয়েছে এবং স্থানীয় খসড়ায় রাখা হয়েছে।",
+          cameraActive: "ক্যামেরা চালু আছে। শিক্ষার্থীকে ফ্রেমে রাখুন।",
+          cameraUnavailable: "ক্যামেরা অনুপলব্ধ বা অনুমতি প্রত্যাখ্যাত। HTTPS ও ব্রাউজারের অনুমতি পরীক্ষা করুন।",
+          cameraUnsupported: "এই ব্রাউজারে ক্যামেরা সুবিধা নেই।",
+          processing: "ছবি প্রক্রিয়াকরণ হচ্ছে…",
+          invalidType: "JPEG বা PNG ছবি নির্বাচন করুন।",
+          tooLarge: "নির্বাচিত ফাইলটি ৫ MB সীমার চেয়ে বড়।",
+          imageReadError: "ছবি পড়া যায়নি। অন্য ছবি চেষ্টা করুন।",
+          saveSuccess: "খসড়াটি এই ব্রাউজারে সংরক্ষিত হয়েছে।",
+          saveError: "খসড়া সংরক্ষণ করা যায়নি। ব্রাউজারের স্টোরেজ পূর্ণ বা অনুপলব্ধ হতে পারে।",
+          noReference: "খসড়া রেফারেন্স পাওয়া যায়নি। সংরক্ষণের আগে ধাপ ১-এ ফিরে খসড়া তৈরি বা পুনরুদ্ধার করুন।",
+          removeConfirm: "এই ছবিটি স্থানীয় খসড়া থেকে সরাবেন?",
+          removed: "ছবিটি স্থানীয় খসড়া থেকে সরানো হয়েছে।",
+          cameraStopped: "ক্যামেরা বন্ধ করা হয়েছে।",
+          captureError: "ছবি তোলা যায়নি। ক্যামেরার অনুমতি পরীক্ষা করে আবার চেষ্টা করুন।",
+          storageWarning: "খসড়া রেফারেন্স নেই। বৈধ খসড়া না পাওয়া পর্যন্ত ছবির প্রিভিউ অস্থায়ী।"
+        },
+        ne: {
+          eyebrow: "स्वतन्त्र प्रस्ताव · डोनर / ट्रस्ट कोटा आवेदन",
+          title: "चरण ४ -- तस्बिर र हस्ताक्षर",
+          independentStatus: "स्वतन्त्र प्रस्ताव -- आधिकारिक होइन",
+          noticeTitle: "तस्बिरसम्बन्धी निर्देशन",
+          noticeText: "स्पष्ट पासपोर्ट आकारको तस्बिर, हस्ताक्षरको तस्बिर र हालको लाइभ तस्बिर दिनुहोस्। लागू आधिकारिक सूचनाको निर्देशन कुनै पनि सुझाइएको आकारभन्दा प्राथमिक हुन्छ।",
+          progressTitle: "आवेदनको प्रगति",
+          progressValue: "चरण ४ / ७ · ५७%",
+          referenceLabel: "मस्यौदा सन्दर्भ",
+          savedLabel: "मस्यौदाको स्थिति",
+          languageLabel: "भाषा",
+          imagesHeading: "४.१ आवेदकका तस्बिर",
+          imagesIntro: "स्पष्ट JPEG वा PNG तस्बिर छान्नुहोस्। फाइलहरू यही ब्राउजरमा प्रशोधन गरिन्छन् र स्टोरेज उपलब्ध भएमा स्थानीय मस्यौदामा सुरक्षित गरिन्छन्।",
+          passportLabel: "पासपोर्ट आकारको तस्बिर",
+          passportHelp: "JPEG वा PNG, प्रशोधनअघि अधिकतम ५ MB।",
+          signatureLabel: "हस्ताक्षरको तस्बिर",
+          signatureHelp: "आवेदकको हस्ताक्षरको स्पष्ट तस्बिर छान्नुहोस्, प्रशोधनअघि अधिकतम ५ MB।",
+          liveHeading: "४.२ विद्यार्थीको लाइभ तस्बिर",
+          liveIntro: "क्यामेराको अनुमति र सामान्यतया HTTPS आवश्यक हुन्छ। ब्राउजरको अनुमति जाँच गर्नुहोस्। यहाँ तस्बिर खिच्दैमा पहिचान प्रमाणित हुँदैन वा स्क्रिनसट रोकिँदैन।",
+          startCamera: "क्यामेरा सुरु गर्नुहोस्",
+          capturePhoto: "लाइभ तस्बिर खिच्नुहोस्",
+          stopCamera: "क्यामेरा बन्द गर्नुहोस्",
+          removeImage: "तस्बिर हटाउनुहोस्",
+          storageHeading: "स्थानीय स्टोरेज र गोपनीयता",
+          privacy1: "तस्बिरहरू ब्राउजरको स्थानीय मस्यौदामा सुरक्षित हुन्छन्; यो पृष्ठले कुनै निकायमा अपलोड गर्दैन।",
+          privacy2: "ब्राउजरको स्टोरेज मेटिन वा अनुपलब्ध हुन सक्छ र एउटै उपकरण प्रोफाइल प्रयोग गर्ने अरूले यसमा पहुँच पाउन सक्छन्।",
+          privacy3: "स्टोरेज भरिएको भए सुरक्षित गर्ने कार्य असफल हुन सक्छ। पुष्टि नभएसम्म तस्बिर सुरक्षित भएको नमान्नुहोस्।",
+          privacy4: "यो प्रोटोटाइपले सर्भर-साइड कागजात भण्डारण, पहिचान प्रमाणीकरण वा मालवेयर जाँच प्रदान गर्दैन।",
+          saveButton: "मस्यौदा सुरक्षित गर्नुहोस्",
+          homeButton: "गृहपृष्ठ",
+          previousButton: "← अघिल्लो: योग्यता",
+          nextButton: "अर्को: कागजात →",
+          footer1: "स्वतन्त्र प्रस्ताव मात्र -- आधिकारिक WBMCC आवेदन सेवा होइन।",
+          footer2: "उपकरणको अपरेटिङ सिस्टमले स्क्रिनसट वा रेकर्डिङ रोक्न सक्दैन।",
+          notGenerated: "बनाइएको छैन",
+          draftLoaded: "मस्यौदा लोड भयो",
+          noDraft: "अघिल्लो मस्यौदा भेटिएन",
+          fileSaved: "तस्बिर स्थानीय मस्यौदामा सुरक्षित भयो।",
+          fileLoaded: "यस ब्राउजरबाट पहिले सुरक्षित गरिएको तस्बिर लोड भयो।",
+          noImage: "कुनै तस्बिर छानिएको छैन।",
+          liveSaved: "लाइभ तस्बिर खिचेर स्थानीय मस्यौदामा सुरक्षित गरियो।",
+          cameraActive: "क्यामेरा चालू छ। विद्यार्थीलाई फ्रेममा राख्नुहोस्।",
+          cameraUnavailable: "क्यामेरा उपलब्ध छैन वा अनुमति अस्वीकार भयो। HTTPS र ब्राउजर अनुमति जाँच गर्नुहोस्।",
+          cameraUnsupported: "यस ब्राउजरमा क्यामेरा सुविधा उपलब्ध छैन।",
+          processing: "तस्बिर प्रशोधन हुँदैछ…",
+          invalidType: "JPEG वा PNG तस्बिर छान्नुहोस्।",
+          tooLarge: "छानिएको फाइल ५ MB सीमाभन्दा ठूलो छ।",
+          imageReadError: "तस्बिर पढ्न सकिएन। अर्को तस्बिर प्रयास गर्नुहोस्।",
+          saveSuccess: "मस्यौदा यस ब्राउजरमा सुरक्षित भयो।",
+          saveError: "मस्यौदा सुरक्षित गर्न सकिएन। ब्राउजर स्टोरेज भरिएको वा अनुपलब्ध हुन सक्छ।",
+          noReference: "मस्यौदा सन्दर्भ भेटिएन। सुरक्षित गर्नुअघि चरण १ मा फर्केर मस्यौदा बनाउनुहोस् वा पुनः प्राप्त गर्नुहोस्।",
+          removeConfirm: "यो तस्बिर स्थानीय मस्यौदाबाट हटाउने हो?",
+          removed: "तस्बिर स्थानीय मस्यौदाबाट हटाइयो।",
+          cameraStopped: "क्यामेरा बन्द गरियो।",
+          captureError: "तस्बिर खिच्न सकिएन। क्यामेरा अनुमति जाँच गरेर फेरि प्रयास गर्नुहोस्।",
+          storageWarning: "मस्यौदा सन्दर्भ छैन। मान्य मस्यौदा उपलब्ध नभएसम्म तस्बिर पूर्वावलोकन अस्थायी हुन्छ।"
+        }
+      };
+
+      function t(key) {
+        return translations[language]?.[key] || translations.en[key] || key;
+      }
+
+      function showStatus(message, type = "") {
+        const node = $("statusMessage");
+        node.textContent = message;
+        node.className = "status-message visible";
+        if (type) node.classList.add(type);
+      }
+
+      function clearStatus() {
+        $("statusMessage").textContent = "";
+        $("statusMessage").className = "status-message";
+      }
+
+      function readDraft() {
+        try {
+          const raw = localStorage.getItem(KEY);
+          if (!raw) return null;
+
+          const parsed = JSON.parse(raw);
+          if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
+
+          // Migrate an older flat draft without discarding its fields.
+          if (!parsed.fields || typeof parsed.fields !== "object" || Array.isArray(parsed.fields)) {
+            const oldFields = { ...parsed };
+            delete oldFields.reference;
+            delete oldFields.createdAt;
+            delete oldFields.lastSavedAt;
+
+            return {
+              reference: parsed.reference || "",
+              createdAt: parsed.createdAt || "",
+              lastSavedAt: parsed.lastSavedAt || "",
+              fields: oldFields
+            };
+          }
+
+          return { ...parsed, fields: { ...parsed.fields } };
+        } catch {
+          return null;
+        }
+      }
+
+      function getReference() {
+        try {
+          return draft?.reference || localStorage.getItem(REFERENCE_KEY) || "";
+        } catch {
+          return draft?.reference || "";
+        }
+      }
+
+      function getCreatedAt() {
+        try {
+          return draft?.createdAt || localStorage.getItem(CREATED_KEY) || "";
+        } catch {
+          return draft?.createdAt || "";
+        }
+      }
+
+      function updateReferencePanel() {
+        $("applicationReference").textContent = getReference() || t("notGenerated");
+        $("draftStatus").textContent = draft ? t("draftLoaded") : t("noDraft");
+      }
+
+      function save() {
+        if (!draft) {
+          showStatus(t("noReference"), "error");
+          return false;
+        }
+
+        const reference = getReference();
+        if (!reference) {
+          showStatus(t("noReference"), "error");
+          return false;
+        }
+
+        draft.reference = reference;
+        draft.createdAt = getCreatedAt() || new Date().toISOString();
+        draft.lastSavedAt = new Date().toISOString();
+        draft.fields = {
+          ...(draft.fields || {}),
+          photoLanguage: language
+        };
+
+        try {
+          localStorage.setItem(KEY, JSON.stringify(draft));
+          localStorage.setItem(REFERENCE_KEY, draft.reference);
+          localStorage.setItem(CREATED_KEY, draft.createdAt);
+          localStorage.setItem(LANGUAGE_KEY, language);
+
+          updateReferencePanel();
+          showStatus(t("saveSuccess"), "success");
+          return true;
+        } catch {
+          showStatus(t("saveError"), "error");
+          return false;
+        }
+      }
+
+      function imageValue(field) {
+        const value = draft?.fields?.[field];
+        if (typeof value === "string" && value.startsWith("data:image/")) return value;
+        if (value && typeof value === "object" && typeof value.dataUrl === "string") return value.dataUrl;
+        return "";
+      }
+
+      function setImageState(field, previewId, statusId, removeId) {
+        const value = imageValue(field);
+        const preview = $(previewId);
+        preview.hidden = !value;
+        preview.removeAttribute("src");
+
+        if (value) {
+          preview.src = value;
+          $(statusId).textContent = t("fileLoaded");
+          $(removeId).hidden = false;
+        } else {
+          $(statusId).textContent = t("noImage");
+          $(removeId).hidden = true;
+        }
+      }
+
+      function renderSavedImages() {
+        setImageState("passportPhoto", "passportPreview", "passportStatus", "removePassport");
+        setImageState("signatureImage", "signaturePreview", "signatureStatus", "removeSignature");
+        setImageState("livePhoto", "livePreview", "liveStatus", "removeLive");
+      }
+
+      function applyLanguage(next) {
+        language = translations[next] ? next : "en";
+        document.documentElement.lang = language;
+        $("language").value = language;
+
+        document.querySelectorAll("[data-i18n]").forEach((node) => {
+          const key = node.getAttribute("data-i18n");
+          if (translations[language][key]) node.textContent = translations[language][key];
+        });
+
+        updateReferencePanel();
+      }
+
+      function canvasToJpeg(canvas, quality) {
+        return new Promise((resolve, reject) => {
+          try {
+            canvas.toBlob((blob) => {
+              if (!blob) {
+                reject(new Error("Image conversion failed"));
+                return;
+              }
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result);
+              reader.onerror = () => reject(new Error("Image read failed"));
+              reader.readAsDataURL(blob);
+            }, "image/jpeg", quality);
+          } catch (error) {
+            reject(error);
+          }
+        });
+      }
+
+      async function compressImage(file, field) {
+        if (!file || !["image/jpeg", "image/png"].includes(file.type)) {
+          throw new Error("TYPE");
+        }
+
+        if (file.size > MAX_INPUT_BYTES) {
+          throw new Error("SIZE");
+        }
+
+        const source = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => reject(new Error("READ"));
+          reader.readAsDataURL(file);
+        });
+
+        const img = await new Promise((resolve, reject) => {
+          const image = new Image();
+          image.onload = () => resolve(image);
+          image.onerror = () => reject(new Error("READ"));
+          image.src = source;
+        });
+
+        const ratio = Math.min(1, MAX_DIMENSION / Math.max(img.naturalWidth, img.naturalHeight));
+        const width = Math.max(1, Math.round(img.naturalWidth * ratio));
+        const height = Math.max(1, Math.round(img.naturalHeight * ratio));
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+
+        const context = canvas.getContext("2d", { alpha: false });
+        if (!context) throw new Error("READ");
+
+        // White background avoids turning transparent PNG signature strokes black
+        // when converting to JPEG.
+        context.fillStyle = "#ffffff";
+        context.fillRect(0, 0, width, height);
+        context.drawImage(img, 0, 0, width, height);
+
+        return canvasToJpeg(canvas, field === "signatureImage" ? 0.88 : JPEG_QUALITY);
+      }
+
+      function bindImageInput(field, inputId, previewId, statusId, removeId) {
+        $(inputId).addEventListener("change", async (event) => {
+          clearStatus();
+
+          const file = event.target.files?.[0];
+          if (!file) return;
+
+          $(statusId).textContent = t("processing");
+
+          try {
+            const dataUrl = await compressImage(file, field);
+
+            if (!draft) {
+              showStatus(t("storageWarning"), "error");
+              // Show a temporary preview, but do not claim it was saved.
+              $(previewId).src = dataUrl;
+              $(previewId).hidden = false;
+              $(statusId).textContent = t("storageWarning");
+              return;
+            }
+
+            draft.fields[field] = dataUrl;
+
+            // Confirm local storage succeeds before saying the image was saved.
+            if (!saveSilently()) {
+              delete draft.fields[field];
+              showStatus(t("saveError"), "error");
+              return;
+            }
+
+            $(previewId).src = dataUrl;
+            $(previewId).hidden = false;
+            $(statusId).textContent = t("fileSaved");
+            $(removeId).hidden = false;
+            showStatus(t("fileSaved"), "success");
+          } catch (error) {
+            event.target.value = "";
+            const message = error.message === "TYPE" ? t("invalidType")
+              : error.message === "SIZE" ? t("tooLarge")
+              : t("imageReadError");
+            $(statusId).textContent = message;
+            showStatus(message, "error");
+          }
+        });
+      }
+
+      function saveSilently() {
+        if (!draft || !getReference()) return false;
+
+        draft.reference = getReference();
+        draft.createdAt = getCreatedAt() || new Date().toISOString();
+        draft.lastSavedAt = new Date().toISOString();
+        draft.fields = { ...(draft.fields || {}), photoLanguage: language };
+
+        try {
+          localStorage.setItem(KEY, JSON.stringify(draft));
+          localStorage.setItem(REFERENCE_KEY, draft.reference);
+          localStorage.setItem(CREATED_KEY, draft.createdAt);
+          localStorage.setItem(LANGUAGE_KEY, language);
+          updateReferencePanel();
+          return true;
+        } catch {
+          return false;
+        }
+      }
+
+      function removeImage(field, previewId, statusId, removeId) {
+        if (!window.confirm(t("removeConfirm"))) return;
+
+        if (!draft) {
+          showStatus(t("noReference"), "error");
+          return;
+        }
+
+        const previous = draft.fields[field];
+        delete draft.fields[field];
+
+        if (!saveSilently()) {
+          draft.fields[field] = previous;
+          showStatus(t("saveError"), "error");
+          return;
+        }
+
+        $(previewId).removeAttribute("src");
+        $(previewId).hidden = true;
+        $(statusId).textContent = t("removed");
+        $(removeId).hidden = true;
+
+        if (field === "passportPhoto") $("passportPhoto").value = "";
+        if (field === "signatureImage") $("signatureImage").value = "";
+
+        showStatus(t("removed"), "success");
+      }
+
+      async function startCamera() {
+        clearStatus();
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          showStatus(t("cameraUnsupported"), "error");
+          $("liveStatus").textContent = t("cameraUnsupported");
+          return;
+        }
+
+        stopCamera(false);
+
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+              facingMode: "user",
+              width: { ideal: 1280 },
+              height: { ideal: 1280 }
+            },
+            audio: false
+          });
+
+          $("video").srcObject = stream;
+          $("video").hidden = false;
+          $("capture").disabled = false;
+          $("stopCamera").disabled = false;
+          $("liveStatus").textContent = t("cameraActive");
+
+          try {
+            await $("video").play();
+          } catch {
+            // Some browsers require a user gesture before video playback.
+          }
+        } catch {
+          stopCamera(false);
+          $("liveStatus").textContent = t("cameraUnavailable");
+          showStatus(t("cameraUnavailable"), "error");
+        }
+      }
+
+      async function capturePhoto() {
+        clearStatus();
+
+        const video = $("video");
+        const canvas = $("canvas");
+
+        if (!stream || !video.videoWidth || !video.videoHeight) {
+          showStatus(t("captureError"), "error");
+          return;
+        }
+
+        const ratio = Math.min(1, MAX_DIMENSION / Math.max(video.videoWidth, video.videoHeight));
+        canvas.width = Math.max(1, Math.round(video.videoWidth * ratio));
+        canvas.height = Math.max(1, Math.round(video.videoHeight * ratio));
+
+        const context = canvas.getContext("2d", { alpha: false });
+        if (!context) {
+          showStatus(t("captureError"), "error");
+          return;
+        }
+
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        try {
+          const dataUrl = await canvasToJpeg(canvas, JPEG_QUALITY);
+
+          if (!draft) {
+            $("livePreview").src = dataUrl;
+            $("livePreview").hidden = false;
+            $("liveStatus").textContent = t("storageWarning");
+            showStatus(t("storageWarning"), "error");
+            stopCamera(false);
+            return;
+          }
+
+          draft.fields.livePhoto = dataUrl;
+
+          if (!saveSilently()) {
+            delete draft.fields.livePhoto;
+            showStatus(t("saveError"), "error");
+            return;
+          }
+
+          $("livePreview").src = dataUrl;
+          $("livePreview").hidden = false;
+          $("liveStatus").textContent = t("liveSaved");
+          $("removeLive").hidden = false;
+          showStatus(t("liveSaved"), "success");
+          stopCamera(false);
+        } catch {
+          showStatus(t("captureError"), "error");
+        }
+      }
+
+      function stopCamera(showMessage = true) {
+        if (stream) {
+          stream.getTracks().forEach((track) => track.stop());
+        }
+
+        stream = null;
+
+        const video = $("video");
+        if (video.srcObject) video.srcObject = null;
+        video.hidden = true;
+
+        $("capture").disabled = true;
+        $("stopCamera").disabled = true;
+
+        if (showMessage) $("liveStatus").textContent = t("cameraStopped");
+      }
+
+      $("language").addEventListener("change", () => {
+        const next = $("language").value;
+        applyLanguage(next);
+
+        try {
+          localStorage.setItem(LANGUAGE_KEY, next);
+          if (draft) {
+            draft.fields.photoLanguage = language;
+            saveSilently();
+          }
+        } catch {
+          // Language changes still apply for the current page view.
+        }
+
+        renderSavedImages();
+      });
+
+      $("startCamera").addEventListener("click", startCamera);
+      $("capture").addEventListener("click", capturePhoto);
+      $("stopCamera").addEventListener("click", () => stopCamera(true));
+      $("saveButton").addEventListener("click", save);
+
+      $("removePassport").addEventListener("click", () =>
+        removeImage("passportPhoto", "passportPreview", "passportStatus", "removePassport")
+      );
+
+      $("removeSignature").addEventListener("click", () =>
+        removeImage("signatureImage", "signaturePreview", "signatureStatus", "removeSignature")
+      );
+
+      $("removeLive").addEventListener("click", () =>
+        removeImage("livePhoto", "livePreview", "liveStatus", "removeLive")
+      );
+
+      window.addEventListener("pagehide", () => stopCamera(false));
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) stopCamera(false);
+      });
+
+      bindImageInput("passportPhoto", "passportPhoto", "passportPreview", "passportStatus", "removePassport");
+      bindImageInput("signatureImage", "signatureImage", "signaturePreview", "signatureStatus", "removeSignature");
+
+      try {
+        draft = readDraft();
+
+        const storedLanguage = localStorage.getItem(LANGUAGE_KEY)
+          || draft?.fields?.photoLanguage
+          || "en";
+
+        applyLanguage(storedLanguage);
+        updateReferencePanel();
+
+        if (draft) {
+          renderSavedImages();
+        } else {
+          $("passportStatus").textContent = t("noImage");
+          $("signatureStatus").textContent = t("noImage");
+          $("liveStatus").textContent = t("noImage");
+          showStatus(t("storageWarning"), "error");
+        }
+      } catch {
+        draft = null;
+        applyLanguage("en");
+        updateReferencePanel();
+        showStatus(t("saveError"), "error");
+      }
+    })();
+  </script>
 </body>
 </html>

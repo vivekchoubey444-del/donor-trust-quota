@@ -1,0 +1,286 @@
+"use strict";
+/**
+ * Donor Trust Quota -- Production Security Middleware
+ * File: functions/_middleware.js
+ *
+ * Universal core:
+ *   applySecurity(request, response, config)
+ *   runSecurityMiddleware(request, nextHandler, config)
+ *
+ * Cloudflare Pages adapter:
+ *   onRequest(context)
+ *
+ * Optional configuration:
+ *   SECURITY_CSP
+ *   FORCE_HTTPS=true
+ *   ALLOWED_HOSTS=example.com,www.example.com
+ *   ENABLE_HSTS=true
+ *   HSTS_MAX_AGE=31536000
+ *   REFERRER_POLICY=strict-origin-when-cross-origin
+ *
+ * IMPORTANT:
+ * - Authentication and authorization belong in protected handlers.
+ * - Rate limiting must be implemented at the platform, gateway, or backend.
+ * - Enable HSTS only after HTTPS is working correctly on the production domain.
+ * - Do not trust arbitrary forwarded headers from untrusted proxies.
+ */
+const DEFAULT_HSTS_MAX_AGE = 31536000;
+const MAX_HSTS_MAX_AGE = 63072000;
+const BASE_SECURITY_HEADERS = Object.freeze({
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "DENY",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "Permissions-Policy":
+    "camera=(), microphone=(), geolocation=(), payment=()",
+  "X-Permitted-Cross-Domain-Policies": "none",
+  "X-DNS-Prefetch-Control": "off",
+  "Cross-Origin-Opener-Policy": "same-origin"
+});
+const PRIVATE_RESPONSE_HEADERS = Object.freeze({
+  "Cache-Control": "no-store, no-cache, must-revalidate, private",
+  "Pragma": "no-cache",
+  "Expires": "0",
+  "Cross-Origin-Resource-Policy": "same-origin",
+  "X-Robots-Tag": "noindex, nofollow, noarchive"
+});
+function textResponse(message, status, extraHeaders = {}) {
+  return new Response(message, {
+    status,
+    headers: {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "no-store",
+      "X-Content-Type-Options": "nosniff",
+      "X-Frame-Options": "DENY",
+      "Referrer-Policy": "no-referrer",
+      ...extraHeaders
+    }
+  });
+}
+function getRequestUrl(request) {
+  try {
+    return new URL(request.url);
+  } catch {
+    return null;
+  }
+}
+function isApiPath(pathname) {
+  return pathname === "/api" || pathname.startsWith("/api/");
+}
+function isAdminPath(pathname) {
+  return (
+    pathname === "/admin" ||
+    pathname.startsWith("/admin/") ||
+    pathname === "/private-admin" ||
+    pathname.startsWith("/private-admin/")
+  );
+}
+function isSensitivePath(pathname) {
+  return isApiPath(pathname) || isAdminPath(pathname);
+}
+function setIfMissing(headers, name, value) {
+  if (!headers.has(name)) {
+    headers.set(name, value);
+  }
+}
+function normalizeHostname(value) {
+  if (typeof value !== "string" || !value.trim()) {
+    return null;
+  }
+  const input = value.trim().toLowerCase();
+  // Host entries must not contain schemes, paths, credentials, or queries.
+  if (
+    input.includes("://") ||
+    input.includes("/") ||
+    input.includes("@") ||
+    input.includes("?") ||
+    input.includes("#")
+  ) {
+    return null;
+  }
+  try {
+    const parsed = new URL("https://" + input);
+    if (
+      parsed.username ||
+      parsed.password ||
+      parsed.pathname !== "/" ||
+      parsed.search ||
+      parsed.hash
+    ) {
+      return null;
+    }
+    return parsed.host.toLowerCase();
+  } catch {
+    return null;
+  }
+}
+function getAllowedHosts(value) {
+  const entries = Array.isArray(value)
+    ? value
+    : String(value || "").split(",");
+  return entries
+    .map(normalizeHostname)
+    .filter(Boolean);
+}
+function getHstsValue(config) {
+  if (config.ENABLE_HSTS !== true) {
+    return null;
+  }
+  const maxAge = Number(
+    config.HSTS_MAX_AGE || DEFAULT_HSTS_MAX_AGE
+  );
+  if (
+    !Number.isSafeInteger(maxAge) ||
+    maxAge < 0 ||
+    maxAge > MAX_HSTS_MAX_AGE
+  ) {
+    return null;
+  }
+  // Do not add includeSubDomains or preload automatically.
+  // Those options can affect other domains and require deliberate planning.
+  return "max-age=" + maxAge;
+}
+/**
+ * Applies security headers without buffering the response body.
+ *
+ * Existing headers are preserved unless a stricter policy is deliberately
+ * required for a sensitive route.
+ *
+ * @param {Request} request
+ * @param {Response} response
+ * @param {object} config
+ * @returns {Response}
+ */
+export function applySecurity(request, response, config = {}) {
+  if (
+    typeof Request === "undefined" ||
+    !(request instanceof Request) ||
+    typeof Response === "undefined" ||
+    !(response instanceof Response)
+  ) {
+    throw new TypeError("A valid Request and Response are required.");
+  }
+  const url = getRequestUrl(request);
+  if (!url) {
+    return textResponse("Invalid request.", 400);
+  }
+  const headers = new Headers(response.headers);
+  for (const [name, value] of Object.entries(BASE_SECURITY_HEADERS)) {
+    setIfMissing(headers, name, value);
+  }
+  if (isSensitivePath(url.pathname)) {
+    for (
+      const [name, value] of Object.entries(PRIVATE_RESPONSE_HEADERS)
+    ) {
+      headers.set(name, value);
+    }
+  }
+  if (
+    typeof config.SECURITY_CSP === "string" &&
+    config.SECURITY_CSP.trim()
+  ) {
+    setIfMissing(
+      headers,
+      "Content-Security-Policy",
+      config.SECURITY_CSP.trim()
+    );
+  }
+  /*
+   * HSTS is emitted only for HTTPS requests and only when explicitly enabled.
+   * The hosting platform must enforce HTTPS correctly before enabling this.
+   */
+  const hstsValue = getHstsValue(config);
+  if (url.protocol === "https:" && hstsValue) {
+    setIfMissing(headers, "Strict-Transport-Security", hstsValue);
+  }
+  /*
+   * Constructing a new Response with the original stream avoids reading
+   * or buffering large response bodies in middleware.
+   */
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers
+  });
+}
+/**
+ * Platform-independent middleware runner.
+ *
+ * nextHandler must return a Response.
+ * HTTPS redirects are handled before calling nextHandler.
+ */
+export async function runSecurityMiddleware(
+  request,
+  nextHandler,
+  config = {}
+) {
+  if (
+    typeof Request === "undefined" ||
+    !(request instanceof Request)
+  ) {
+    return textResponse("Invalid request.", 400);
+  }
+  if (typeof nextHandler !== "function") {
+    return textResponse("Service unavailable.", 503);
+  }
+  const url = getRequestUrl(request);
+  if (!url) {
+    return textResponse("Invalid request.", 400);
+  }
+  /*
+   * HTTPS redirect is opt-in.
+   *
+   * Only explicitly allowlisted hosts may be redirected. This prevents
+   * this middleware from becoming an open redirect using a forged Host.
+   */
+  if (config.FORCE_HTTPS === true && url.protocol === "http:") {
+    const allowedHosts = getAllowedHosts(config.ALLOWED_HOSTS);
+    const requestHost = url.host.toLowerCase();
+    if (!allowedHosts.length || !allowedHosts.includes(requestHost)) {
+      return textResponse("Invalid host.", 400);
+    }
+    const destination = new URL(url.href);
+    destination.protocol = "https:";
+    return new Response(null, {
+      status: 308,
+      headers: {
+        Location: destination.href,
+        "Cache-Control": "no-store",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "no-referrer"
+      }
+    });
+  }
+  try {
+    const response = await nextHandler();
+    if (!(response instanceof Response)) {
+      return textResponse("Invalid upstream response.", 502);
+    }
+    return applySecurity(request, response, config);
+  } catch {
+    // Keep internal exceptions and stack traces out of public responses.
+    return textResponse("An internal server error occurred.", 500);
+  }
+}
+/**
+ * Cloudflare Pages adapter.
+ *
+ * For other runtimes, reuse runSecurityMiddleware() in the platform's
+ * documented middleware or request-handler entry point.
+ */
+export async function onRequest(context) {
+  const { request, env, next } = context;
+  return runSecurityMiddleware(
+    request,
+    () => next(),
+    {
+      SECURITY_CSP: env?.SECURITY_CSP || "",
+      FORCE_HTTPS: env?.FORCE_HTTPS === "true",
+      ALLOWED_HOSTS: String(env?.ALLOWED_HOSTS || "")
+        .split(",")
+        .map((host) => host.trim())
+        .filter(Boolean),
+      ENABLE_HSTS: env?.ENABLE_HSTS === "true",
+      HSTS_MAX_AGE: env?.HSTS_MAX_AGE
+    }
+  );
+}

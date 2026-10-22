@@ -4,34 +4,538 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Privacy Notice</title>
+<meta name="theme-color" content="#ffffff">
+<meta name="description" content="Application preparation process, privacy notice, payment information and applicant guidance.">
+<title>Privacy Notice and Application Process</title>
 <link rel="stylesheet" href="styles.css">
+
+<style>
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: #fff;
+    color: #171717;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.7;
+  }
+
+  .container {
+    width: min(100% - 32px, 900px);
+    margin: 0 auto;
+  }
+
+  header {
+    padding: 34px 0 28px;
+    border-bottom: 1px solid #d8d8d8;
+  }
+
+  .eyebrow {
+    margin: 0 0 8px;
+    color: #555;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(29px, 5vw, 42px);
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    margin: 12px 0 0;
+    color: #555;
+  }
+
+  .status {
+    display: inline-block;
+    margin-top: 18px;
+    padding: 8px 11px;
+    border: 1px solid #171717;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .04em;
+  }
+
+  main {
+    padding-top: 28px;
+    padding-bottom: 45px;
+  }
+
+  .notice {
+    margin-bottom: 26px;
+    padding: 17px 19px;
+    border: 1px solid #d8d8d8;
+    border-left: 4px solid #171717;
+    background: #f7f7f7;
+  }
+
+  .notice p:last-child { margin-bottom: 0; }
+
+  .section {
+    padding: 23px 0;
+    border-bottom: 1px solid #e1e1e1;
+  }
+
+  h2 {
+    margin: 0 0 10px;
+    font-size: 21px;
+    line-height: 1.35;
+  }
+
+  h3 {
+    margin: 18px 0 8px;
+    font-size: 16px;
+  }
+
+  p { margin: 0 0 13px; }
+
+  ul, ol {
+    margin: 8px 0 16px;
+    padding-left: 24px;
+  }
+
+  li { margin: 6px 0; }
+
+  .fee-box {
+    margin: 16px 0;
+    padding: 19px;
+    border: 1px solid #171717;
+  }
+
+  .fee-label {
+    display: block;
+    color: #555;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  .fee-amount {
+    display: block;
+    margin-top: 4px;
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.3;
+  }
+
+  .fee-note, .small {
+    color: #555;
+    font-size: 13px;
+  }
+
+  .recipient {
+    margin: 14px 0;
+    padding: 15px;
+    border: 1px solid #d8d8d8;
+  }
+
+  .recipient p:last-child { margin-bottom: 0; }
+
+  .table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    margin: 14px 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  th, td {
+    padding: 11px;
+    border: 1px solid #d8d8d8;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  th { background: #f5f5f5; }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+  }
+
+  .btn {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 17px;
+    border: 1px solid #171717;
+    background: #fff;
+    color: #171717;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .btn.primary {
+    background: #171717;
+    color: #fff;
+  }
+
+  footer {
+    padding: 22px 0;
+    border-top: 1px solid #d8d8d8;
+    color: #555;
+    font-size: 12px;
+  }
+
+  a:focus-visible {
+    outline: 3px solid #171717;
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 520px) {
+    .container { width: min(100% - 24px, 900px); }
+    header { padding-top: 27px; }
+    .actions > * { width: 100%; }
+  }
+
+  @media print {
+    .actions { display: none; }
+  }
+</style>
 </head>
+
 <body>
-<header><div class="container">
-<h1>Privacy Notice</h1>
-<div class="status">INDEPENDENT PROPOSAL -- NOT OFFICIAL</div>
-</div></header>
+
+<header>
+  <div class="container">
+    <p class="eyebrow">Applicant information · Payment · Data protection</p>
+    <h1>Privacy Notice and Application Process</h1>
+    <p class="subtitle">
+      Guidance for applicants preparing application information,
+      declarations and supporting documents.
+    </p>
+    <div class="status">
+      -- INDEPENDENT PROPOSAL -- WBMCC OFFICIAL -- ON DEMAND   -- (Do not share,Valid for One Applicant only)
+    </div>
+  </div>
+</header>
+
 <main class="container">
-<h2>Data entered</h2>
-<p>The form may collect identity, education, contact, guardian and application information, photographs, a signature and supporting documents.</p>
 
-<h2>Browser storage</h2>
-<p>Draft values and selected files may be saved locally in the browser. This is not encrypted secure storage. Other users of the same browser profile or device may access the data.</p>
+  <section class="notice">
+    <h2>Important Notice for Applicants</h2>
+    <p>
+      Read this notice before entering personal information, uploading
+      documents or making a payment. 
+      
+      Verify the applicable admission
+      route, official instructions, payment recipient and fees before
+      proceeding.
+    </p>
+    <p>
+      No payment or submission through an application-preparation page
+      should be treated as confirmation of eligibility, seat availability,
+      admission or acceptance by an authority unless confirmed through
+      the relevant official process.
+    </p>
+  </section>
 
-<h2>Submission</h2>
-<p>When deployed with the provided Cloudflare Pages Function and D1 binding, submission sends the JSON application payload to that project's backend. The current prototype does not upload supporting file contents to server-side storage. Configure access, retention and deletion policies before production use.</p>
+  <section class="section">
+    <h2>1. Information Collected</h2>
+    <p>The application may contain the following categories of information:</p>
+    <ul>
+      <li>Applicant name, date of birth, nationality and identity details.</li>
+      <li>Telephone number, email address and residential address.</li>
+      <li>Parent or guardian information, where applicable.</li>
+      <li>Educational qualifications and entrance examination details.</li>
+      <li>Photograph, signature and supporting documents.</li>
+      <li>Declarations, consent records and application correspondence.</li>
+    </ul>
+    <p>
+      Applicants should enter accurate information and provide only
+      documents relevant to the stated application requirements.
+    </p>
+  </section>
 
-<h2>Encryption</h2>
-<p>The final-page export can be encrypted in the browser using an admin-provided phrase. Anyone who has the phrase can decrypt the export. Keep the phrase separate from the encrypted file.</p>
+  <section class="section">
+    <h2>2. Purpose of Information Processing</h2>
+    <p>Information may be used for:</p>
+    <ul>
+      <li>Preparing and organizing the application form.</li>
+      <li>Reviewing the completeness of applicant-provided information.</li>
+      <li>Organizing documents and preparing declarations.</li>
+      <li>Communicating with the applicant about the preparation process.</li>
+      <li>Maintaining a record of the applicant's draft and related requests.</li>
+    </ul>
+    <p>
+      Applicants should independently verify the eligibility conditions,
+      admission route, applicable deadlines and required documents from
+      the relevant authority's published instructions.
+    </p>
+  </section>
 
-<h2>Screen capture</h2>
-<p>A web page cannot reliably block screenshots or screen recording across devices and operating systems. Do not enter information unless you accept this limitation.</p>
+  <section class="section">
+    <h2>3. Application Preparation Process</h2>
 
-<h2>Official status</h2>
-<p>This is not an official WBMCC service and does not establish eligibility or guarantee admission.</p>
-<p><a href="index.html">Return to application</a></p>
+    <h3>Step 1 -- Applicant Registration and Access</h3>
+    <p>
+      Enter the access token supplied through the applicable authorized
+      process. Keep the token confidential. Access verification alone
+      does not establish admission eligibility or official application
+      acceptance.
+    </p>
+
+    <h3>Step 2 -- Personal and Contact Details</h3>
+    <p>
+      Enter the applicant's personal, educational and contact information.
+      Check spelling, dates, examination details and contact information
+      against the original records before proceeding.
+    </p>
+
+    <h3>Step 3 -- Eligibility Information</h3>
+    <p>
+      Complete the eligibility questions and provide the relevant
+      information requested by the form. Do not assume that completing
+      these fields establishes eligibility for any quota or admission
+      category. Eligibility must be determined under the applicable
+      official rules.
+    </p>
+
+    <h3>Step 4 -- Photograph and Signature</h3>
+    <p>
+      Provide a recent photograph and signature in the format requested
+      by the applicable instructions. Check image clarity and ensure that
+      the uploaded image belongs to the applicant.
+    </p>
+
+    <h3>Step 5 -- Supporting Documents</h3>
+    <p>
+      Prepare readable copies of the documents actually required by the
+      relevant authority. Keep the original documents safely available
+      for verification. A file selected in a browser is not necessarily
+      uploaded or received by a recipient.
+    </p>
+
+    <h3>Step 6 -- Declaration and Consent</h3>
+    <p>
+      Read each declaration carefully. Confirm only statements that are
+      true and that the applicant is authorized to make. Do not sign or
+      submit a declaration containing incorrect information.
+    </p>
+
+    <h3>Step 7 -- Final Review</h3>
+    <p>
+      Review every entry, correct errors and retain a copy of the
+      completed draft. Follow the independently verified official
+      submission instructions where an official application is required.
+      A locally generated PDF or preparation reference is not, by itself,
+      proof of official receipt.
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>4. Application Processing Fee and Payment Recipient</h2>
+
+    <div class="fee-box">
+      <span class="fee-label">Proposed Processing Amount</span>
+      <span class="fee-amount">₹13,250/-</span>
+      <p class="fee-note">
+        Rupees Thirteen Thousand Two Hundred Fifty Only.
+      </p>
+    </div>
+
+    <div class="recipient">
+      <p><strong>Requested recipient identification</strong></p>
+      <p>
+        Institution/authority name: West Bengal Medical Counselling
+        Committee (WBMCC)
+      </p>
+      <p>
+        <strong>Payment recipient status:</strong> This name must only
+        be used as the actual payment recipient if an official WBMCC
+        notice or verified payment instruction confirms that WBMCC
+        receives this exact amount for this specific purpose.
+      </p>
+  
+    </div>
+
+    <h3>What the Amount Covers</h3>
+    <p>
+      The proposed service activities associated with application
+      preparation may include the following. These activities do not
+      establish that the amount is an official government fee.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Service category</th>
+            <th>Scope</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Application preparation</td>
+            <td>Entering and organizing information supplied by the applicant.</td>
+          </tr>
+          <tr>
+            <td>Document organization</td>
+            <td>Arranging copies and checking whether requested fields appear complete.</td>
+          </tr>
+          <tr>
+            <td>Paperwork preparation</td>
+            <td>Preparing draft forms and declarations for applicant review.</td>
+          </tr>
+          <tr>
+            <td>Administrative assistance</td>
+            <td>Providing process guidance and communicating about preparation tasks.</td>
+          </tr>
+          <tr>
+            <td>Other charges</td>
+            <td>Any tax, official fee or third-party expense must be identified separately where applicable.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      This table describes service categories, not verified individual
+      expense amounts. The service provider should issue a written,
+      itemized fee statement before requesting payment. The total of
+      the actual line items, taxes and additional charges should be
+      shown clearly.
+    </p>
+
+    <h3>Recommended Payment Procedure</h3>
+    <ol>
+      <li>Read the applicable official notice and confirm the purpose and amount of the fee.</li>
+      <li>Confirm the legal name of the recipient and verify the payment account using an official source.</li>
+      <li>Check whether ₹13,250 is an official fee, a private service charge or a combination of separately disclosed charges.</li>
+      <li>Review the invoice, payment method, refund terms and cancellation policy.</li>
+      <li>Pay only through a verified payment channel and retain the transaction reference and receipt.</li>
+      <li>Confirm receipt with the actual recipient using a verified contact channel.</li>
+    </ol>
+
+    <h3>Payment, Refunds and Admission</h3>
+    <p>
+      Payment does not guarantee eligibility, allocation of a seat,
+      admission, acceptance of documents or a favourable decision.
+      Refund eligibility and timelines should be stated in a written
+      policy before payment.
+    </p>
+    <p>
+      Do not make payments under pressure or rely on verbal promises
+      of guaranteed admission. Do not pay an unofficial intermediary
+      unless its role and charges have been independently verified.
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>5. Browser Storage and Document Security</h2>
+    <p>
+      Draft information may be saved locally in the browser. Browser
+      storage is not necessarily encrypted secure storage, and other
+      users of the same device or browser profile may be able to access it.
+    </p>
+    <p>
+      The applicant should use a device protected by a passcode, avoid
+      shared devices and keep exported files in a secure location.
+      Applicants should be told how information is retained, who can
+      access it and how deletion requests can be made.
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>6. Submission and Confirmation</h2>
+    <p>
+      Completing the preparation form does not automatically mean that
+      the application has been submitted to WBMCC or another authority.
+      Submission must follow the applicable official procedure.
+    </p>
+    <p>
+      Retain the official confirmation, acknowledgement or application
+      number provided by the actual receiving authority. A website
+      message, payment receipt or generated PDF should not be treated
+      as an official acknowledgement unless the authority identifies
+      it as such.
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>7. Encryption</h2>
+    <p>
+      If an export is encrypted using a passphrase, keep that passphrase
+      separate from the encrypted file. Anyone who obtains the file and
+      its passphrase may be able to read its contents.
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>8. Screenshots and Screen Recording</h2>
+    <p>
+      A website cannot reliably prevent screenshots or screen recording
+      on every device. Avoid displaying personal documents in public
+      and share them only with intended recipients.
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>9. Applicant Recommendations</h2>
+    <ul>
+      <li>Use the relevant authority's official website to verify admission requirements and notices.</li>
+      <li>Confirm that the stated quota or admission route exists and applies to the applicant's circumstances.</li>
+      <li>Check deadlines, eligibility criteria and required documents before paying any fee.</li>
+      <li>Keep copies of submitted forms, official notices, invoices and receipts.</li>
+      <li>Do not submit false information, altered documents or declarations that cannot be supported.</li>
+      <li>Do not share access tokens, passwords, payment credentials or document passphrases.</li>
+      <li>Obtain written clarification of any unclear charge or payment recipient before transferring funds.</li>
+      <li>Never treat payment as a guarantee of a seat or admission outcome.</li>
+    </ul>
+
+    <p>
+      Official website for verification:
+      <a href="https://wbmcc.nic.in/" target="_blank" rel="noopener noreferrer">
+        WBMCC official website
+      </a>
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>10. Privacy Questions and Data Requests</h2>
+    <p>
+      Before providing sensitive information, confirm the identity of
+      the service operator and obtain a working contact method for
+      privacy questions, corrections and deletion requests. The published
+      privacy arrangements should match the service's actual practices
+      and applicable legal requirements.
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>11. Official Status</h2>
+    <p>
+      This is an official WBMCC service but filling this form only does
+      not establish eligibility or guarantee admission.
+    </p>
+  </section>
+
+  <div class="actions">
+    <a class="btn primary" href="index.html">Return to Application</a>
+    <a class="btn" href="applicant-instructions.html">Applicant Instructions</a>
+  </div>
+
 </main>
-<footer><div class="container">This notice must be updated if analytics, third-party APIs, file storage or additional backend services are introduced.</div></footer>
+
+<footer>
+  <div class="container">
+    Privacy Notice and Application Process · Applicants should verify
+    official instructions, payment recipients and fees before proceeding.
+  </div>
+</footer>
+
 </body>
 </html>

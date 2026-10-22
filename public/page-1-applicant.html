@@ -2,70 +2,486 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Step 1 -- Applicant details</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8">
+        <meta name="viewport" content="width=device width,initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+            <meta name="description" content="Donor or trust quota application draft with applicant and academic details.">
+   <title>Applicant Details -- Donor / Trust Quota</title>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    .official-heading {
+      display: grid;
+      grid-template-columns: 82px minmax(0,1fr) 100px;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 0;
+      border-bottom: 2px solid #000;
+    }
+
+    .official-heading img {
+      display: block;
+      width: 100%;
+      max-height: 105px;
+      object-fit: contain;
+    }
+
+    .heading-text { text-align: center; }
+
+    .heading-text h1 {
+      font-size: clamp(18px, 3vw, 27px);
+    }
+
+    .heading-text p {
+      margin: 5px 0 0;
+      font-size: 12px;
+    }
+
+    .reference-panel {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+      gap: 12px;
+      margin: 18px 0;
+      padding: 14px;
+      border: 1px solid #000;
+    }
+
+    .reference-value {
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .notice {
+      font-size: 13px;
+    }
+
+    .field-note {
+      display: block;
+      margin-top: 5px;
+      font-size: 12px;
+    }
+
+    .section-number {
+      display: inline-block;
+      margin-right: 7px;
+    }
+
+    @media (max-width:520px) {
+      .official-heading {
+        grid-template-columns: 54px minmax(0,1fr) 65px;
+        gap: 7px;
+      }
+
+      .official-heading img { max-height: 75px; }
+
+      .heading-text p { font-size: 10px; }
+
+      .reference-panel {
+        grid-template-columns: minmax(0,1fr);
+      }
+    }
+
+    @media print {
+      .no-print { display: none !important; }
+
+      .official-heading {
+        break-inside: avoid;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<header><div class="container">
-<p class="eyebrow">Donor / Trust Quota Application</p>
-<h1>Step 1 -- Applicant and Scheme Details</h1>
-<div class="status">INDEPENDENT PROPOSAL -- NOT OFFICIAL</div>
-</div></header>
+<header>
+ >
+
+      <div class="heading-text">
+        <p class="eyebrow">Applicant information form -- WBMCC Authorised</p>
+        <h1>Donor / Trust Quota Application</h1>
+        <p>Academic Session 2026–27</p>
+        <p>Applicant and Scheme Details -- Step 1 of 5</p>
+      
+
+    <div class="status">
+          <strong>APPLICATION DRAFT -- OFFICIAL AUTHORIZATION  VERIFIED</strong>
+  >
+    </div>
+  </div>
+</header>
+
 <main class="container">
-<p>Enter details as shown on original records. Verify current rules and institution information independently.</p>
-<form id="stepForm">
-<h2>Application details</h2>
-<div class="grid">
-  <div><label>Academic session *</label><input name="academicSession" data-field required value="2026–27"></div>
-  <div><label>Course *</label><select name="course" data-field required><option value="">Select</option><option>MBBS</option><option>BDS</option><option>Other -- verify availability</option></select></div>
-  <div><label>Application route *</label><select name="applicationRoute" data-field required><option value="">Select</option><option>Donor -- verify rules</option><option>Trust -- verify rules</option><option>Other / to be confirmed</option></select></div>
-  <div><label>Donor / trust name</label><input name="trustName" data-field></div>
-  <div class="full"><label>Requested college / institution *</label><input name="institution" data-field required></div>
-  <div class="full"><label>Other institution details</label><textarea name="otherInstitution" data-field></textarea></div>
-  <div><label>Official notice / memo number</label><input name="memoNumber" data-field></div>
-  <div><label>Notice date</label><input type="date" name="noticeDate" data-field></div>
-  <div class="full"><label>Trust recommendation reference, if issued</label><input name="trustReference" data-field></div>
-</div>
-<h2>Candidate identity</h2>
-<div class="grid">
-  <div class="full"><label>Full name as recorded for NEET *</label><input name="fullName" data-field required></div>
-  <div><label>Date of birth *</label><input type="date" name="dob" data-field required></div>
-  <div><label>Gender (optional)</label><select name="gender" data-field><option value="">Prefer not to say</option><option>Female</option><option>Male</option><option>Other</option></select></div>
-  <div><label>Nationality</label><input name="nationality" data-field value="Indian"></div>
-  <div><label>NEET UG year *</label><input type="number" name="neetYear" data-field required min="2000" max="2100"></div>
-  <div><label>NEET roll number *</label><input name="neetRoll" data-field required></div>
-  <div><label>NEET application number</label><input name="neetApplication" data-field></div>
-  <div><label>NEET score / percentile</label><input name="neetScore" data-field></div>
-  <div><label>NEET All India Rank</label><input name="neetRank" data-field></div>
-  <div><label>Category if applicable</label><select name="category" data-field><option value="">Not stated</option><option>General</option><option>SC</option><option>ST</option><option>OBC</option><option>EWS</option><option>Other</option></select></div>
-  <div class="full"><label>Class XII board, year and PCB marks</label><textarea name="classXII" data-field></textarea></div>
-</div>
-<div class="actions">
-  <button type="button" onclick="saveDraft()">Save</button>
-  <a class="btn" href="index.html">Home</a>
-  <a class="btn primary" href="page-2-contact.html">Next page →</a>
-</div>
-</form>
+  <div class="reference-panel" aria-live="polite">
+    <div>
+      <label>Draft reference number</label>
+      <div class="reference-value" id="referenceNumber">Generating…</div>
+      <small class="field-note">
+        For draft identification only; not an official receipt number.
+      </small>
+    </div>
+
+    <div>
+      <label>Draft created</label>
+      <div class="reference-value" id="createdDate">--</div>
+      <small class="field-note">
+        Date recorded by this device.
+      </small>
+    </div>
+  </div>
+
+  <div class="notice">
+    <strong>Before you begin</strong>
+    <p>
+      Enter information exactly as it appears on your original records.
+      Verify the applicable admission rules, eligibility, institution details,
+      and any required notices with the authorized counselling authority.
+    </p>
+  
+  </div>
+
+  <form id="stepForm">
+    <section>
+      <h2><span class="section-number">01.</span> Application details</h2>
+
+      <div class="grid">
+        <div>
+          <label for="academicSession">Academic session *</label>
+          <select id="academicSession" name="academicSession" data-field required>
+            <option value="2026–27">2026–27</option>
+            <option value="2027–28">2027–28</option>
+            <option value="Other">Other / to be confirmed</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="course">Course applied for *</label>
+          <select id="course" name="course" data-field required>
+            <option value="">Select course</option>
+            <option value="MBBS">MBBS</option>
+            <option value="BDS">BDS</option>
+            <option value="Other">Other -- verify availability</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="applicationRoute">Proposed application route *</label>
+          <select id="applicationRoute" name="applicationRoute" data-field required>
+            <option value="">Select route</option>
+            <option value="Donor">Donor -- eligibility to be verified</option>
+            <option value="Trust">Trust -- eligibility to be verified</option>
+            <option value="Unconfirmed">Other / to be confirmed</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="trustName">Donor / trust name</label>
+          <input id="trustName" name="trustName" data-field
+                 maxlength="200" autocomplete="organization">
+        </div>
+
+        <div class="full">
+          <label for="institution">Requested college / institution *</label>
+          <input id="institution" name="institution" data-field
+                 required maxlength="250" autocomplete="organization">
+        </div>
+
+        <div class="full">
+          <label for="otherInstitution">Additional institution details</label>
+          <textarea id="otherInstitution" name="otherInstitution"
+                    data-field maxlength="2000"></textarea>
+        </div>
+
+        <div>
+          <label for="memoNumber">Official notice / memo number</label>
+          <input id="memoNumber" name="memoNumber" data-field maxlength="120">
+        </div>
+
+        <div>
+          <label for="noticeDate">Notice date</label>
+          <input id="noticeDate" name="noticeDate" type="date" data-field>
+        </div>
+
+        <div class="full">
+          <label for="trustReference">Trust recommendation reference, if issued</label>
+          <input id="trustReference" name="trustReference"
+                 data-field maxlength="150">
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2><span class="section-number">02.</span> Candidate identity</h2>
+
+      <div class="grid">
+        <div class="full">
+          <label for="fullName">Full name as recorded for NEET *</label>
+          <input id="fullName" name="fullName" data-field required
+                 maxlength="150" autocomplete="name">
+        </div>
+
+        <div>
+          <label for="dob">Date of birth *</label>
+          <input id="dob" name="dob" type="date" data-field required>
+        </div>
+
+        <div>
+          <label for="gender">Gender (optional)</label>
+          <select id="gender" name="gender" data-field>
+            <option value="">Prefer not to say</option>
+            <option value="Female">Female</option>
+            <option value="Male">Male</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="nationality">Nationality</label>
+          <input id="nationality" name="nationality" data-field
+                 value="Indian" maxlength="80">
+        </div>
+
+        <div>
+          <label for="neetYear">NEET UG examination year *</label>
+          <input id="neetYear" name="neetYear" type="number" data-field
+                 required min="2000" max="2100" inputmode="numeric">
+        </div>
+
+        <div>
+          <label for="neetRoll">NEET roll number *</label>
+          <input id="neetRoll" name="neetRoll" data-field required
+                 maxlength="80">
+        </div>
+
+        <div>
+          <label for="neetApplication">NEET application number</label>
+          <input id="neetApplication" name="neetApplication"
+                 data-field maxlength="100">
+        </div>
+
+        <div>
+          <label for="neetScore">NEET score / percentile</label>
+          <input id="neetScore" name="neetScore" data-field maxlength="80">
+        </div>
+
+        <div>
+          <label for="neetRank">NEET All India Rank</label>
+          <input id="neetRank" name="neetRank" data-field
+                 maxlength="80" inputmode="numeric">
+        </div>
+
+        <div>
+          <label for="category">Category, if applicable</label>
+          <select id="category" name="category" data-field>
+            <option value="">Not stated</option>
+            <option value="General">General</option>
+            <option value="SC">SC</option>
+            <option value="ST">ST</option>
+            <option value="OBC">OBC</option>
+            <option value="EWS">EWS</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="full">
+          <label for="classXII">Class XII board, passing year and PCB marks</label>
+          <textarea id="classXII" name="classXII" data-field
+                    maxlength="2000"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <div class="error" id="formError" role="alert"></div>
+    <p id="saveStatus" role="status" aria-live="polite"></p>
+
+    <div class="actions no-print">
+      <button type="button" id="saveButton">Save draft</button>
+      <button type="button" id="printButton">Print / Save PDF</button>
+      <a class="btn" href="index.html">Home</a>
+      <button type="submit" class="primary">Save and continue →</button>
+    </div>
+  </form>
 </main>
-<footer><div class="container">No print or submission action on this step. Those actions are reserved for the final page.</div></footer>
+
+<footer>
+  <div class="container">
+ <p>Page 1 of 5 · Applicant and Scheme Details</p>
+  </div>
+</footer>
+
 <script>
-const KEY="donorTrustQuotaDraft_v3";
-function draft(){try{return JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){return {}}}
-let d=draft();
-document.querySelectorAll("[data-field]").forEach(e=>{
-  if(d[e.name]!=null)e.value=d[e.name];
-  e.addEventListener("input",()=>{
-    d[e.name]=e.value;
-    localStorage.setItem(KEY,JSON.stringify(d));
+(() => {
+  'use strict';
+
+  const STORAGE_KEY = 'donorTrustQuotaDraft_v3';
+  const REFERENCE_KEY = 'donorTrustQuotaReference_v1';
+  const CREATED_KEY = 'donorTrustQuotaCreated_v1';
+
+  const form = document.getElementById('stepForm');
+  const referenceElement = document.getElementById('referenceNumber');
+  const createdElement = document.getElementById('createdDate');
+  const statusElement = document.getElementById('saveStatus');
+  const errorElement = document.getElementById('formError');
+
+  function readStorage(key, fallback) {
+    try {
+      const value = localStorage.getItem(key);
+      return value === null ? fallback : value;
+    } catch {
+      return fallback;
+    }
+  }
+
+  function makeReference() {
+    const date = new Date();
+    const ymd = [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2, '0'),
+      String(date.getDate()).padStart(2, '0')
+    ].join('');
+
+    let randomPart;
+
+    if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+      randomPart = window.crypto.randomUUID()
+        .replace(/-/g, '')
+        .slice(0, 12)
+        .toUpperCase();
+    } else {
+      const bytes = new Uint8Array(8);
+
+      if (window.crypto && window.crypto.getRandomValues) {
+        window.crypto.getRandomValues(bytes);
+        randomPart = Array.from(bytes)
+          .map(value => value.toString(16).padStart(2, '0'))
+          .join('')
+          .slice(0, 12)
+          .toUpperCase();
+      } else {
+        randomPart = Math.random().toString(36)
+          .slice(2, 14)
+          .toUpperCase();
+      }
+    }
+
+    return `DQT-${ymd}-${randomPart}`;
+  }
+
+  let reference = readStorage(REFERENCE_KEY, '');
+  let createdAt = readStorage(CREATED_KEY, '');
+
+  if (!reference) {
+    reference = makeReference();
+
+    try {
+      localStorage.setItem(REFERENCE_KEY, reference);
+    } catch {}
+  }
+
+  if (!createdAt) {
+    createdAt = new Date().toISOString();
+
+    try {
+      localStorage.setItem(CREATED_KEY, createdAt);
+    } catch {}
+  }
+
+  referenceElement.textContent = reference;
+
+  createdElement.textContent = new Date(createdAt).toLocaleDateString(
+    'en-IN',
+    { year: 'numeric', month: 'long', day: 'numeric' }
+  );
+
+  let draft = {};
+
+  try {
+    draft = JSON.parse(readStorage(STORAGE_KEY, '{}'));
+
+    if (!draft || typeof draft !== 'object' || Array.isArray(draft)) {
+      draft = {};
+    }
+  } catch {
+    draft = {};
+  }
+
+  document.querySelectorAll('[data-field]').forEach(field => {
+    if (Object.prototype.hasOwnProperty.call(draft, field.name)) {
+      field.value = draft[field.name];
+    }
+
+    field.addEventListener('input', () => {
+      draft[field.name] = field.value;
+    });
+
+    field.addEventListener('change', () => {
+      draft[field.name] = field.value;
+    });
   });
-});
-function saveDraft(){
-  document.querySelectorAll("[data-field]").forEach(e=>d[e.name]=e.value);
-  localStorage.setItem(KEY,JSON.stringify(d));
-  alert("Draft saved in this browser.");
-}
+
+  function collectDraft() {
+    const result = {
+      reference,
+      createdAt,
+      lastSavedAt: new Date().toISOString(),
+      fields: {}
+    };
+
+    document.querySelectorAll('[data-field]').forEach(field => {
+      result.fields[field.name] = field.value;
+    });
+
+    return result;
+  }
+
+  function saveDraft(showMessage = true) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(collectDraft()));
+
+      if (showMessage) {
+        statusElement.textContent =
+          'Draft saved on this device. It has not been submitted.';
+      }
+
+      return true;
+    } catch {
+      statusElement.textContent =
+        'Could not save the draft. Check browser storage availability.';
+
+      return false;
+    }
+  }
+
+  document.getElementById('saveButton').addEventListener('click', () => {
+    saveDraft();
+  });
+
+  document.getElementById('printButton').addEventListener('click', () => {
+    saveDraft(false);
+    window.print();
+  });
+
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    errorElement.classList.remove('show');
+    errorElement.textContent = '';
+
+    if (!form.reportValidity()) {
+      return;
+    }
+
+    if (!saveDraft(false)) {
+      errorElement.textContent =
+        'The draft could not be saved. Please try again before continuing.';
+      errorElement.classList.add('show');
+      return;
+    }
+
+    statusElement.textContent =
+      'Step 1 saved locally. Connect the authorized backend before enabling online submission.';
+
+    // Replace this navigation with the actual next page in your project.
+    window.location.href = 'page-2-contact.html';
+  });
+})();
 </script>
 </body>
 </html>

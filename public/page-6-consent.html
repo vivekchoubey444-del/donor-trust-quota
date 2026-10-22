@@ -2,66 +2,1532 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Step 6 -- Declarations</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Step 6: declarations, applicant acknowledgement and privacy information for a donor quota application draft.">
+  <title>Step 6 -- DECLARATIONS AND PRIVACY</title>
+   <link rel="stylesheet" href="styles.css">
+
+  <style>
+    :root {
+      color-scheme: light;
+      --black: #111111;
+      --dark: #242424;
+      --gray: #5b5b5b;
+      --muted: #777777;
+      --line: #d5d5d5;
+      --soft: #f5f5f5;
+      --white: #ffffff;
+      --danger: #a00000;
+      --success: #185b2b;
+      --radius: 8px;
+      --content-width: 900px;
+      --focus: #1b5fcc;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      background: var(--white);
+      color: var(--black);
+      font-family:
+        "Noto Sans",
+        "Noto Sans Devanagari",
+        "Noto Sans Bengali",
+        "Noto Sans Nepali",
+        "Nirmala UI",
+        "Mangal",
+        "Vrinda",
+        "Kohinoor Devanagari",
+        "Kohinoor Bangla",
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+    }
+
+    a {
+      color: var(--black);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button,
+    input,
+    select,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    a:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .page {
+      width: min(100% - 32px, var(--content-width));
+      margin: 0 auto;
+      padding: 20px 0 44px;
+    }
+
+    .utility-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+      color: var(--gray);
+      font-size: 13px;
+    }
+
+    .language-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .language-control label {
+      font-weight: 700;
+    }
+
+    .language-control select {
+      max-width: 190px;
+      min-height: 40px;
+      padding: 7px 30px 7px 10px;
+      border: 1px solid var(--black);
+      border-radius: 4px;
+      background: var(--white);
+      color: var(--black);
+    }
+
+    .document-header {
+      padding: 26px 0 22px;
+      text-align: center;
+      border-bottom: 2px solid var(--black);
+    }
+
+    .logo-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 22px;
+      margin-bottom: 16px;
+    }
+
+    .logo {
+      display: block;
+      width: auto;
+      max-width: 130px;
+      height: 76px;
+      object-fit: contain;
+    }
+
+    .logo-placeholder {
+      display: none;
+      width: 110px;
+      min-height: 62px;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      border: 1px solid var(--line);
+      color: var(--gray);
+      font-size: 11px;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+
+    .eyebrow {
+      margin: 0 0 4px;
+      color: var(--gray);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      color: var(--black);
+      line-height: 1.3;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(25px, 4vw, 34px);
+      letter-spacing: -0.025em;
+    }
+
+    .subtitle {
+      margin: 8px auto 0;
+      max-width: 680px;
+      color: var(--gray);
+      font-size: 14px;
+    }
+
+    .notice {
+      margin: 20px 0;
+      padding: 14px 16px;
+      border: 1px solid var(--black);
+      border-left-width: 5px;
+      background: var(--soft);
+    }
+
+    .notice strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .notice p {
+      margin: 0;
+      color: var(--dark);
+      font-size: 14px;
+    }
+
+    .progress-section {
+      margin: 22px 0;
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .progress-track {
+      height: 7px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--white);
+    }
+
+    .progress-fill {
+      width: 85.714%;
+      height: 100%;
+      background: var(--black);
+    }
+
+    .reference-panel {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 22px 0;
+      padding: 14px;
+      border: 1px solid var(--line);
+    }
+
+    .reference-item small {
+      display: block;
+      color: var(--gray);
+      font-size: 12px;
+    }
+
+    .reference-item strong {
+      display: block;
+      margin-top: 2px;
+      overflow-wrap: anywhere;
+    }
+
+    .section {
+      margin: 24px 0;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--white);
+    }
+
+    .section h2 {
+      margin: 0 0 8px;
+      font-size: 21px;
+    }
+
+    .section-intro {
+      margin: 0 0 16px;
+      color: var(--gray);
+      font-size: 14px;
+    }
+
+    .declaration {
+      margin: 14px 0;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+
+    .check-row {
+      display: grid;
+      grid-template-columns: 22px minmax(0, 1fr);
+      align-items: start;
+      gap: 11px;
+      cursor: pointer;
+    }
+
+    .check-row input[type="checkbox"] {
+      width: 19px;
+      height: 19px;
+      margin: 4px 0 0;
+      accent-color: var(--black);
+      cursor: pointer;
+    }
+
+    .check-title {
+      display: block;
+      font-weight: 800;
+    }
+
+    .check-description {
+      display: block;
+      margin-top: 4px;
+      color: var(--gray);
+      font-size: 14px;
+    }
+
+    .required {
+      color: var(--danger);
+      font-weight: 800;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .field {
+      min-width: 0;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 750;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      min-height: 46px;
+      padding: 10px 12px;
+      border: 1px solid #777777;
+      border-radius: 4px;
+      background: var(--white);
+      color: var(--black);
+    }
+
+    .field input[aria-invalid="true"],
+    .declaration.invalid {
+      border-color: var(--danger);
+    }
+
+    .help-text {
+      margin: 6px 0 0;
+      color: var(--gray);
+      font-size: 12px;
+    }
+
+    .privacy-list {
+      margin: 12px 0 0;
+      padding-left: 23px;
+    }
+
+    .privacy-list li {
+      margin: 8px 0;
+    }
+
+    .privacy-disclaimer {
+      margin-top: 16px;
+      padding: 12px 14px;
+      border: 1px dashed var(--gray);
+      font-size: 13px;
+    }
+
+    .status-message {
+      display: none;
+      margin: 18px 0;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      overflow-wrap: anywhere;
+    }
+
+    .status-message.visible {
+      display: block;
+    }
+
+    .status-message.error {
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .status-message.success {
+      border-color: var(--success);
+      color: var(--success);
+    }
+
+    .navigation {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 2px solid var(--black);
+    }
+
+    .button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 46px;
+      padding: 10px 18px;
+      border: 1px solid var(--black);
+      border-radius: 4px;
+      background: var(--white);
+      color: var(--black);
+      font-weight: 750;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .button.primary {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .footer {
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      color: var(--gray);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .footer p {
+      margin: 5px 0;
+    }
+
+    .noscript {
+      margin: 16px 0;
+      padding: 12px;
+      border: 1px solid var(--danger);
+      color: var(--danger);
+    }
+
+    @media (max-width: 600px) {
+      .page {
+        width: min(100% - 22px, var(--content-width));
+        padding-top: 12px;
+      }
+
+      .logo-row {
+        gap: 12px;
+      }
+
+      .logo {
+        max-width: 95px;
+        height: 60px;
+      }
+
+      .section {
+        padding: 15px;
+      }
+
+      .field-grid,
+      .reference-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .navigation {
+        flex-direction: column-reverse;
+      }
+
+      .navigation > *,
+      .navigation .button,
+      .button-group,
+      .button-group .button {
+        width: 100%;
+      }
+
+      .language-control {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .language-control select {
+        flex: 1;
+        max-width: 220px;
+      }
+    }
+
+    @media print {
+      body {
+        font-size: 11pt;
+      }
+
+      .page {
+        width: 100%;
+        padding: 0;
+      }
+
+      .utility-bar,
+      .progress-section,
+      .navigation,
+      .status-message,
+      .footer .no-print {
+        display: none !important;
+      }
+
+      .section,
+      .declaration,
+      .reference-panel,
+      .notice {
+        break-inside: avoid;
+      }
+
+      input,
+      select {
+        border: 1px solid #777 !important;
+      }
+
+      .button {
+        display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<header><div class="container">
-<p class="eyebrow">Donor / Trust Quota Application</p>
-<h1>Step 6 -- Declarations and Privacy</h1>
-<div class="status">INDEPENDENT PROPOSAL -- NOT OFFICIAL</div>
-</div></header>
-<main class="container">
-<p>Read the declarations carefully. Do not confirm a statement unless it is true. These are acknowledgements for this independent preparation tool, not an official WBMCC declaration.</p>
-<form id="consentForm">
-<div class="check">
-  <input type="checkbox" id="consentTruth" data-field required>
-  <label for="consentTruth">I confirm that the information I entered is accurate to the best of my knowledge. *</label>
-</div>
-<div class="check">
-  <input type="checkbox" id="consentAuthority" data-field required>
-  <label for="consentAuthority">I understand that eligibility, quota availability, deadlines and requirements must be verified against current official instructions. This website does not guarantee admission. *</label>
-</div>
-<div class="check">
-  <input type="checkbox" id="consentPrivacy" data-field required>
-  <label for="consentPrivacy">I have read the privacy notice and understand that browser storage is not a secure database and this static website does not itself submit data to WBMCC. *</label>
-</div>
-<div class="grid">
-  <div><label>Applicant / authorized guardian full name *</label><input name="typedName" data-field required></div>
-  <div><label>Date *</label><input name="signedDate" data-field type="date" required></div>
-  <div class="full"><label>Relationship to applicant, if signing for them</label><input name="signingRelationship" data-field></div>
-</div>
-<p><a href="privacy-notice.html">Read the full privacy notice</a></p>
-<div class="actions">
-  <button type="button" onclick="saveDraft()">Save</button>
-  <a class="btn" href="index.html">Home</a>
-  <a class="btn" href="page-5-documents.html">← Previous</a>
-  <a class="btn primary" href="page-7-review.html">Next page →</a>
-</div>
-</form>
-</main>
-<footer><div class="container">Final validation, submission, print and download actions are on the last page only.</div></footer>
-<script>
-const KEY="donorTrustQuotaDraft_v3";
-let d={};try{d=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}
-document.querySelectorAll("[data-field]").forEach(e=>{
-  const k=e.name||e.id;
-  if(d[k]!==undefined){if(e.type==="checkbox")e.checked=!!d[k];else e.value=d[k]}
-  e.addEventListener("input",()=>saveField(e));
-  e.addEventListener("change",()=>saveField(e));
-});
-signedDate.value ||= new Date().toISOString().slice(0,10);
-function saveField(e){
-  d[e.name||e.id]=e.type==="checkbox"?e.checked:e.value;
-  try{localStorage.setItem(KEY,JSON.stringify(d))}catch(err){}
-}
-function saveDraft(){
-  document.querySelectorAll("[data-field]").forEach(e=>d[e.name||e.id]=e.type==="checkbox"?e.checked:e.value);
-  localStorage.setItem(KEY,JSON.stringify(d));
-  alert("Declarations saved in this browser.");
-}
-</script>
+  <main class="page">
+    <div class="utility-bar">
+      <span data-i18n="stepLabel">Application form · Step 6 of 7</span>
+
+      <div class="language-control">
+        <label for="language" data-i18n="languageLabel">Language</label>
+        <select id="language" name="language" autocomplete="off">
+          <option value="en">English</option>
+          <option value="hi">हिन्दी</option>
+          <option value="bn">বাংলা</option>
+          <option value="ne">नेपाली</option>
+        </select>
+      </div>
+    </div>
+
+    <header class="document-header">
+      <div class="logo-row" aria-label="Reference logos">
+        <div>
+          <img
+            class="logo"
+            src="assets/images/national-emblem.jpg"
+            alt="National emblem reference image"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+          >
+         
+        </div>
+      </div>
+
+      <p class="eyebrow" data-i18n="eyebrow">Applicant declarations</p>
+      <h1 data-i18n="pageTitle">Declarations &amp; Privacy</h1>
+      <p class="subtitle" data-i18n="subtitle">
+        Review each declaration carefully before proceeding to the final review page.
+      </p>
+    </header>
+
+    <noscript>
+      <div class="noscript">
+        JavaScript is required to save this draft and continue to the next step.
+      </div>
+    </noscript>
+
+    <div class="notice" role="note">
+      <strong data-i18n="importantTitle">Important information</strong>
+    </div>
+
+    <section class="progress-section" aria-label="Application progress">
+      <div class="progress-top">
+        <strong data-i18n="progressTitle">Application progress</strong>
+        <span data-i18n="progressValue">Step 6 of 7 · 86%</span>
+      </div>
+      <div
+        class="progress-track"
+        role="progressbar"
+        aria-valuemin="1"
+        aria-valuemax="7"
+        aria-valuenow="6"
+        aria-label="Step 6 of 7"
+      >
+        <div class="progress-fill"></div>
+      </div>
+    </section>
+
+    <section class="reference-panel" aria-label="Draft reference">
+      <div class="reference-item">
+        <small data-i18n="referenceLabel">Draft reference</small>
+        <strong id="applicationReference">Not generated</strong>
+      </div>
+      <div class="reference-item">
+        <small data-i18n="createdLabel">Draft created</small>
+        <strong id="draftCreated">Not available</strong>
+      </div>
+    </section>
+
+    <form id="consentForm" novalidate>
+      <section class="section" aria-labelledby="declarationsHeading">
+        <h2 id="declarationsHeading" data-i18n="declarationsTitle">
+          6.1 Applicant declarations
+        </h2>
+        <p class="section-intro" data-i18n="declarationsIntro">
+          Tick each required declaration only if you have read it and agree with its meaning.
+        </p>
+
+        <div class="declaration" id="truthDeclaration">
+          <label class="check-row" for="consentTruth">
+            <input
+              type="checkbox"
+              id="consentTruth"
+              name="consentTruth"
+              required
+              value="true"
+              aria-describedby="truthDescription"
+            >
+            <span>
+              <span class="check-title" data-i18n="truthTitle">
+                Accuracy of information
+                <span class="required">*</span>
+              </span>
+              <span class="check-description" id="truthDescription" data-i18n="truthDescription">
+                I declare that the information and documents I provide are, to the best of my
+                knowledge, true, complete and accurate. I understand that incorrect, incomplete
+                or misleading information may lead to rejection or other action under applicable rules.
+              </span>
+            </span>
+          </label>
+        </div>
+
+        <div class="declaration" id="authorityDeclaration">
+          <label class="check-row" for="consentAuthority">
+            <input
+              type="checkbox"
+              id="consentAuthority"
+              name="consentAuthority"
+              required
+              value="true"
+              aria-describedby="authorityDescription"
+            >
+            <span>
+              <span class="check-title" data-i18n="authorityTitle">
+                Verification and applicable rules
+                <span class="required">*</span>
+              </span>
+              <span class="check-description" id="authorityDescription" data-i18n="authorityDescription">
+                I understand that the competent authority or institution may verify information
+                and documents in accordance with applicable rules. I understand that this declaration
+                does not itself establish eligibility or guarantee admission or allocation of a seat.
+              </span>
+            </span>
+          </label>
+        </div>
+
+        <div class="declaration" id="privacyDeclaration">
+          <label class="check-row" for="consentPrivacy">
+            <input
+              type="checkbox"
+              id="consentPrivacy"
+              name="consentPrivacy"
+              required
+              value="true"
+              aria-describedby="privacyConsentDescription"
+            >
+            <span>
+              <span class="check-title" data-i18n="privacyConsentTitle">
+                Acknowledgement of privacy information
+                <span class="required">*</span>
+              </span>
+              <span
+                class="check-description"
+                id="privacyConsentDescription"
+                data-i18n="privacyConsentDescription"
+              >
+                I have read the privacy information on this page and understand the limitations
+                of this draft interface, including that saving a draft in this browser is not
+                the same as securely submitting an application to an authority.
+              </span>
+            </span>
+          </label>
+        </div>
+
+        <p class="help-text" data-i18n="requiredNote">
+          * All three declarations are required to continue.
+        </p>
+      </section>
+
+      <section class="section" aria-labelledby="signatureHeading">
+        <h2 id="signatureHeading" data-i18n="signatureTitle">
+          6.2 Applicant acknowledgement
+        </h2>
+        <p class="section-intro" data-i18n="signatureIntro">
+          Enter the details of the person making these declarations. Use the applicant's name
+          unless an authorised parent or guardian is completing this section.
+        </p>
+
+        <div class="field-grid">
+          <div class="field">
+            <label for="typedName">
+              <span data-i18n="typedNameLabel">Full name of declarant</span>
+              <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="typedName"
+              name="typedName"
+              maxlength="150"
+              autocomplete="name"
+              required
+              placeholder="Enter full name"
+              data-i18n-placeholder="typedNamePlaceholder"
+            >
+            <p class="help-text" data-i18n="typedNameHelp">
+              This typed name is an acknowledgement field, not a verified digital signature.
+            </p>
+          </div>
+
+          <div class="field">
+            <label for="signedDate">
+              <span data-i18n="signedDateLabel">Date of acknowledgement</span>
+              <span class="required">*</span>
+            </label>
+            <input
+              type="date"
+              id="signedDate"
+              name="signedDate"
+              required
+            >
+          </div>
+
+          <div class="field full">
+            <label for="signingRelationship" data-i18n="relationshipLabel">
+              Relationship to applicant
+            </label>
+            <select id="signingRelationship" name="signingRelationship">
+              <option value="applicant" data-i18n="relationshipApplicant">Applicant</option>
+              <option value="parent" data-i18n="relationshipParent">Parent</option>
+              <option value="guardian" data-i18n="relationshipGuardian">Legal guardian</option>
+              <option value="authorised_representative" data-i18n="relationshipRepresentative">
+                Other authorised representative
+              </option>
+            </select>
+            <p class="help-text" data-i18n="relationshipHelp">
+              Select a representative option only when that person is authorised to act for the applicant.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="privacyHeading">
+        <h2 id="privacyHeading" data-i18n="privacyTitle">
+          6.3 Privacy information
+        </h2>
+        <p class="section-intro" data-i18n="privacyIntro">
+          Please read the following information before saving your declarations.
+        </p>
+
+        <ul class="privacy-list">
+        <li data-i18n="privacyItem2">
+            Browser storage may be accessible to someone using the same device or browser profile.
+            Do not use a shared device for sensitive information unless you can protect access to it.
+          </li>
+          <li data-i18n="privacyItem3">
+            Clearing browser data, changing browsers, or using a different device may make the draft
+            unavailable.
+          </li>
+          <li data-i18n="privacyItem4">
+            Do not upload or enter information unless you have verified the identity of the service,
+            its purpose, and the official instructions governing the application.
+          </li>
+          <li data-i18n="privacyItem5">
+            Any later online submission, data retention, access control, or document verification
+            depends on the separate server and privacy arrangements of the service receiving it.
+          </li>
+        </ul>
+
+      </section>
+
+      <div
+        id="statusMessage"
+        class="status-message"
+        role="status"
+        aria-live="polite"
+        tabindex="-1"
+      ></div>
+
+      <div class="button-group" aria-label="Draft actions">
+        <button class="button" type="button" id="saveDraftButton" data-i18n="saveDraft">
+          Save draft
+        </button>
+        <button class="button" type="button" id="printButton" data-i18n="printPage">
+          Print page
+        </button>
+      </div>
+
+      <nav class="navigation" aria-label="Application page navigation">
+        <a class="button" href="page-5-documents.html" data-i18n="previousButton">
+          ← Previous: Documents
+        </a>
+        <button class="button primary" type="submit" id="continueButton" data-i18n="continueButton">
+          Save and continue →
+        </button>
+      </nav>
+    </form>
+
+    <footer class="footer">
+   <p data-i18n="footerVerify">
+        Verify the current official application procedure and privacy notice before submitting personal documents.
+      </p>
+      <p class="no-print" data-i18n="footerVersion">
+        Step 6 · Declarations and privacy
+      </p>
+    </footer>
+  </main>
+
+  <script>
+    "use strict";
+
+    (() => {
+      const DRAFT_KEY = "donorTrustQuotaDraft_v3";
+      const REFERENCE_KEY = "donorTrustQuotaReference_v1";
+      const CREATED_KEY = "donorTrustQuotaCreated_v1";
+      const LANGUAGE_KEY = "donorTrustQuotaLanguage_v1";
+
+      const form = document.getElementById("consentForm");
+      const languageSelect = document.getElementById("language");
+      const statusMessage = document.getElementById("statusMessage");
+      const saveDraftButton = document.getElementById("saveDraftButton");
+      const continueButton = document.getElementById("continueButton");
+
+      const consentFields = [
+        "consentTruth",
+        "consentAuthority",
+        "consentPrivacy",
+        "typedName",
+        "signedDate",
+        "signingRelationship"
+      ];
+
+      const translations = {
+        en: {
+          stepLabel: "Application form · Step 6 of 7",
+          languageLabel: "Language",
+          emblemPlaceholder: "Emblem image",
+          logoPlaceholder: "WBMCC image",
+          eyebrow: "Applicant declarations",
+          pageTitle: "Declarations & Privacy",
+          subtitle: "Review each declaration carefully before proceeding to the final review page.",
+          importantTitle: "Important information",
+          importantText: "This is a draft application interface. Completing this page does not establish eligibility, guarantee a seat, or confirm submission to WBMCC or any government authority. Verify the applicable official instructions before providing sensitive documents.",
+          progressTitle: "Application progress",
+          progressValue: "Step 6 of 7 · 86%",
+          referenceLabel: "Draft reference",
+          createdLabel: "Draft created",
+          declarationsTitle: "6.1 Applicant declarations",
+          declarationsIntro: "Tick each required declaration only if you have read it and agree with its meaning.",
+          truthTitle: "Accuracy of information",
+          truthDescription: "I declare that the information and documents I provide are, to the best of my knowledge, true, complete and accurate. I understand that incorrect, incomplete or misleading information may lead to rejection or other action under applicable rules.",
+          authorityTitle: "Verification and applicable rules",
+          authorityDescription: "I understand that the competent authority or institution may verify information and documents in accordance with applicable rules. I understand that this declaration does not itself establish eligibility or guarantee admission or allocation of a seat.",
+          privacyConsentTitle: "Acknowledgement of privacy information",
+          privacyConsentDescription: "I have read the privacy information on this page and understand the limitations of this draft interface, including that saving a draft in this browser is not the same as securely submitting an application to an authority.",
+          requiredNote: "* All three declarations are required to continue.",
+          signatureTitle: "6.2 Applicant acknowledgement",
+          signatureIntro: "Enter the details of the person making these declarations. Use the applicant's name unless an authorised parent or guardian is completing this section.",
+          typedNameLabel: "Full name of declarant",
+          typedNamePlaceholder: "Enter full name",
+          typedNameHelp: "This typed name is an acknowledgement field, not a verified digital signature.",
+          signedDateLabel: "Date of acknowledgement",
+          relationshipLabel: "Relationship to applicant",
+          relationshipApplicant: "Applicant",
+          relationshipParent: "Parent",
+          relationshipGuardian: "Legal guardian",
+          relationshipRepresentative: "Other authorised representative",
+          relationshipHelp: "Select a representative option only when that person is authorised to act for the applicant.",
+          privacyTitle: "6.3 Privacy information",
+          privacyIntro: "Please read the following information before saving your declarations.",
+          privacyItem1: "The details entered on this page are saved to the browser's local draft when you save or continue. This page does not send them to a server by itself.",
+          privacyItem2: "Browser storage may be accessible to someone using the same device or browser profile. Do not use a shared device for sensitive information unless you can protect access to it.",
+          privacyItem3: "Clearing browser data, changing browsers, or using a different device may make the draft unavailable.",
+          privacyItem4: "Do not upload or enter information unless you have verified the identity of the service, its purpose, and the official instructions governing the application.",
+          privacyItem5: "Any later online submission, data retention, access control, or document verification depends on the separate server and privacy arrangements of the service receiving it.",
+          privacyDisclaimer: "Privacy notice: this page is a client-side draft form. It does not, on its own, provide server-side encryption, secure document storage, account authentication, malware scanning, or a legally verified electronic-signature service.",
+          saveDraft: "Save draft",
+          printPage: "Print page",
+          previousButton: "← Previous: Documents",
+          continueButton: "Save and continue →",
+          footerDraft: "Draft interface only. Saving locally does not mean an application has been officially submitted.",
+          footerVerify: "Verify the current official application procedure and privacy notice before submitting personal documents.",
+          footerVersion: "Step 6 · Declarations and privacy",
+          notGenerated: "Not generated",
+          notAvailable: "Not available",
+          saveSuccess: "Draft saved in this browser.",
+          saveError: "The draft could not be saved. Check browser storage settings and available space.",
+          referenceError: "No draft reference was found. Please return to Step 1 and create or restore the application draft.",
+          requiredError: "Please complete all required declarations, enter the declarant's name, and choose the acknowledgement date.",
+          nextError: "Your draft could not be saved, so the next page has not been opened.",
+          invalidName: "Enter a valid name using at least two non-space characters.",
+          invalidDate: "The acknowledgement date cannot be in the future.",
+          storageUnavailable: "Browser storage is unavailable. Your declarations may not persist after leaving this page.",
+          confirmClear: "Clear the saved draft for this application from this browser? This cannot be undone.",
+          clearButton: "Clear local draft",
+          clearSuccess: "The saved draft has been cleared from this browser.",
+          clearError: "The local draft could not be cleared."
+        },
+
+        hi: {
+          stepLabel: "आवेदन फ़ॉर्म · चरण 6 / 7",
+          languageLabel: "भाषा",
+          emblemPlaceholder: "प्रतीक चित्र",
+          logoPlaceholder: "WBMCC चित्र",
+          eyebrow: "आवेदक की घोषणाएँ",
+          pageTitle: "घोषणाएँ और गोपनीयता",
+          subtitle: "अंतिम समीक्षा पृष्ठ पर जाने से पहले प्रत्येक घोषणा ध्यान से पढ़ें।",
+          importantTitle: "महत्वपूर्ण जानकारी",
+          importantText: "यह आवेदन का प्रारूप है। इस पृष्ठ को पूरा करने से पात्रता सिद्ध नहीं होती, सीट की गारंटी नहीं मिलती और WBMCC या किसी सरकारी प्राधिकरण के पास आवेदन जमा होने की पुष्टि नहीं होती। संवेदनशील दस्तावेज़ देने से पहले आधिकारिक निर्देशों की पुष्टि करें।",
+          progressTitle: "आवेदन की प्रगति",
+          progressValue: "चरण 6 / 7 · 86%",
+          referenceLabel: "ड्राफ़्ट संदर्भ",
+          createdLabel: "ड्राफ़्ट बनाया गया",
+          declarationsTitle: "6.1 आवेदक की घोषणाएँ",
+          declarationsIntro: "प्रत्येक आवश्यक घोषणा को तभी चुनें जब आपने उसे पढ़ लिया हो और उसके अर्थ से सहमत हों।",
+          truthTitle: "जानकारी की सत्यता",
+          truthDescription: "मैं घोषित करता/करती हूँ कि मेरे द्वारा दी गई जानकारी और दस्तावेज़ मेरी जानकारी के अनुसार सत्य, पूर्ण और सही हैं। मैं समझता/समझती हूँ कि गलत, अधूरी या भ्रामक जानकारी के कारण लागू नियमों के अनुसार आवेदन अस्वीकार किया जा सकता है या अन्य कार्रवाई हो सकती है।",
+          authorityTitle: "सत्यापन और लागू नियम",
+          authorityDescription: "मैं समझता/समझती हूँ कि सक्षम प्राधिकरण या संस्था लागू नियमों के अनुसार जानकारी और दस्तावेज़ों का सत्यापन कर सकती है। यह घोषणा अपने आप पात्रता सिद्ध नहीं करती और प्रवेश या सीट आवंटन की गारंटी नहीं देती।",
+          privacyConsentTitle: "गोपनीयता जानकारी की स्वीकृति",
+          privacyConsentDescription: "मैंने इस पृष्ठ की गोपनीयता जानकारी पढ़ ली है और इस प्रारूप की सीमाएँ समझता/समझती हूँ। इस ब्राउज़र में ड्राफ़्ट सहेजना किसी प्राधिकरण को सुरक्षित रूप से आवेदन जमा करने के समान नहीं है।",
+          requiredNote: "* आगे बढ़ने के लिए तीनों घोषणाएँ आवश्यक हैं।",
+          signatureTitle: "6.2 आवेदक की स्वीकृति",
+          signatureIntro: "घोषणा करने वाले व्यक्ति का विवरण भरें। यदि अधिकृत माता-पिता या अभिभावक यह भाग भर रहे हैं, तो उनका नाम दर्ज करें।",
+          typedNameLabel: "घोषणा करने वाले का पूरा नाम",
+          typedNamePlaceholder: "पूरा नाम दर्ज करें",
+          typedNameHelp: "यह नाम की पुष्टि के लिए फ़ील्ड है, सत्यापित डिजिटल हस्ताक्षर नहीं।",
+          signedDateLabel: "स्वीकृति की तारीख",
+          relationshipLabel: "आवेदक से संबंध",
+          relationshipApplicant: "आवेदक",
+          relationshipParent: "माता या पिता",
+          relationshipGuardian: "कानूनी अभिभावक",
+          relationshipRepresentative: "अन्य अधिकृत प्रतिनिधि",
+          relationshipHelp: "प्रतिनिधि का विकल्प तभी चुनें जब उस व्यक्ति को आवेदक की ओर से कार्य करने का अधिकार हो।",
+          privacyTitle: "6.3 गोपनीयता जानकारी",
+          privacyIntro: "अपनी घोषणाएँ सहेजने से पहले निम्न जानकारी पढ़ें।",
+          privacyItem1: "इस पृष्ठ की जानकारी सहेजने या आगे बढ़ने पर ब्राउज़र के स्थानीय ड्राफ़्ट में रखी जाती है। यह पृष्ठ अपने आप किसी सर्वर को जानकारी नहीं भेजता।",
+          privacyItem2: "एक ही डिवाइस या ब्राउज़र प्रोफ़ाइल का उपयोग करने वाला व्यक्ति ब्राउज़र में रखी जानकारी तक पहुँच सकता है। संवेदनशील जानकारी के लिए साझा डिवाइस का उपयोग सावधानी से करें।",
+          privacyItem3: "ब्राउज़र डेटा हटाने, ब्राउज़र बदलने या दूसरे डिवाइस का उपयोग करने से ड्राफ़्ट उपलब्ध नहीं रह सकता।",
+          privacyItem4: "सेवा की पहचान, उद्देश्य और आवेदन के आधिकारिक निर्देशों की पुष्टि किए बिना जानकारी दर्ज या अपलोड न करें।",
+          privacyItem5: "बाद में ऑनलाइन जमा करना, डेटा सुरक्षित रखना, पहुँच नियंत्रित करना और दस्तावेज़ों का सत्यापन संबंधित सेवा के अलग सर्वर और गोपनीयता व्यवस्थाओं पर निर्भर करेगा।",
+          privacyDisclaimer: "गोपनीयता सूचना: यह ब्राउज़र में चलने वाला प्रारूप है। यह अपने आप सर्वर-साइड एन्क्रिप्शन, सुरक्षित दस्तावेज़ भंडारण, खाता प्रमाणीकरण, मैलवेयर जाँच या कानूनी रूप से सत्यापित इलेक्ट्रॉनिक हस्ताक्षर सेवा प्रदान नहीं करता।",
+          saveDraft: "ड्राफ़्ट सहेजें",
+          printPage: "पृष्ठ प्रिंट करें",
+          previousButton: "← पिछला: दस्तावेज़",
+          continueButton: "सहेजें और आगे बढ़ें →",
+          footerDraft: "यह केवल ड्राफ़्ट है। स्थानीय रूप से सहेजने का अर्थ आधिकारिक आवेदन जमा होना नहीं है।",
+          footerVerify: "व्यक्तिगत दस्तावेज़ देने से पहले वर्तमान आधिकारिक प्रक्रिया और गोपनीयता सूचना की पुष्टि करें।",
+          footerVersion: "चरण 6 · घोषणाएँ और गोपनीयता",
+          notGenerated: "बनाया नहीं गया",
+          notAvailable: "उपलब्ध नहीं",
+          saveSuccess: "ड्राफ़्ट इस ब्राउज़र में सहेजा गया।",
+          saveError: "ड्राफ़्ट सहेजा नहीं जा सका। ब्राउज़र स्टोरेज सेटिंग और उपलब्ध स्थान जाँचें।",
+          referenceError: "ड्राफ़्ट संदर्भ नहीं मिला। कृपया चरण 1 पर जाकर आवेदन ड्राफ़्ट बनाएँ या पुनः प्राप्त करें।",
+          requiredError: "सभी आवश्यक घोषणाएँ पूरी करें, घोषणा करने वाले का नाम दर्ज करें और तारीख चुनें।",
+          nextError: "ड्राफ़्ट सहेजा नहीं जा सका, इसलिए अगला पृष्ठ नहीं खोला गया।",
+          invalidName: "कम-से-कम दो गैर-रिक्त अक्षरों वाला सही नाम दर्ज करें।",
+          invalidDate: "स्वीकृति की तारीख भविष्य की नहीं हो सकती।",
+          storageUnavailable: "ब्राउज़र स्टोरेज उपलब्ध नहीं है। पृष्ठ छोड़ने के बाद घोषणाएँ सुरक्षित न रह सकेंगी।",
+          confirmClear: "क्या इस ब्राउज़र से इस आवेदन का सहेजा हुआ ड्राफ़्ट हटाना चाहते हैं? यह कार्रवाई वापस नहीं की जा सकती।",
+          clearButton: "स्थानीय ड्राफ़्ट हटाएँ",
+          clearSuccess: "इस ब्राउज़र से सहेजा हुआ ड्राफ़्ट हटा दिया गया।",
+          clearError: "स्थानीय ड्राफ़्ट हटाया नहीं जा सका।"
+        },
+
+        bn: {
+          stepLabel: "আবেদন ফর্ম · ধাপ ৬ / ৭",
+          languageLabel: "ভাষা",
+          emblemPlaceholder: "প্রতীকচিহ্নের ছবি",
+          logoPlaceholder: "WBMCC-এর ছবি",
+          eyebrow: "আবেদনকারীর ঘোষণা",
+          pageTitle: "ঘোষণা ও গোপনীয়তা",
+          subtitle: "চূড়ান্ত পর্যালোচনা পৃষ্ঠায় যাওয়ার আগে প্রতিটি ঘোষণা মনোযোগ দিয়ে পড়ুন।",
+          importantTitle: "গুরুত্বপূর্ণ তথ্য",
+          importantText: "এটি আবেদনপত্রের একটি খসড়া ইন্টারফেস। এই পৃষ্ঠা পূরণ করলেই যোগ্যতা প্রমাণিত হয় না, আসন নিশ্চিত হয় না বা WBMCC কিংবা কোনও সরকারি কর্তৃপক্ষের কাছে আবেদন জমা হয়েছে বলে প্রমাণিত হয় না। সংবেদনশীল নথি দেওয়ার আগে সরকারি নির্দেশ যাচাই করুন।",
+          progressTitle: "আবেদনের অগ্রগতি",
+          progressValue: "ধাপ ৬ / ৭ · ৮৬%",
+          referenceLabel: "খসড়া রেফারেন্স",
+          createdLabel: "খসড়া তৈরির তারিখ",
+          declarationsTitle: "৬.১ আবেদনকারীর ঘোষণা",
+          declarationsIntro: "প্রতিটি আবশ্যিক ঘোষণা পড়ে তার অর্থে সম্মত হলেই নির্বাচন করুন।",
+          truthTitle: "তথ্যের সত্যতা",
+          truthDescription: "আমি ঘোষণা করছি যে আমার দেওয়া তথ্য ও নথি আমার জানা মতে সত্য, সম্পূর্ণ ও সঠিক। ভুল, অসম্পূর্ণ বা বিভ্রান্তিকর তথ্যের কারণে প্রযোজ্য নিয়ম অনুযায়ী আবেদন প্রত্যাখ্যাত হতে পারে বা অন্য ব্যবস্থা নেওয়া হতে পারে--এটি আমি বুঝি।",
+          authorityTitle: "যাচাই ও প্রযোজ্য নিয়ম",
+          authorityDescription: "আমি বুঝি যে উপযুক্ত কর্তৃপক্ষ বা প্রতিষ্ঠান প্রযোজ্য নিয়ম অনুযায়ী তথ্য ও নথি যাচাই করতে পারে। এই ঘোষণা নিজে থেকে যোগ্যতা প্রমাণ করে না এবং ভর্তি বা আসন বরাদ্দ নিশ্চিত করে না।",
+          privacyConsentTitle: "গোপনীয়তা তথ্য সম্পর্কে স্বীকৃতি",
+          privacyConsentDescription: "আমি এই পৃষ্ঠার গোপনীয়তা সংক্রান্ত তথ্য পড়েছি এবং এই খসড়া ইন্টারফেসের সীমাবদ্ধতা বুঝেছি। এই ব্রাউজারে খসড়া সংরক্ষণ করা কোনও কর্তৃপক্ষের কাছে নিরাপদে আবেদন জমা দেওয়ার সমতুল্য নয়।",
+          requiredNote: "* এগিয়ে যেতে তিনটি ঘোষণাই আবশ্যক।",
+          signatureTitle: "৬.২ আবেদনকারীর স্বীকৃতি",
+          signatureIntro: "যিনি ঘোষণা করছেন তাঁর তথ্য লিখুন। অনুমোদিত অভিভাবক এই অংশ পূরণ করলে তাঁর নাম লিখুন।",
+          typedNameLabel: "ঘোষণাকারীর পূর্ণ নাম",
+          typedNamePlaceholder: "পূর্ণ নাম লিখুন",
+          typedNameHelp: "এই নামের ঘরটি স্বীকৃতির জন্য; এটি যাচাইকৃত ডিজিটাল স্বাক্ষর নয়।",
+          signedDateLabel: "স্বীকৃতির তারিখ",
+          relationshipLabel: "আবেদনকারীর সঙ্গে সম্পর্ক",
+          relationshipApplicant: "আবেদনকারী",
+          relationshipParent: "মাতা বা পিতা",
+          relationshipGuardian: "আইনি অভিভাবক",
+          relationshipRepresentative: "অন্যান্য অনুমোদিত প্রতিনিধি",
+          relationshipHelp: "আবেদনকারীর পক্ষে কাজ করার অনুমতি থাকলেই প্রতিনিধির বিকল্প নির্বাচন করুন।",
+          privacyTitle: "৬.৩ গোপনীয়তা তথ্য",
+          privacyIntro: "ঘোষণা সংরক্ষণের আগে নিচের তথ্য পড়ুন।",
+          privacyItem1: "সংরক্ষণ বা এগিয়ে যাওয়ার সময় এই পৃষ্ঠার তথ্য ব্রাউজারের স্থানীয় খসড়ায় রাখা হয়। এই পৃষ্ঠা নিজে থেকে সার্ভারে তথ্য পাঠায় না।",
+          privacyItem2: "একই ডিভাইস বা ব্রাউজার প্রোফাইল ব্যবহারকারী অন্য কেউ ব্রাউজারে রাখা তথ্য দেখতে পারেন। সংবেদনশীল তথ্যের ক্ষেত্রে শেয়ার করা ডিভাইস ব্যবহারে সতর্ক থাকুন।",
+          privacyItem3: "ব্রাউজারের তথ্য মুছে ফেললে, ব্রাউজার বদলালে বা অন্য ডিভাইস ব্যবহার করলে খসড়াটি আর নাও পাওয়া যেতে পারে।",
+          privacyItem4: "পরিষেবার পরিচয়, উদ্দেশ্য এবং সরকারি আবেদন নির্দেশ যাচাই না করে তথ্য লিখবেন না বা নথি আপলোড করবেন না।",
+          privacyItem5: "পরবর্তী অনলাইন জমা, তথ্য সংরক্ষণ, প্রবেশাধিকার নিয়ন্ত্রণ এবং নথি যাচাই সংশ্লিষ্ট পরিষেবার পৃথক সার্ভার ও গোপনীয়তা ব্যবস্থার উপর নির্ভর করবে।",
+          privacyDisclaimer: "গোপনীয়তা বিজ্ঞপ্তি: এটি ব্রাউজারভিত্তিক খসড়া ফর্ম। এটি নিজে থেকে সার্ভার-সাইড এনক্রিপশন, নিরাপদ নথি সংরক্ষণ, অ্যাকাউন্ট যাচাইকরণ, ম্যালওয়্যার পরীক্ষা বা আইনগতভাবে যাচাইকৃত ইলেকট্রনিক স্বাক্ষর পরিষেবা দেয় না।",
+          saveDraft: "খসড়া সংরক্ষণ করুন",
+          printPage: "পৃষ্ঠা প্রিন্ট করুন",
+          previousButton: "← আগের ধাপ: নথি",
+          continueButton: "সংরক্ষণ করে এগিয়ে যান →",
+          footerDraft: "এটি শুধু একটি খসড়া ইন্টারফেস। স্থানীয়ভাবে সংরক্ষণ মানে সরকারি আবেদন জমা নয়।",
+          footerVerify: "ব্যক্তিগত নথি জমা দেওয়ার আগে বর্তমান সরকারি পদ্ধতি ও গোপনীয়তা বিজ্ঞপ্তি যাচাই করুন।",
+          footerVersion: "ধাপ ৬ · ঘোষণা ও গোপনীয়তা",
+          notGenerated: "তৈরি হয়নি",
+          notAvailable: "পাওয়া যায়নি",
+          saveSuccess: "খসড়াটি এই ব্রাউজারে সংরক্ষিত হয়েছে।",
+          saveError: "খসড়া সংরক্ষণ করা যায়নি। ব্রাউজারের স্টোরেজ সেটিং ও খালি জায়গা পরীক্ষা করুন।",
+          referenceError: "খসড়ার রেফারেন্স পাওয়া যায়নি। ধাপ ১-এ ফিরে গিয়ে খসড়া তৈরি করুন বা পুনরুদ্ধার করুন।",
+          requiredError: "সব আবশ্যিক ঘোষণা নির্বাচন করুন, ঘোষণাকারীর নাম লিখুন এবং তারিখ বেছে নিন।",
+          nextError: "খসড়া সংরক্ষণ করা যায়নি, তাই পরের পৃষ্ঠা খোলা হয়নি।",
+          invalidName: "কমপক্ষে দুটি অ-ফাঁকা অক্ষর দিয়ে সঠিক নাম লিখুন।",
+          invalidDate: "স্বীকৃতির তারিখ ভবিষ্যতের হতে পারে না।",
+          storageUnavailable: "ব্রাউজার স্টোরেজ পাওয়া যাচ্ছে না। পৃষ্ঠা ছাড়লে ঘোষণাগুলি সংরক্ষিত নাও থাকতে পারে।",
+          confirmClear: "এই ব্রাউজার থেকে এই আবেদনের সংরক্ষিত খসড়া মুছবেন? এটি ফিরিয়ে আনা যাবে না।",
+          clearButton: "স্থানীয় খসড়া মুছুন",
+          clearSuccess: "এই ব্রাউজার থেকে সংরক্ষিত খসড়া মুছে ফেলা হয়েছে।",
+          clearError: "স্থানীয় খসড়া মুছে ফেলা যায়নি।"
+        },
+
+        ne: {
+          stepLabel: "आवेदन फाराम · चरण ६ / ७",
+          languageLabel: "भाषा",
+          emblemPlaceholder: "प्रतीकको तस्बिर",
+          logoPlaceholder: "WBMCC को तस्बिर",
+          eyebrow: "आवेदकका घोषणाहरू",
+          pageTitle: "घोषणा र गोपनीयता",
+          subtitle: "अन्तिम समीक्षा पृष्ठमा जानुअघि प्रत्येक घोषणा ध्यानपूर्वक पढ्नुहोस्।",
+          importantTitle: "महत्त्वपूर्ण जानकारी",
+          importantText: "यो आवेदनको मस्यौदा इन्टरफेस हो। यो पृष्ठ पूरा गर्दैमा योग्यता प्रमाणित हुँदैन, सिट सुनिश्चित हुँदैन वा WBMCC अथवा कुनै सरकारी निकायमा आवेदन बुझाइएको पुष्टि हुँदैन। संवेदनशील कागजात दिनुअघि आधिकारिक निर्देशन जाँच गर्नुहोस्।",
+          progressTitle: "आवेदनको प्रगति",
+          progressValue: "चरण ६ / ७ · ८६%",
+          referenceLabel: "मस्यौदा सन्दर्भ",
+          createdLabel: "मस्यौदा सिर्जना गरिएको",
+          declarationsTitle: "६.१ आवेदकका घोषणाहरू",
+          declarationsIntro: "प्रत्येक आवश्यक घोषणा पढेर त्यसको अर्थमा सहमत भएपछि मात्र चयन गर्नुहोस्।",
+          truthTitle: "जानकारीको सत्यता",
+          truthDescription: "मैले दिएको जानकारी र कागजात मेरो जानकारीअनुसार सत्य, पूर्ण र सही छन् भनी घोषणा गर्छु। गलत, अपूर्ण वा भ्रामक जानकारीका कारण लागू नियमअनुसार आवेदन अस्वीकृत हुन वा अन्य कारबाही हुन सक्छ भन्ने कुरा म बुझ्छु।",
+          authorityTitle: "जाँच र लागू नियमहरू",
+          authorityDescription: "सक्षम निकाय वा संस्थाले लागू नियमअनुसार जानकारी र कागजात जाँच गर्न सक्छ भन्ने कुरा म बुझ्छु। यस घोषणाले मात्र योग्यता प्रमाणित गर्दैन र भर्ना वा सिट बाँडफाँट सुनिश्चित गर्दैन।",
+          privacyConsentTitle: "गोपनीयता जानकारीको स्वीकृति",
+          privacyConsentDescription: "मैले यस पृष्ठको गोपनीयता जानकारी पढेको छु र यो मस्यौदा इन्टरफेसका सीमितताहरू बुझेको छु। यस ब्राउजरमा मस्यौदा सुरक्षित गर्नु कुनै निकायमा सुरक्षित रूपमा आवेदन बुझाउनु बराबर होइन।",
+          requiredNote: "* अगाडि बढ्न तीनवटै घोषणा आवश्यक छन्।",
+          signatureTitle: "६.२ आवेदकको स्वीकृति",
+          signatureIntro: "घोषणा गर्ने व्यक्तिको विवरण लेख्नुहोस्। अधिकृत अभिभावकले यो भाग भर्दै हुनुहुन्छ भने उहाँको नाम लेख्नुहोस्।",
+          typedNameLabel: "घोषणा गर्ने व्यक्तिको पूरा नाम",
+          typedNamePlaceholder: "पूरा नाम लेख्नुहोस्",
+          typedNameHelp: "यो नाम स्वीकृतिको विवरण हो, प्रमाणित डिजिटल हस्ताक्षर होइन।",
+          signedDateLabel: "स्वीकृतिको मिति",
+          relationshipLabel: "आवेदकसँगको सम्बन्ध",
+          relationshipApplicant: "आवेदक",
+          relationshipParent: "आमा वा बुबा",
+          relationshipGuardian: "कानुनी अभिभावक",
+          relationshipRepresentative: "अन्य अधिकृत प्रतिनिधि",
+          relationshipHelp: "आवेदकको तर्फबाट काम गर्ने अधिकार भएको अवस्थामा मात्र प्रतिनिधि विकल्प छान्नुहोस्।",
+          privacyTitle: "६.३ गोपनीयता जानकारी",
+          privacyIntro: "घोषणाहरू सुरक्षित गर्नुअघि तलको जानकारी पढ्नुहोस्।",
+          privacyItem1: "सुरक्षित गर्दा वा अगाडि बढ्दा यस पृष्ठको विवरण ब्राउजरको स्थानीय मस्यौदामा राखिन्छ। यो पृष्ठले आफैँ सर्भरमा जानकारी पठाउँदैन।",
+          privacyItem2: "एउटै उपकरण वा ब्राउजर प्रोफाइल प्रयोग गर्ने अरू व्यक्तिले ब्राउजरमा राखिएको जानकारी हेर्न सक्छन्। संवेदनशील जानकारीका लागि साझा उपकरण प्रयोग गर्दा सावधानी अपनाउनुहोस्।",
+          privacyItem3: "ब्राउजरको डेटा मेटाउँदा, ब्राउजर परिवर्तन गर्दा वा अर्को उपकरण प्रयोग गर्दा मस्यौदा उपलब्ध नहुन सक्छ।",
+          privacyItem4: "सेवाको पहिचान, उद्देश्य र आधिकारिक आवेदन निर्देशन पुष्टि नगरी जानकारी नलेख्नुहोस् वा कागजात अपलोड नगर्नुहोस्।",
+          privacyItem5: "पछिको अनलाइन बुझाइ, डेटा भण्डारण, पहुँच नियन्त्रण र कागजात जाँच सम्बन्धित सेवाको छुट्टै सर्भर र गोपनीयता व्यवस्थामा निर्भर हुन्छ।",
+          privacyDisclaimer: "गोपनीयता सूचना: यो ब्राउजरमा चल्ने मस्यौदा फाराम हो। यसले आफैँ सर्भर-साइड इन्क्रिप्सन, सुरक्षित कागजात भण्डारण, खाता प्रमाणीकरण, मालवेयर जाँच वा कानुनी रूपमा प्रमाणित इलेक्ट्रोनिक हस्ताक्षर सेवा प्रदान गर्दैन।",
+          saveDraft: "मस्यौदा सुरक्षित गर्नुहोस्",
+          printPage: "पृष्ठ प्रिन्ट गर्नुहोस्",
+          previousButton: "← अघिल्लो: कागजात",
+          continueButton: "सुरक्षित गरेर अगाडि बढ्नुहोस् →",
+          footerDraft: "यो मस्यौदा इन्टरफेस मात्र हो। स्थानीय रूपमा सुरक्षित गर्नु आधिकारिक आवेदन बुझाउनु होइन।",
+          footerVerify: "व्यक्तिगत कागजात बुझाउनुअघि हालको आधिकारिक प्रक्रिया र गोपनीयता सूचना जाँच गर्नुहोस्।",
+          footerVersion: "चरण ६ · घोषणा र गोपनीयता",
+          notGenerated: "बनाइएको छैन",
+          notAvailable: "उपलब्ध छैन",
+          saveSuccess: "मस्यौदा यस ब्राउजरमा सुरक्षित भयो।",
+          saveError: "मस्यौदा सुरक्षित गर्न सकिएन। ब्राउजर स्टोरेज सेटिङ र उपलब्ध ठाउँ जाँच गर्नुहोस्।",
+          referenceError: "मस्यौदा सन्दर्भ भेटिएन। चरण १ मा फर्केर मस्यौदा बनाउनुहोस् वा पुनः प्राप्त गर्नुहोस्।",
+          requiredError: "सबै आवश्यक घोषणा चयन गर्नुहोस्, घोषणा गर्ने व्यक्तिको नाम लेख्नुहोस् र मिति छान्नुहोस्।",
+          nextError: "मस्यौदा सुरक्षित हुन सकेन, त्यसैले अर्को पृष्ठ खोलिएन।",
+          invalidName: "कम्तीमा दुईवटा खाली नभएका अक्षर भएको सही नाम लेख्नुहोस्।",
+          invalidDate: "स्वीकृतिको मिति भविष्यको हुन सक्दैन।",
+          storageUnavailable: "ब्राउजर स्टोरेज उपलब्ध छैन। यो पृष्ठ छोडेपछि घोषणाहरू सुरक्षित नरहन सक्छन्।",
+          confirmClear: "यस ब्राउजरबाट यो आवेदनको सुरक्षित मस्यौदा मेटाउने हो? यो कार्य फिर्ता गर्न सकिँदैन।",
+          clearButton: "स्थानीय मस्यौदा मेटाउनुहोस्",
+          clearSuccess: "यस ब्राउजरबाट सुरक्षित मस्यौदा मेटाइयो।",
+          clearError: "स्थानीय मस्यौदा मेटाउन सकिएन।"
+        }
+      };
+
+      let currentLanguage = "en";
+      let storageAvailable = true;
+
+      function t(key) {
+        return translations[currentLanguage]?.[key]
+          || translations.en[key]
+          || key;
+      }
+
+      function safeReadDraft() {
+        try {
+          const raw = localStorage.getItem(DRAFT_KEY);
+
+          if (!raw) {
+            return null;
+          }
+
+          const parsed = JSON.parse(raw);
+
+          if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+            return null;
+          }
+
+          // Preserve compatibility with older flat drafts.
+          if (!parsed.fields || typeof parsed.fields !== "object" || Array.isArray(parsed.fields)) {
+            const legacy = { ...parsed };
+
+            delete legacy.reference;
+            delete legacy.createdAt;
+            delete legacy.lastSavedAt;
+
+            return {
+              reference: parsed.reference || "",
+              createdAt: parsed.createdAt || "",
+              lastSavedAt: parsed.lastSavedAt || "",
+              fields: legacy
+            };
+          }
+
+          return {
+            ...parsed,
+            fields: { ...parsed.fields }
+          };
+        } catch (error) {
+          storageAvailable = false;
+          return null;
+        }
+      }
+
+      function readStoredValue(key) {
+        try {
+          return localStorage.getItem(key);
+        } catch (error) {
+          storageAvailable = false;
+          return null;
+        }
+      }
+
+      function writeStoredValue(key, value) {
+        try {
+          localStorage.setItem(key, value);
+          return true;
+        } catch (error) {
+          storageAvailable = false;
+          return false;
+        }
+      }
+
+      function getDraftReference(draft) {
+        return (
+          draft?.reference
+          || readStoredValue(REFERENCE_KEY)
+          || ""
+        );
+      }
+
+      function getDraftCreatedAt(draft) {
+        return (
+          draft?.createdAt
+          || readStoredValue(CREATED_KEY)
+          || ""
+        );
+      }
+
+      function displayDate(value) {
+        if (!value) {
+          return t("notAvailable");
+        }
+
+        const date = new Date(value);
+
+        if (Number.isNaN(date.getTime())) {
+          return String(value);
+        }
+
+        try {
+          return new Intl.DateTimeFormat(
+            currentLanguage === "en" ? "en-IN"
+              : currentLanguage === "hi" ? "hi-IN"
+              : currentLanguage === "bn" ? "bn-BD"
+              : "ne-NP",
+            { dateStyle: "medium" }
+          ).format(date);
+        } catch (error) {
+          return date.toLocaleDateString();
+        }
+      }
+
+      function refreshReferencePanel(draft) {
+        const reference = getDraftReference(draft);
+        const createdAt = getDraftCreatedAt(draft);
+
+        document.getElementById("applicationReference").textContent =
+          reference || t("notGenerated");
+
+        document.getElementById("draftCreated").textContent =
+          displayDate(createdAt);
+      }
+
+      function showStatus(message, type = "") {
+        statusMessage.textContent = message;
+        statusMessage.className = "status-message visible";
+
+        if (type) {
+          statusMessage.classList.add(type);
+        }
+      }
+
+      function clearStatus() {
+        statusMessage.textContent = "";
+        statusMessage.className = "status-message";
+      }
+
+      function applyLanguage(language) {
+        currentLanguage = translations[language] ? language : "en";
+        document.documentElement.lang = currentLanguage;
+        languageSelect.value = currentLanguage;
+
+        document.querySelectorAll("[data-i18n]").forEach((element) => {
+          const key = element.getAttribute("data-i18n");
+
+          if (translations[currentLanguage][key]) {
+            element.textContent = translations[currentLanguage][key];
+          }
+        });
+
+        document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
+          const key = element.getAttribute("data-i18n-placeholder");
+
+          if (translations[currentLanguage][key]) {
+            element.placeholder = translations[currentLanguage][key];
+          }
+        });
+
+        refreshReferencePanel(safeReadDraft());
+        updateValidationStyles();
+      }
+
+      function collectConsentFields() {
+        return {
+          consentTruth: document.getElementById("consentTruth").checked,
+          consentAuthority: document.getElementById("consentAuthority").checked,
+          consentPrivacy: document.getElementById("consentPrivacy").checked,
+          typedName: document.getElementById("typedName").value.trim(),
+          signedDate: document.getElementById("signedDate").value,
+          signingRelationship: document.getElementById("signingRelationship").value,
+          consentRecordedAt: new Date().toISOString(),
+          consentLanguage: currentLanguage
+        };
+      }
+
+      function validateForm() {
+        clearStatus();
+
+        const nameInput = document.getElementById("typedName");
+        const dateInput = document.getElementById("signedDate");
+
+        const allChecked = [
+          "consentTruth",
+          "consentAuthority",
+          "consentPrivacy"
+        ].every((id) => document.getElementById(id).checked);
+
+        const name = nameInput.value.trim();
+        const validName = name.length >= 2;
+        const selectedDate = dateInput.value;
+        const today = new Date();
+        const localToday = [
+          today.getFullYear(),
+          String(today.getMonth() + 1).padStart(2, "0"),
+          String(today.getDate()).padStart(2, "0")
+        ].join("-");
+
+        const validDate = Boolean(selectedDate) && selectedDate <= localToday;
+
+        nameInput.setAttribute("aria-invalid", String(!validName));
+        dateInput.setAttribute("aria-invalid", String(!validDate));
+
+        document.getElementById("truthDeclaration")
+          .classList.toggle("invalid", !document.getElementById("consentTruth").checked);
+
+        document.getElementById("authorityDeclaration")
+          .classList.toggle("invalid", !document.getElementById("consentAuthority").checked);
+
+        document.getElementById("privacyDeclaration")
+          .classList.toggle("invalid", !document.getElementById("consentPrivacy").checked);
+
+        if (!allChecked) {
+          showStatus(t("requiredError"), "error");
+          return false;
+        }
+
+        if (!validName) {
+          showStatus(t("invalidName"), "error");
+          nameInput.focus();
+          return false;
+        }
+
+        if (!validDate) {
+          showStatus(t("invalidDate"), "error");
+          dateInput.focus();
+          return false;
+        }
+
+        return true;
+      }
+
+      function updateValidationStyles() {
+        document.getElementById("truthDeclaration")
+          .classList.toggle("invalid", false);
+
+        document.getElementById("authorityDeclaration")
+          .classList.toggle("invalid", false);
+
+        document.getElementById("privacyDeclaration")
+          .classList.toggle("invalid", false);
+      }
+
+      function saveDraft() {
+        clearStatus();
+
+        let draft = safeReadDraft();
+
+        if (!draft) {
+          draft = {
+            reference: readStoredValue(REFERENCE_KEY) || "",
+            createdAt: readStoredValue(CREATED_KEY) || "",
+            lastSavedAt: "",
+            fields: {}
+          };
+        }
+
+        const reference = getDraftReference(draft);
+
+        if (!reference) {
+          showStatus(t("referenceError"), "error");
+          return false;
+        }
+
+        draft.reference = reference;
+        draft.createdAt = getDraftCreatedAt(draft) || new Date().toISOString();
+        draft.lastSavedAt = new Date().toISOString();
+        draft.fields = {
+          ...(draft.fields || {}),
+          ...collectConsentFields()
+        };
+
+        if (!writeStoredValue(DRAFT_KEY, JSON.stringify(draft))) {
+          showStatus(t("saveError"), "error");
+          return false;
+        }
+
+        writeStoredValue(REFERENCE_KEY, draft.reference);
+        writeStoredValue(CREATED_KEY, draft.createdAt);
+        writeStoredValue(LANGUAGE_KEY, currentLanguage);
+
+        refreshReferencePanel(draft);
+        showStatus(t("saveSuccess"), "success");
+        return true;
+      }
+
+      function loadDraft() {
+        const draft = safeReadDraft();
+
+        if (!draft) {
+          refreshReferencePanel(null);
+
+          if (!storageAvailable) {
+            showStatus(t("storageUnavailable"), "error");
+          }
+
+          return;
+        }
+
+        refreshReferencePanel(draft);
+
+        const fields = draft.fields || {};
+
+        consentFields.forEach((fieldName) => {
+          if (!Object.prototype.hasOwnProperty.call(fields, fieldName)) {
+            return;
+          }
+
+          const input = document.getElementById(fieldName);
+
+          if (!input) {
+            return;
+          }
+
+          if (input.type === "checkbox") {
+            input.checked = fields[fieldName] === true
+              || fields[fieldName] === "true";
+          } else if (fields[fieldName] !== null && fields[fieldName] !== undefined) {
+            input.value = String(fields[fieldName]);
+          }
+        });
+
+        const storedLanguage = readStoredValue(LANGUAGE_KEY);
+        const savedLanguage = fields.consentLanguage || storedLanguage || "en";
+
+        applyLanguage(savedLanguage);
+
+        if (!storageAvailable) {
+          showStatus(t("storageUnavailable"), "error");
+        }
+      }
+
+      languageSelect.addEventListener("change", () => {
+        currentLanguage = languageSelect.value;
+        applyLanguage(currentLanguage);
+        writeStoredValue(LANGUAGE_KEY, currentLanguage);
+        clearStatus();
+      });
+
+      saveDraftButton.addEventListener("click", () => {
+        saveDraft();
+      });
+
+      document.getElementById("printButton").addEventListener("click", () => {
+        window.print();
+      });
+
+      form.addEventListener("change", (event) => {
+        if (
+          event.target.matches('input[type="checkbox"]')
+          || event.target.matches("input, select")
+        ) {
+          clearStatus();
+        }
+      });
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        if (!validateForm()) {
+          statusMessage.focus();
+          return;
+        }
+
+        const draft = safeReadDraft();
+        const reference = getDraftReference(draft);
+
+        if (!reference) {
+          showStatus(t("referenceError"), "error");
+          statusMessage.focus();
+          return;
+        }
+
+        if (!saveDraft()) {
+          showStatus(t("nextError"), "error");
+          statusMessage.focus();
+          return;
+        }
+
+        // This is navigation to the next local page, not server submission.
+        window.location.href = "page-7-review.html";
+      });
+
+      // Default the date to today's local date for convenience.
+      const dateInput = document.getElementById("signedDate");
+      if (!dateInput.value) {
+        const today = new Date();
+        dateInput.value = [
+          today.getFullYear(),
+          String(today.getMonth() + 1).padStart(2, "0"),
+          String(today.getDate()).padStart(2, "0")
+        ].join("-");
+      }
+
+      loadDraft();
+
+      // Keep date default after loading only if no saved date was provided.
+      if (!dateInput.value) {
+        const today = new Date();
+        dateInput.value = [
+          today.getFullYear(),
+          String(today.getMonth() + 1).padStart(2, "0"),
+          String(today.getDate()).padStart(2, "0")
+        ].join("-");
+      }
+    })();
+  </script>
 </body>
 </html>

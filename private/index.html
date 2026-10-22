@@ -1,0 +1,1162 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Private Admin Dashboard | Donor Trust Quota</title>
+
+  <style>
+    :root {
+      color-scheme: light;
+      --background: #ffffff;
+      --surface: #ffffff;
+      --surface-alt: #f6f7f8;
+      --text: #111111;
+      --muted: #5c626b;
+      --border: #d9dde2;
+      --primary: #111111;
+      --danger: #b42318;
+      --success: #137333;
+      --warning: #8a4b00;
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--background);
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background: var(--background);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, Helvetica, Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      min-height: 44px;
+      padding: 10px 15px;
+      border: 1px solid var(--primary);
+      border-radius: 8px;
+      background: var(--primary);
+      color: #ffffff;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    button:hover:not(:disabled) {
+      opacity: .84;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible {
+      outline: 3px solid #8bb8ff;
+      outline-offset: 2px;
+    }
+
+    button:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    button.secondary {
+      background: #ffffff;
+      color: #111111;
+      border-color: #aeb4bc;
+    }
+
+    button.danger {
+      background: #ffffff;
+      color: var(--danger);
+      border-color: var(--danger);
+    }
+
+    button.success {
+      background: #ffffff;
+      color: var(--success);
+      border-color: var(--success);
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #b9c0c8;
+      border-radius: 8px;
+      background: #ffffff;
+      color: #111111;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 650;
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      border-bottom: 1px solid var(--border);
+      background: #ffffff;
+    }
+
+    .topbar-inner {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 0;
+    }
+
+    .brand {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -.3px;
+    }
+
+    .brand small {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    main {
+      padding: 28px 0 48px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(26px, 4vw, 36px);
+      line-height: 1.2;
+      letter-spacing: -.7px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 19px;
+      letter-spacing: -.2px;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    p {
+      margin: 0 0 12px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .notice {
+      padding: 13px 15px;
+      margin: 20px 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface-alt);
+    }
+
+    .notice.warning {
+      border-color: #e4b66b;
+      background: #fffaf0;
+    }
+
+    .notice.error {
+      border-color: #e5a4a0;
+      background: #fff7f6;
+    }
+
+    .notice.success {
+      border-color: #9ed0aa;
+      background: #f5fff6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .card {
+      min-width: 0;
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 2px 8px rgb(0 0 0 / 3%);
+    }
+
+    .card.full {
+      grid-column: 1 / -1;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .stat {
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #ffffff;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .stat-value {
+      margin-top: 5px;
+      font-size: 21px;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .status-line {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      flex-wrap: wrap;
+      margin: 8px 0;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #777777;
+    }
+
+    .dot.good {
+      background: #16803c;
+    }
+
+    .dot.bad {
+      background: #c5221f;
+    }
+
+    .dot.warn {
+      background: #d88b00;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .field {
+      margin: 14px 0;
+    }
+
+    .help {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .login-wrap {
+      width: min(460px, 100%);
+      margin: 32px auto;
+    }
+
+    .login-card {
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #ffffff;
+      text-align: left;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      overflow-wrap: anywhere;
+    }
+
+    th {
+      background: var(--surface-alt);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 3px 8px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .pill.good {
+      color: var(--success);
+      border-color: #9ed0aa;
+    }
+
+    .pill.bad {
+      color: var(--danger);
+      border-color: #e5a4a0;
+    }
+
+    .pill.warn {
+      color: var(--warning);
+      border-color: #e4b66b;
+    }
+
+    .footer {
+      padding: 20px 0;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 760px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card.full {
+        grid-column: auto;
+      }
+
+      .stat-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar-inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .header-actions {
+        width: 100%;
+      }
+
+      .header-actions button {
+        flex: 1;
+      }
+
+      .card {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        Donor Trust Quota
+        <small>Private administration dashboard</small>
+      </div>
+
+      <div class="header-actions">
+        <button id="refreshButton" class="secondary" type="button">
+          Refresh status
+        </button>
+        <button id="logoutButton" class="secondary hidden" type="button">
+          Log out
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="loginSection" class="login-wrap">
+      <div class="login-card">
+        <h1>Administrator sign in</h1>
+        <p class="muted">
+          Authenticate with your configured admin API token.
+          Do not use your GitHub password here.
+        </p>
+
+        <div class="notice warning">
+          This dashboard is a management interface, not proof of official
+          WBMCC authorization. Use only credentials issued for your own
+          backend.
+        </div>
+
+        <form id="loginForm">
+          <div class="field">
+            <label for="adminToken">Admin API token</label>
+            <input
+              id="adminToken"
+              name="adminToken"
+              type="password"
+              autocomplete="current-password"
+              minlength="32"
+              maxlength="4096"
+              required
+              placeholder="Enter your admin API token"
+            >
+          </div>
+
+          <button id="loginButton" type="submit" style="width:100%">
+            Verify credentials
+          </button>
+        </form>
+
+        <p id="loginMessage" class="muted" role="status" aria-live="polite"
+           style="margin-top:14px"></p>
+      </div>
+    </section>
+
+    <section id="dashboardSection" class="hidden">
+      <h1>Administration overview</h1>
+      <p class="muted">
+        Monitor service availability and manage form availability through
+        your authenticated backend.
+      </p>
+
+      <div id="globalMessage" class="notice hidden" role="status"
+           aria-live="polite"></div>
+
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-label">Backend service</div>
+          <div id="serviceStat" class="stat-value">Unknown</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Application form</div>
+          <div id="formStat" class="stat-value">Unknown</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Last status check</div>
+          <div id="checkedStat" class="stat-value">Not checked</div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <section class="card">
+          <h2>Live service status</h2>
+
+          <div class="status-line">
+            <span id="serviceDot" class="dot"></span>
+            <strong id="serviceStatus">Waiting for status</strong>
+          </div>
+
+          <p id="serviceDetail" class="muted">
+            Status has not been retrieved.
+          </p>
+
+          <div class="button-row">
+            <button id="checkStatusButton" type="button">
+              Check now
+            </button>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Application form controls</h2>
+
+          <div class="status-line">
+            <span id="formDot" class="dot"></span>
+            <strong id="formStatus">Unknown</strong>
+          </div>
+
+          <p class="muted">
+            Locking prevents new submissions only if the public submission
+            endpoint checks the same server-side setting.
+          </p>
+
+          <div class="field">
+            <label for="controlReason">Reason for change</label>
+            <textarea
+              id="controlReason"
+              maxlength="500"
+              placeholder="Enter the reason for this administrative action"
+            ></textarea>
+          </div>
+
+          <div class="button-row">
+            <button id="lockFormButton" class="danger" type="button">
+              Lock form
+            </button>
+            <button id="unlockFormButton" class="success" type="button">
+              Unlock form
+            </button>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Emergency pause</h2>
+
+          <p>
+            Use this control to request an application-submission pause
+            during an incident or maintenance window.
+          </p>
+
+          <div class="notice warning">
+            The backend must enforce this pause on every submission request.
+            Hiding or disabling a button on the website is not sufficient.
+          </div>
+
+          <div class="field">
+            <label for="pauseReason">Pause or resume reason</label>
+            <textarea
+              id="pauseReason"
+              maxlength="500"
+              placeholder="Explain the incident or maintenance reason"
+            ></textarea>
+          </div>
+
+          <div class="button-row">
+            <button id="pauseButton" class="danger" type="button">
+              Emergency pause
+            </button>
+            <button id="resumeButton" class="secondary" type="button">
+              Resume submissions
+            </button>
+          </div>
+
+          <p id="pauseStatus" class="muted" style="margin-top:12px">
+            Pause status not yet verified.
+          </p>
+        </section>
+
+        <section class="card">
+          <h2>Administrative safety</h2>
+          <ul>
+            <li>Keep the admin token out of source code and public files.</li>
+            <li>Use HTTPS for the admin API.</li>
+            <li>Require server-side authorization for every admin route.</li>
+            <li>Record who changed the form state and why.</li>
+            <li>Never expose applicant documents in public responses.</li>
+          </ul>
+        </section>
+
+        <section class="card full">
+          <h2>Applications</h2>
+          <p class="muted">
+            Displays only the records returned by the authenticated backend.
+            Sensitive applicant data should be minimized and access-controlled.
+          </p>
+
+          <div class="button-row">
+            <button id="loadApplicationsButton" type="button">
+              Load applications
+            </button>
+          </div>
+
+          <p id="applicationsMessage" class="muted" role="status"
+             aria-live="polite" style="margin-top:12px"></p>
+
+          <div class="table-wrap" style="margin-top:14px">
+            <table>
+              <thead>
+                <tr>
+                  <th>Reference</th>
+                  <th>Status</th>
+                  <th>Submitted</th>
+                </tr>
+              </thead>
+              <tbody id="applicationsBody">
+                <tr>
+                  <td colspan="3">Applications have not been loaded.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card full">
+          <h2>Audit log</h2>
+          <p class="muted">
+            Shows administrative events returned by the backend.
+          </p>
+
+          <div class="button-row">
+            <button id="loadAuditButton" class="secondary" type="button">
+              Load audit log
+            </button>
+          </div>
+
+          <p id="auditMessage" class="muted" role="status"
+             aria-live="polite" style="margin-top:12px"></p>
+
+          <div class="table-wrap" style="margin-top:14px">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Action</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody id="auditBody">
+                <tr>
+                  <td colspan="3">Audit events have not been loaded.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      Private admin interface. Do not share access tokens or applicant
+      information. This page does not itself confer official authority.
+    </div>
+  </footer>
+
+  <script>
+    "use strict";
+
+    /*
+     * Backend routes expected by this dashboard.
+     *
+     * POST /api/access
+     * GET  /api/admin/status
+     * POST /api/admin/form-control
+     * GET  /api/v1/admin/applications
+     * GET  /api/admin/audit-log
+     *
+     * The backend must implement and authorize every route. The last three
+     * admin-control/status/audit contracts are not provided by this HTML.
+     */
+
+    const API = {
+      access: "/api/access",
+      status: "/api/admin/status",
+      formControl: "/api/admin/form-control",
+      applications: "/api/v1/admin/applications",
+      audit: "/api/admin/audit-log"
+    };
+
+    const $ = (id) => document.getElementById(id);
+
+    let adminToken = "";
+    let lastStatus = null;
+    let statusTimer = null;
+    let requestInProgress = false;
+
+    function setMessage(id, message, type) {
+      const element = $(id);
+      element.textContent = message;
+      element.classList.remove("hidden", "warning", "error", "success");
+
+      if (type) {
+        element.classList.add(type);
+      }
+
+      if (!message) {
+        element.classList.add("hidden");
+      }
+    }
+
+    function setButtonBusy(button, busy, busyText) {
+      if (!button.dataset.originalText) {
+        button.dataset.originalText = button.textContent;
+      }
+
+      button.disabled = busy;
+      button.textContent = busy
+        ? (busyText || "Please wait…")
+        : button.dataset.originalText;
+    }
+
+    function escapeDisplay(value) {
+      if (value === null || value === undefined || value === "") {
+        return "--";
+      }
+
+      return String(value).slice(0, 1000);
+    }
+
+    function makeCell(value) {
+      const cell = document.createElement("td");
+      cell.textContent = escapeDisplay(value);
+      return cell;
+    }
+
+    function makeRow(values) {
+      const row = document.createElement("tr");
+
+      values.forEach((value) => {
+        row.appendChild(makeCell(value));
+      });
+
+      return row;
+    }
+
+    async function apiRequest(path, options = {}) {
+      const headers = new Headers(options.headers || {});
+      headers.set("Accept", "application/json");
+
+      if (options.body !== undefined) {
+        headers.set("Content-Type", "application/json");
+      }
+
+      if (adminToken) {
+        headers.set("Authorization", "Bearer " + adminToken);
+      }
+
+      const response = await fetch(path, {
+        ...options,
+        headers,
+        credentials: "same-origin",
+        cache: "no-store",
+        redirect: "error"
+      });
+
+      const contentType = response.headers.get("content-type") || "";
+      let data = null;
+
+      if (contentType.includes("application/json")) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        data = { message: text.slice(0, 500) };
+      }
+
+      if (!response.ok) {
+        const message =
+          data && typeof data.message === "string"
+            ? data.message
+            : "Request failed with HTTP " + response.status;
+
+        throw new Error(message);
+      }
+
+      return data || {};
+    }
+
+    async function verifyToken(token) {
+      const data = await apiRequest(API.access, {
+        method: "POST",
+        body: JSON.stringify({ purpose: "admin" }),
+        headers: {
+          Authorization: "Bearer " + token
+        }
+      });
+
+      if (data.authenticated !== true && data.ok !== true) {
+        throw new Error("The backend did not confirm authentication.");
+      }
+
+      return data;
+    }
+
+    function showDashboard() {
+      $("loginSection").classList.add("hidden");
+      $("dashboardSection").classList.remove("hidden");
+      $("logoutButton").classList.remove("hidden");
+    }
+
+    function showLogin() {
+      $("dashboardSection").classList.add("hidden");
+      $("loginSection").classList.remove("hidden");
+      $("logoutButton").classList.add("hidden");
+      $("adminToken").value = "";
+      $("loginMessage").textContent = "";
+    }
+
+    function setDot(id, state) {
+      const dot = $(id);
+      dot.className = "dot";
+
+      if (state === "good") {
+        dot.classList.add("good");
+      } else if (state === "bad") {
+        dot.classList.add("bad");
+      } else if (state === "warn") {
+        dot.classList.add("warn");
+      }
+    }
+
+    function renderStatus(data) {
+      lastStatus = data;
+
+      const healthy =
+        data.service === "ok" ||
+        data.service === "healthy" ||
+        data.ok === true;
+
+      const locked = data.formLocked === true;
+      const paused = data.emergencyPaused === true;
+
+      $("serviceStat").textContent = healthy ? "Healthy" : "Check";
+      $("formStat").textContent = paused
+        ? "Paused"
+        : locked
+          ? "Locked"
+          : "Open";
+
+      $("serviceStatus").textContent =
+        healthy ? "Backend responding" : "Backend status requires attention";
+
+      $("serviceDetail").textContent =
+        data.message ||
+        (healthy
+          ? "The status endpoint reports a healthy service."
+          : "Review the backend response and server logs.");
+
+      setDot("serviceDot", healthy ? "good" : "bad");
+
+      $("formStatus").textContent = paused
+        ? "Emergency pause enabled"
+        : locked
+          ? "Form locked"
+          : "Form reported open";
+
+      setDot("formDot", paused || locked ? "bad" : "good");
+
+      $("pauseStatus").textContent = paused
+        ? "The backend reports that submissions are paused."
+        : "The backend does not report an emergency pause.";
+
+      $("checkedStat").textContent =
+        new Date().toLocaleTimeString();
+
+      $("lockFormButton").disabled = locked;
+      $("unlockFormButton").disabled = !locked;
+      $("pauseButton").disabled = paused;
+      $("resumeButton").disabled = !paused;
+    }
+
+    async function refreshStatus() {
+      if (!adminToken || requestInProgress) {
+        return;
+      }
+
+      requestInProgress = true;
+      setButtonBusy($("checkStatusButton"), true, "Checking…");
+
+      try {
+        const data = await apiRequest(API.status, { method: "GET" });
+
+        if (typeof data.formLocked !== "boolean" ||
+            typeof data.emergencyPaused !== "boolean") {
+          throw new Error(
+            "Status response must include boolean formLocked and emergencyPaused fields."
+          );
+        }
+
+        renderStatus(data);
+        setMessage("globalMessage", "Status updated successfully.", "success");
+      } catch (error) {
+        setDot("serviceDot", "bad");
+        $("serviceStat").textContent = "Unavailable";
+        $("serviceStatus").textContent = "Status check failed";
+        $("serviceDetail").textContent = error.message;
+        $("checkedStat").textContent = new Date().toLocaleTimeString();
+
+        setMessage(
+          "globalMessage",
+          "Could not verify live status: " + error.message,
+          "error"
+        );
+      } finally {
+        requestInProgress = false;
+        setButtonBusy($("checkStatusButton"), false);
+        setButtonBusy($("refreshButton"), false);
+      }
+    }
+
+    async function changeFormControl(action, reason) {
+      if (!adminToken) {
+        throw new Error("Please sign in first.");
+      }
+
+      if (!reason.trim()) {
+        throw new Error("Enter a reason before changing form controls.");
+      }
+
+      const confirmed = window.confirm(
+        "Confirm administrative action: " + action +
+        "\n\nReason: " + reason.trim()
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      const requestId = crypto.randomUUID
+        ? crypto.randomUUID()
+        : String(Date.now()) + "-" + Math.random().toString(16).slice(2);
+
+      const data = await apiRequest(API.formControl, {
+        method: "POST",
+        body: JSON.stringify({
+          action,
+          reason: reason.trim(),
+          requestId
+        })
+      });
+
+      if (data.ok !== true) {
+        throw new Error(
+          data.message || "The backend did not confirm the action."
+        );
+      }
+
+      setMessage(
+        "globalMessage",
+        data.message || "The backend accepted the control change.",
+        "success"
+      );
+
+      await refreshStatus();
+    }
+
+    async function loadApplications() {
+      setMessage("applicationsMessage", "Loading applications…");
+
+      try {
+        const data = await apiRequest(API.applications, {
+          method: "GET"
+        });
+
+        const applications = Array.isArray(data.applications)
+          ? data.applications
+          : [];
+
+        const body = $("applicationsBody");
+        body.replaceChildren();
+
+        if (applications.length === 0) {
+          body.appendChild(makeRow(["No records", "--", "--"]));
+        } else {
+          applications.forEach((application) => {
+            body.appendChild(makeRow([
+              application.reference || application.id,
+              application.status,
+              application.createdAt || application.created_at
+            ]));
+          });
+        }
+
+        setMessage(
+          "applicationsMessage",
+          applications.length + " record(s) returned by the backend.",
+          "success"
+        );
+      } catch (error) {
+        setMessage(
+          "applicationsMessage",
+          "Unable to load applications: " + error.message,
+          "error"
+        );
+      }
+    }
+
+    async function loadAuditLog() {
+      setMessage("auditMessage", "Loading audit log…");
+
+      try {
+        const data = await apiRequest(API.audit, { method: "GET" });
+        const entries = Array.isArray(data.entries) ? data.entries : [];
+        const body = $("auditBody");
+
+        body.replaceChildren();
+
+        if (entries.length === 0) {
+          body.appendChild(makeRow(["No events", "--", "--"]));
+        } else {
+          entries.forEach((entry) => {
+            body.appendChild(makeRow([
+              entry.createdAt || entry.created_at || entry.timestamp,
+              entry.action || entry.event,
+              entry.details || entry.reason || entry.message
+            ]));
+          });
+        }
+
+        setMessage(
+          "auditMessage",
+          entries.length + " audit event(s) returned.",
+          "success"
+        );
+      } catch (error) {
+        setMessage(
+          "auditMessage",
+          "Unable to load audit log: " + error.message,
+          "error"
+        );
+      }
+    }
+
+    $("loginForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const token = $("adminToken").value.trim();
+
+      if (token.length < 32) {
+        setMessage(
+          "loginMessage",
+          "Enter the admin API token configured on your backend.",
+          "error"
+        );
+        return;
+      }
+
+      setButtonBusy($("loginButton"), true, "Verifying…");
+      setMessage("loginMessage", "Verifying credentials…");
+
+      try {
+        // Do not retain the token unless the backend confirms it.
+        await verifyToken(token);
+        adminToken = token;
+
+        showDashboard();
+        setMessage("globalMessage", "Authentication accepted.", "success");
+        await refreshStatus();
+
+        if (statusTimer) {
+          clearInterval(statusTimer);
+        }
+
+        statusTimer = setInterval(refreshStatus, 30000);
+      } catch (error) {
+        adminToken = "";
+        setMessage(
+          "loginMessage",
+          "Sign-in failed: " + error.message,
+          "error"
+        );
+      } finally {
+        setButtonBusy($("loginButton"), false);
+      }
+    });
+
+    $("logoutButton").addEventListener("click", () => {
+      adminToken = "";
+      lastStatus = null;
+
+      if (statusTimer) {
+        clearInterval(statusTimer);
+        statusTimer = null;
+      }
+
+      showLogin();
+      setMessage("globalMessage", "");
+    });
+
+    $("refreshButton").addEventListener("click", refreshStatus);
+    $("checkStatusButton").addEventListener("click", refreshStatus);
+    $("loadApplicationsButton").addEventListener("click", loadApplications);
+    $("loadAuditButton").addEventListener("click", loadAuditLog);
+
+    $("lockFormButton").addEventListener("click", async () => {
+      try {
+        await changeFormControl("lock", $("controlReason").value);
+      } catch (error) {
+        setMessage("globalMessage", error.message, "error");
+      }
+    });
+
+    $("unlockFormButton").addEventListener("click", async () => {
+      try {
+        await changeFormControl("unlock", $("controlReason").value);
+      } catch (error) {
+        setMessage("globalMessage", error.message, "error");
+      }
+    });
+
+    $("pauseButton").addEventListener("click", async () => {
+      try {
+        await changeFormControl("emergency_pause", $("pauseReason").value);
+      } catch (error) {
+        setMessage("globalMessage", error.message, "error");
+      }
+    });
+
+    $("resumeButton").addEventListener("click", async () => {
+      try {
+        await changeFormControl("resume", $("pauseReason").value);
+      } catch (error) {
+        setMessage("globalMessage", error.message, "error");
+      }
+    });
+
+    window.addEventListener("pagehide", () => {
+      if (statusTimer) {
+        clearInterval(statusTimer);
+      }
+    });
+  </script>
+</body>
+</html>

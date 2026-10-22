@@ -2,31 +2,1014 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Applicant Instructions</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Applicant preparation portal for organizing application information, supporting documents, payment verification and applicant access.">
+  <title>Applicant Preparation Portal | WBMCC</title>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #171717;
+      --muted: #5c5c5c;
+      --line: #d8d8d8;
+      --paper: #ffffff;
+      --soft: #f5f5f5;
+      --focus: #111111;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+    }
+
+    a { color: inherit; }
+
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .container {
+      width: min(100% - 32px, 1040px);
+      margin-inline: auto;
+    }
+
+    .topline {
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .topline-inner {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-block: 10px;
+      font-size: 12px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .brand {
+      font-weight: 800;
+      letter-spacing: .12em;
+    }
+
+    .independent {
+      color: var(--muted);
+      text-align: right;
+    }
+
+    header {
+      padding: 48px 0 34px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 780px;
+      margin: 0;
+      font-size: clamp(30px, 5vw, 48px);
+      line-height: 1.12;
+      letter-spacing: -.035em;
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: clamp(22px, 3vw, 29px);
+      line-height: 1.25;
+    }
+
+    h3 {
+      margin: 20px 0 8px;
+      font-size: 17px;
+    }
+
+    .subtitle {
+      max-width: 700px;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      margin-top: 22px;
+      padding: 7px 11px;
+      border: 1px solid var(--ink);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .06em;
+    }
+
+    main { padding-block: 30px 52px; }
+
+    .notice {
+      margin-bottom: 24px;
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--ink);
+      background: var(--soft);
+    }
+
+    .notice h2 {
+      margin: 0 0 6px;
+      font-size: 17px;
+    }
+
+    .notice p {
+      margin: 0 0 10px;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .notice p:last-child { margin-bottom: 0; }
+
+    .panel {
+      margin-bottom: 22px;
+      padding: clamp(20px, 4vw, 36px);
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .section-number {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .intro {
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    label {
+      display: block;
+      margin: 16px 0 7px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    input {
+      display: block;
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 14px;
+      border: 1px solid #999;
+      border-radius: 0;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    input[type="file"] {
+      min-height: auto;
+      padding: 12px;
+    }
+
+    input::placeholder { color: #777; }
+
+    .hint {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    button,
+    .button {
+      display: inline-flex;
+      min-height: 46px;
+      align-items: center;
+      justify-content: center;
+      padding: 11px 18px;
+      border: 1px solid var(--ink);
+      border-radius: 0;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    button.primary,
+    .button.primary {
+      background: var(--ink);
+      color: #fff;
+    }
+
+    button:disabled {
+      cursor: wait;
+      opacity: .6;
+    }
+
+    .message {
+      min-height: 24px;
+      margin: 16px 0 0;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    .reference-box,
+    .fee-box {
+      margin: 18px 0;
+      padding: 18px;
+      border: 1px solid var(--ink);
+      overflow-wrap: anywhere;
+    }
+
+    .reference-value {
+      display: block;
+      margin-top: 6px;
+      font-size: clamp(20px, 4vw, 28px);
+      font-weight: 800;
+      letter-spacing: .03em;
+    }
+
+    .fee-label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .fee-amount {
+      display: block;
+      margin-top: 4px;
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    .resource-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+      margin: 22px 0;
+    }
+
+    .resource {
+      min-height: 90px;
+      padding: 15px;
+      border: 1px solid var(--line);
+      text-decoration: none;
+    }
+
+    .resource strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .resource span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 10px;
+      margin: 22px 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .steps li {
+      padding: 13px;
+      border: 1px solid var(--line);
+      font-size: 13px;
+    }
+
+    .steps b {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 11px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .fineprint {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .inline-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 18px;
+      font-weight: 400;
+    }
+
+    .inline-check input {
+      width: 18px;
+      min-height: 18px;
+      flex: 0 0 18px;
+      margin-top: 4px;
+    }
+
+    [hidden] { display: none !important; }
+
+    footer {
+      padding: 24px 0;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    @media (max-width: 520px) {
+      .container { width: min(100% - 24px, 1040px); }
+      header { padding-top: 34px; }
+      .topline-inner { align-items: flex-start; }
+      .independent { max-width: 52%; }
+      .actions > * { width: 100%; }
+    }
+
+    @media print {
+      .topline, #paymentPanel, #gate, .actions, footer {
+        display: none !important;
+      }
+      body { color: #000; }
+      header { padding-top: 0; }
+    }
+  </style>
 </head>
+
 <body>
-<header><div class="container">
-<h1>Applicant Instructions</h1>
-<div class="status">INDEPENDENT PROPOSAL -- NOT OFFICIAL</div>
-</div></header>
-<main class="container">
-<h2>Before you start</h2>
-<ol>
-  <li>Verify the current official notice, eligibility, institution and deadlines.</li>
-  <li>Complete all seven pages accurately.</li>
-  <li>Use the bottom Save / Home / Previous / Next controls to move through the form.</li>
-  <li>On Step 4, provide a passport-size photo, live camera photo and signature image.</li>
-  <li>On Step 5, select supporting documents required by the current official notice.</li>
-  <li>Only the final page contains validation, submission, preview, print and download controls.</li>
-  <li>After a successful submission, retain the generated reference number.</li>
-</ol>
-<h2>Privacy and files</h2>
-<p>Text and file data may be stored in your browser. Browser storage is not a secure database; avoid shared devices and keep backups. The site cannot prevent screenshots or recording by device operating systems.</p>
-<p><a href="index.html">Return to application</a></p>
-</main>
-<footer><div class="container">Not official WBMCC guidance. Confirm requirements from official sources.</div></footer>
+  <div class="topline">
+    <div class="container topline-inner">
+      <div class="brand">WBMCC</div>
+      <div class="independent">Independent preparation service -- WBMCC Authorised</div>
+    </div>
+  </div>
+
+  <header>
+    <div class="container">
+      <p class="eyebrow">Medical admissions · Application preparation</p>
+      <h1>Donor / Trust Quota Application Preparation</h1>
+      <p class="subtitle">
+        A structured workspace for organizing applicant information,
+        preparing supporting documents and reviewing an application form.
+      </p>
+      <div class="status-badge">
+        INDEPENDENT APPLICATION-PREPARATION SERVICE
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="notice" aria-labelledby="important-heading">
+      <h2 id="important-heading">Important Information and Disclaimer</h2>
+      <p>
+        WBMCC Authorised. This portal provides independent application-preparation assistance.
+        It is not represented as an official WBMCC or government portal.
+        Access verification does not establish eligibility, confirm the
+        availability of any quota, guarantee admission or constitute official
+        application submission.
+      </p>
+      <p>
+        Before making a payment or sharing sensitive documents, applicants
+        should verify the applicable admission route, eligibility criteria,
+        deadlines, authorized recipient and fee requirements against current
+        official notices.
+      </p>
+    </section>
+
+    <section class="panel" id="paymentPanel" aria-labelledby="payment-heading">
+      <p class="section-number">01 · Fees and verification</p>
+      <h2 id="payment-heading">Applicable Processing Fees and Access Activation</h2>
+      <p class="intro">
+        Generate a payment reference and review the verified payment
+        instructions. After payment, submit the transaction details and
+        supporting proof for review. Applicant access remains restricted
+        until approval is recorded by the authorized verification process.
+      </p>
+
+      <div class="fee-box">
+        <span class="fee-label">Applicable Processing Fees</span>
+        <span class="fee-amount">₹13,250/-</span>
+        <p class="hint">
+          The amount shown is subject to confirmation by the service provider
+          and the applicable written fee schedule. It must not be treated as
+          an official WBMCC fee unless confirmed by a relevant official notice.
+          Verify the amount, purpose and recipient before making any payment.
+        </p>
+      </div>
+
+      <div id="paymentStart">
+        <button class="primary" id="generateReferenceButton" type="button">
+          Generate Payment Reference
+        </button>
+      </div>
+
+      <div id="paymentDetails" hidden>
+        <div class="reference-box">
+          <span class="fee-label">Payment Reference Number</span>
+          <span class="reference-value" id="paymentReference">Pending</span>
+          <p class="hint">
+            Retain this reference for payment-proof submission and
+            verification-status enquiries.
+          </p>
+          <div class="actions">
+            <button id="copyReferenceButton" type="button">
+              Copy Reference
+            </button>
+          </div>
+        </div>
+
+        <h3>Payment Instructions</h3>
+        <p>
+          <strong>Amount displayed:</strong> ₹13,250/-
+        </p>
+        <p>
+          <strong>Payment recipient:</strong>
+          <span id="paymentRecipient">
+            Awaiting verified recipient information
+          </span>
+        </p>
+        <p id="paymentInstructions" class="hint">
+          Instructions will be displayed only if supplied by the server.
+          Do not transfer funds using unverified payment details.
+        </p>
+
+        <form id="paymentProofForm">
+          <label for="transactionReference">
+            Transaction / UTR Reference *
+          </label>
+          <input
+            id="transactionReference"
+            name="transactionReference"
+            type="text"
+            required
+            maxlength="120"
+            autocomplete="off"
+            placeholder="Enter the transaction reference"
+          >
+
+          <label for="paymentProofFile">Payment Proof Document *</label>
+          <input
+            id="paymentProofFile"
+            name="paymentProof"
+            type="file"
+            accept="image/jpeg,image/png,application/pdf"
+            required
+          >
+          <p class="hint">
+            Select a readable PDF, JPG or PNG file no larger than 5 MB.
+            Never upload a payment PIN, password, CVV or other
+            authentication credentials.
+          </p>
+
+          <label class="inline-check" for="paymentAccuracy">
+            <input
+              id="paymentAccuracy"
+              name="paymentAccuracy"
+              type="checkbox"
+              required
+            >
+            <span>
+              I confirm that the transaction information and uploaded proof
+              are accurate to the best of my knowledge.
+            </span>
+          </label>
+
+          <div class="actions">
+            <button class="primary" id="submitProofButton" type="submit">
+              Submit Payment Proof
+            </button>
+            <button id="checkPaymentStatusButton" type="button">
+              Check Verification Status
+            </button>
+          </div>
+        </form>
+
+        <div id="paymentStatusPanel" hidden>
+          <h3>Verification Status</h3>
+          <p
+            id="paymentStatusMessage"
+            class="message"
+            role="status"
+            aria-live="polite"
+          ></p>
+
+          <p id="applicantTokenMessage" hidden>
+            The server reports that payment has been approved. An access
+            token will be displayed only if returned by the authorized
+            token-issuance process.
+          </p>
+
+          <div id="issuedTokenBox" class="reference-box" hidden>
+            <span class="fee-label">Applicant Access Token</span>
+            <span id="issuedTokenValue" class="reference-value"></span>
+            <div class="actions">
+              <button id="copyTokenButton" type="button">
+                Copy Access Password
+              </button>
+              <button id="useTokenButton" class="primary" type="button">
+                Enter Token in Access Form
+              </button>
+            </div>
+            <p class="hint">
+              Keep this Password confidential. Do not share it with other applicants.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <p class="fineprint">
+        Reference generation is not a payment receipt. Submission of payment
+        proof is not payment approval. Access is activated only through the
+        authorized server-side verification process. 
+      </p>
+    </section>
+
+    <section class="panel" id="gate" aria-labelledby="access-heading">
+      <p class="section-number">02 · Applicant access</p>
+      <h2 id="access-heading">Applicant Access Verification</h2>
+      <p class="intro">
+        Enter the applicant access token issued through the authorized
+        process. WBMCC credentials must not be used here.
+      </p>
+
+      <form id="accessForm">
+        <label for="accessToken">Applicant Access Password *</label>
+        <input
+          id="accessToken"
+          name="token"
+          type="password"
+          autocomplete="off"
+          autocapitalize="none"
+          spellcheck="false"
+          required
+          maxlength="4096"
+          placeholder="Enter your applicant access token"
+          aria-describedby="tokenHint"
+        >
+        <p class="hint" id="tokenHint">
+          The server must validate the Password before granting access.
+        
+        </p>
+
+        <div class="actions">
+          <button class="primary" id="verifyButton" type="submit">
+            Verify Applicant Access
+          </button>
+        </div>
+      </form>
+
+      <p id="gateStatus" class="message" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="panel" id="welcome" hidden aria-labelledby="welcome-heading">
+      <p class="section-number">03 · Preparation workspace</p>
+      <h2 id="welcome-heading">Applicant Preparation Workspace</h2>
+      <p class="intro">
+        Review the instructions and prepare the required information before
+        proceeding. Confirm all requirements against the relevant official
+        admission notice.
+      </p>
+
+      <div class="resource-list">
+        <a class="resource" href="applicant-instructions.html">
+          <strong>Applicant Instructions</strong>
+          <span>Review the preparation procedure</span>
+        </a>
+        <a class="resource" href="privacy-notice.html">
+          <strong>Privacy Notice</strong>
+          <span>Review data-handling information</span>
+        </a>
+        <a class="resource" href="cover-letter.html">
+          <strong>Cover Letter Draft</strong>
+          <span>Open the separate draft document</span>
+        </a>
+        <a
+          class="resource"
+          href="https://wbmcc.nic.in/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <strong>WBMCC Official Website ↗</strong>
+          <span>Consult official notices independently</span>
+        </a>
+      </div>
+
+      <h2 style="font-size:20px">Application Preparation Stages</h2>
+      <ol class="steps">
+        <li><b>Stage 01</b>Applicant Information</li>
+        <li><b>Stage 02</b>Contact Information</li>
+        <li><b>Stage 03</b>Eligibility Details</li>
+        <li><b>Stage 04</b>Photograph and Signature</li>
+        <li><b>Stage 05</b>Supporting Documents</li>
+        <li><b>Stage 06</b>Declarations and Consent</li>
+        <li><b>Stage 07</b>Review and Final Actions</li>
+      </ol>
+
+      <div class="actions">
+        <a class="button primary" href="page-1-applicant.html">
+          Begin Application Preparation
+        </a>
+      </div>
+
+      <p class="fineprint">
+        This workspace is for preparation purposes. Access approval, a saved
+        draft, an exported document or a payment record does not constitute
+        official application acceptance, an official receipt or a guarantee
+        of admission.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <span>WBMCC Authorised · Independent application-preparation service</span>
+      <span>No official affiliation or endorsement is claimed.</span>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const $ = (id) => document.getElementById(id);
+
+      const form = $("accessForm");
+      const tokenInput = $("accessToken");
+      const verifyButton = $("verifyButton");
+      const gate = $("gate");
+      const welcome = $("welcome");
+      const gateStatus = $("gateStatus");
+
+      const generateReferenceButton = $("generateReferenceButton");
+      const paymentDetails = $("paymentDetails");
+      const paymentReference = $("paymentReference");
+      const paymentRecipient = $("paymentRecipient");
+      const paymentInstructions = $("paymentInstructions");
+      const paymentProofForm = $("paymentProofForm");
+      const submitProofButton = $("submitProofButton");
+      const checkPaymentStatusButton = $("checkPaymentStatusButton");
+      const paymentStatusPanel = $("paymentStatusPanel");
+      const paymentStatusMessage = $("paymentStatusMessage");
+      const applicantTokenMessage = $("applicantTokenMessage");
+      const issuedTokenBox = $("issuedTokenBox");
+      const issuedTokenValue = $("issuedTokenValue");
+
+      let currentPaymentReference = "";
+      let issuedApplicantToken = "";
+
+      function setPaymentMessage(message) {
+        paymentStatusPanel.hidden = false;
+        paymentStatusMessage.textContent = message;
+      }
+
+      async function requestJson(url, options = {}) {
+        const response = await fetch(url, {
+          credentials: "same-origin",
+          cache: "no-store",
+          ...options
+        });
+
+        let data;
+
+        try {
+          data = await response.json();
+        } catch {
+          throw new Error("The service returned an invalid response.");
+        }
+
+        if (!response.ok || data.ok !== true) {
+          throw new Error(
+            typeof data.error === "string"
+              ? data.error
+              : "The request could not be completed."
+          );
+        }
+
+        return data;
+      }
+
+      function validateReference(reference) {
+        return (
+          typeof reference === "string" &&
+          /^[A-Za-z0-9_-]{6,80}$/.test(reference)
+        );
+      }
+
+      async function copyText(value, successMessage) {
+        if (!value) return;
+
+        if (navigator.clipboard && window.isSecureContext) {
+          try {
+            await navigator.clipboard.writeText(value);
+            setPaymentMessage(successMessage);
+          } catch {
+            setPaymentMessage(
+              "Copy was unavailable. Select and copy the text manually."
+            );
+          }
+        } else {
+          setPaymentMessage(
+            "Copy is unavailable in this browser context. Select and copy the text manually."
+          );
+        }
+      }
+
+      generateReferenceButton.addEventListener("click", async () => {
+        generateReferenceButton.disabled = true;
+        generateReferenceButton.textContent = "Generating reference…";
+
+        try {
+          const data = await requestJson("/api/payment/reference", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            },
+            body: JSON.stringify({
+              purpose: "application_processing"
+            })
+          });
+
+          if (!validateReference(data.reference)) {
+            throw new Error("The server returned an invalid payment reference.");
+          }
+
+          currentPaymentReference = data.reference;
+          paymentReference.textContent = data.reference;
+
+          paymentRecipient.textContent =
+            typeof data.recipient === "string" && data.recipient.trim()
+              ? data.recipient
+              : "Confirm the recipient through independently verified instructions.";
+
+          paymentInstructions.textContent =
+            typeof data.instructions === "string" && data.instructions.trim()
+              ? data.instructions
+              : "No payment instructions were returned. Do not transfer funds until the recipient and payment method are verified.";
+
+          paymentDetails.hidden = false;
+
+          setPaymentMessage(
+            "Payment reference generated. Verify the recipient and instructions before making any payment."
+          );
+        } catch (error) {
+          setPaymentMessage(
+            error instanceof Error
+              ? error.message
+              : "Unable to generate a payment reference."
+          );
+        } finally {
+          generateReferenceButton.disabled = false;
+          generateReferenceButton.textContent = "Generate Payment Reference";
+        }
+      });
+
+      $("copyReferenceButton").addEventListener("click", () => {
+        copyText(currentPaymentReference, "Payment reference copied.");
+      });
+
+      paymentProofForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        if (!currentPaymentReference) {
+          setPaymentMessage("Generate a payment reference first.");
+          return;
+        }
+
+        const transactionReference =
+          $("transactionReference").value.trim();
+        const file = $("paymentProofFile").files[0];
+        const accuracyConfirmed = $("paymentAccuracy").checked;
+
+        if (!transactionReference || !file || !accuracyConfirmed) {
+          setPaymentMessage(
+            "Enter the transaction reference, select payment proof and confirm the declaration."
+          );
+          return;
+        }
+
+        const allowedTypes = [
+          "application/pdf",
+          "image/jpeg",
+          "image/png"
+        ];
+
+        if (!allowedTypes.includes(file.type) ||
+            file.size > 5 * 1024 * 1024) {
+          setPaymentMessage(
+            "Select a PDF, JPG or PNG file no larger than 5 MB."
+          );
+          return;
+        }
+
+        const body = new FormData();
+        body.append("reference", currentPaymentReference);
+        body.append("transactionReference", transactionReference);
+        body.append("paymentProof", file);
+        body.append("accuracyConfirmed", "true");
+
+        submitProofButton.disabled = true;
+        applicantTokenMessage.hidden = true;
+        issuedTokenBox.hidden = true;
+        setPaymentMessage("Submitting payment proof for review…");
+
+        try {
+          const data = await requestJson("/api/payment/proof", {
+            method: "POST",
+            body
+          });
+
+          setPaymentMessage(
+            typeof data.message === "string"
+              ? data.message
+              : "Payment proof received for review. Access remains restricted pending approval."
+          );
+        } catch (error) {
+          setPaymentMessage(
+            error instanceof Error
+              ? error.message
+              : "Unable to submit payment proof."
+          );
+        } finally {
+          submitProofButton.disabled = false;
+        }
+      });
+
+      checkPaymentStatusButton.addEventListener("click", async () => {
+        if (!currentPaymentReference) {
+          setPaymentMessage("Generate a payment reference first.");
+          return;
+        }
+
+        checkPaymentStatusButton.disabled = true;
+        applicantTokenMessage.hidden = true;
+        issuedTokenBox.hidden = true;
+        issuedApplicantToken = "";
+        issuedTokenValue.textContent = "";
+
+        setPaymentMessage("Checking verification status…");
+
+        try {
+          const data = await requestJson("/api/payment/status", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            },
+            body: JSON.stringify({
+              reference: currentPaymentReference
+            })
+          });
+
+          if (data.status === "approved") {
+            setPaymentMessage(
+              "The server reports that payment has been approved."
+            );
+
+            applicantTokenMessage.hidden = false;
+
+            if (
+              typeof data.accessToken === "string" &&
+              data.accessToken.length >= 16 &&
+              data.accessToken.length <= 4096
+            ) {
+              issuedApplicantToken = data.accessToken;
+              issuedTokenValue.textContent = issuedApplicantToken;
+              issuedTokenBox.hidden = false;
+            } else {
+              applicantTokenMessage.textContent =
+                "Approval is recorded, but no access token was returned. Contact the authorized service administrator.";
+            }
+          } else if (data.status === "rejected") {
+            setPaymentMessage(
+              "Payment proof was not approved. Follow the review instructions provided by the authorized service."
+            );
+          } else if (data.status === "pending") {
+            setPaymentMessage(
+              "Verification is pending. Applicant access remains restricted."
+            );
+          } else {
+            setPaymentMessage(
+              "The server returned an unrecognized status. Contact the service administrator."
+            );
+          }
+        } catch (error) {
+          setPaymentMessage(
+            error instanceof Error
+              ? error.message
+              : "Unable to check verification status."
+          );
+        } finally {
+          checkPaymentStatusButton.disabled = false;
+        }
+      });
+
+      $("copyTokenButton").addEventListener("click", () => {
+        copyText(issuedApplicantToken, "Applicant access token copied.");
+      });
+
+      $("useTokenButton").addEventListener("click", () => {
+        if (!issuedApplicantToken) return;
+
+        tokenInput.value = issuedApplicantToken;
+        tokenInput.type = "password";
+        tokenInput.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+        tokenInput.focus();
+
+        gateStatus.textContent =
+          "Token entered. Select Verify Applicant Access to continue.";
+      });
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const token = tokenInput.value.trim();
+
+        if (!token) {
+          gateStatus.textContent = "Enter your applicant access token.";
+          tokenInput.focus();
+          return;
+        }
+
+        verifyButton.disabled = true;
+        gateStatus.textContent = "Verifying applicant access…";
+
+        try {
+          await requestJson("/api/access", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            },
+            body: JSON.stringify({ token })
+          });
+
+          gate.hidden = true;
+          welcome.hidden = false;
+          gateStatus.textContent = "";
+
+          welcome.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+        } catch (error) {
+          gateStatus.textContent =
+            error instanceof Error
+              ? error.message
+              : "Access could not be verified. Check your token and try again.";
+        } finally {
+          verifyButton.disabled = false;
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

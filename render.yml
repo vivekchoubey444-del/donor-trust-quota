@@ -1,16 +1,58 @@
-
+# ============================================================
+# Donor Trust Quota Application
+# Render Blueprint
+# File: render.yaml
+# ============================================================
 services:
   - type: web
     name: donor-trust-quota
     runtime: node
     plan: free
-    buildCommand: npm install
+    buildCommand: npm ci
     startCommand: npm start
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: "10000"
+      - key: HOST
+        value: "0.0.0.0"
+      # Configure these as secrets in the Render dashboard.
       - key: DATABASE_URL
         sync: false
       - key: ADMIN_API_TOKEN
         sync: false
+      # Must match the actual browser origin(s) of your frontend.
+      # Replace this example with your deployed frontend origin.
+      - key: CORS_ORIGIN
+        value: https://your-frontend-domain.example
+      # Database TLS; verify this matches your PostgreSQL provider.
+      - key: PGSSL
+        value: "true"
+      - key: TRUST_PROXY
+        value: "true"
+      - key: JSON_BODY_LIMIT
+        value: 100kb
+      - key: REQUEST_TIMEOUT_MS
+        value: "30000"
+      - key: RATE_LIMIT_WINDOW_MS
+        value: "900000"
+      - key: RATE_LIMIT_MAX_REQUESTS
+        value: "60"
+      - key: AUTH_RATE_LIMIT_MAX_REQUESTS
+        value: "10"
+      - key: LOG_LEVEL
+        value: warn
+      - key: LOG_REDACT_SENSITIVE_DATA
+        value: "true"
+      - key: LOG_REQUEST_BODIES
+        value: "false"
+      - key: LOG_RESPONSE_BODIES
+        value: "false"
+      - key: UPLOADS_PUBLICLY_ACCESSIBLE
+        value: "false"
+      - key: REQUIRE_CONSENT_BEFORE_SUBMISSION
+        value: "true"
+      - key: HEALTH_CHECK_ENABLED
+        value: "true"

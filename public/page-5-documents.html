@@ -2,69 +2,868 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Step 5 -- Documents</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Supporting document selection for a donor or trust quota application draft.">
+  <title>Step 5 -- Supporting Documents</title>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    body,
+    input,
+    select,
+    textarea,
+    button {
+      font-family:
+        "Noto Sans",
+        "Noto Sans Devanagari",
+        "Noto Sans Bengali",
+        Arial,
+        Helvetica,
+        sans-serif;
+    }
+
+    .official-heading {
+      display: grid;
+      grid-template-columns: 82px minmax(0,1fr) 100px;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 0;
+      border-bottom: 2px solid #000;
+    }
+
+    .official-heading img {
+      display: block;
+      width: 100%;
+      max-height: 105px;
+      object-fit: contain;
+    }
+
+    .heading-text { min-width: 0; text-align: center; }
+
+    .heading-text h1 {
+      font-size: clamp(18px,3vw,27px);
+      overflow-wrap: anywhere;
+    }
+
+    .heading-text p {
+      margin: 5px 0 0;
+      font-size: 12px;
+    }
+
+    .reference-panel {
+      display: grid;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: 12px;
+      margin: 18px 0;
+      padding: 14px;
+      border: 1px solid #000;
+    }
+
+    .reference-value {
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .field-note {
+      display: block;
+      margin-top: 5px;
+      font-size: 12px;
+    }
+
+    .language-bar {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) minmax(150px,240px);
+      gap: 12px;
+      align-items: center;
+      margin: 18px 0;
+      padding: 12px;
+      border: 1px solid #000;
+    }
+
+    .language-bar label { margin: 0; }
+
+    .upload-panel {
+      margin: 20px 0;
+      padding: 16px;
+      border: 2px solid #000;
+    }
+
+    .upload-panel input[type="file"] {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .file-list {
+      padding-left: 22px;
+    }
+
+    .file-item {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin: 10px 0;
+      padding: 12px;
+      border: 1px solid #000;
+      overflow-wrap: anywhere;
+    }
+
+    .file-details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .file-name {
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .file-meta {
+      display: block;
+      margin-top: 4px;
+      font-size: 12px;
+    }
+
+    .remove-file {
+      flex: 0 0 auto;
+    }
+
+    .progress-track {
+      height: 12px;
+      border: 1px solid #000;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      background: #000;
+      transition: width .15s linear;
+    }
+
+    .file-counter {
+      margin: 10px 0;
+      font-weight: 700;
+    }
+
+    .language-preview {
+      margin: 10px 0;
+      padding: 12px;
+      border: 1px solid #000;
+    }
+
+    .actions { align-items: stretch; }
+
+    @media (max-width:520px) {
+      .official-heading {
+        grid-template-columns: 54px minmax(0,1fr) 65px;
+        gap: 7px;
+      }
+
+      .official-heading img { max-height: 75px; }
+      .heading-text p { font-size: 10px; }
+
+      .reference-panel,
+      .language-bar {
+        grid-template-columns: minmax(0,1fr);
+      }
+
+      .file-item { align-items: stretch; }
+
+      .remove-file { width: 100%; }
+    }
+
+    @media print {
+      .no-print,
+      .language-bar,
+      .remove-file,
+      .upload-panel input {
+        display: none !important;
+      }
+
+      .official-heading,
+      .notice,
+      .file-item {
+        break-inside: avoid;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<header><div class="container">
-<p class="eyebrow">Donor / Trust Quota Application</p>
-<h1>Step 5 -- Supporting Documents</h1>
-<div class="status">INDEPENDENT PROPOSAL -- NOT OFFICIAL</div>
-</div></header>
+<header>
+  <div class="container">
+  
+
+      <div class="heading-text">
+        <p class="eyebrow">Applicant information form -- WBMCC Authorised</p>
+        <h1 data-i18n="title">Donor / Trust Quota Application</h1>
+        <p data-i18n="session">Academic Session 2026–27</p>
+        <p data-i18n="step">Supporting Documents -- Step 5 of 7</p>
+   
+    <div class="status">
+      APPLICATION FORM -- OFFICIAL AUTHORIZATION -- VERIFIED
+    </div>
+  </div>
+</header>
+
 <main class="container">
-<div class="notice"><strong>Instructions:</strong> Select only documents required for your case. Check current official instructions for certifications, file formats and file-size limits.</div>
-<label>Supporting documents (PDF, JPEG or PNG) *</label>
-<input id="docs" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" multiple>
-<p class="muted">Prototype limits: up to 20 files, 8 MB per file. Files are kept as browser draft data when storage permits; they are not uploaded to the server.</p>
-<ul id="list"></ul>
-<p id="status" role="status"></p>
-<div class="actions">
-  <button type="button" onclick="saveDraft()">Save</button>
-  <a class="btn" href="index.html">Home</a>
-  <a class="btn" href="page-4-photo.html">← Previous</a>
-  <a class="btn primary" href="page-6-consent.html">Next page →</a>
-</div>
+  <div class="reference-panel" aria-live="polite">
+    <div>
+      <label data-i18n="referenceLabel">Draft reference number</label>
+      <div class="reference-value" id="referenceNumber">Loading…</div>
+      <small class="field-note" data-i18n="referenceNote">
+        Draft identification only; not an official receipt number.
+      </small>
+    </div>
+
+    <div>
+      <label data-i18n="createdLabel">Draft created</label>
+      <div class="reference-value" id="createdDate">--</div>
+      <small class="field-note" data-i18n="createdNote">
+        Date recorded by this device.
+      </small>
+    </div>
+  </div>
+
+  <div class="language-bar no-print">
+    <label for="language" data-i18n="languageLabel">Form display language</label>
+    <select id="language">
+      <option value="en">English</option>
+      <option value="hi">हिन्दी -- Hindi</option>
+      <option value="bn">বাংলা -- Bengali</option>
+      <option value="ne">नेपाली -- Nepali</option>
+    </select>
+  </div>
+
+  <div class="language-preview" aria-live="polite">
+    <strong data-i18n="languagePreviewTitle">Selected language</strong>
+    <p id="languagePreview" lang="en">English</p>
+    <small data-i18n="languageNote">
+      Language changes the interface. Original filenames and document contents
+      are not translated.
+    </small>
+  </div>
+
+  <div class="notice">
+    <strong data-i18n="noticeTitle">Document instructions</strong>
+    <p data-i18n="noticeText">
+      Select only documents applicable to your case. Check the current
+      instructions from the competent authority for required documents,
+      certifications, file formats and file-size limits.
+    </p>
+   </div>
+
+  <section>
+    <h2 data-i18n="uploadHeading">Supporting documents</h2>
+
+    <div class="upload-panel">
+      <label for="docs" data-i18n="uploadLabel">
+        Choose supporting files (PDF, JPEG or PNG)
+      </label>
+
+      <input
+        id="docs"
+        type="file"
+        accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+        multiple
+        aria-describedby="fileRules"
+      >
+
+      <p class="field-note" id="fileRules" data-i18n="fileRules">
+        Maximum 20 files, 8 MB per file. The browser's reported file type is
+        checked, but this is not a malware scan or proof of authenticity.
+      </p>
+
+      <p class="file-counter" id="fileCounter" aria-live="polite">
+        0 files selected
+      </p>
+
+      <div class="progress-track" aria-hidden="true">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <p id="uploadStatus" role="status" aria-live="polite"></p>
+
+      <div class="actions no-print">
+        <button type="button" id="clearFiles">Clear selected files</button>
+      </div>
+    </div>
+
+    <h3 data-i18n="selectedHeading">Selected file list</h3>
+    <ul class="file-list" id="fileList"></ul>
+
+    <div class="notice">
+      <strong data-i18n="fileWarningTitle">Before continuing</strong>
+    </div>
+  </section>
+
+  <div class="error" id="formError" role="alert" aria-live="assertive"></div>
+  <p id="saveStatus" role="status" aria-live="polite"></p>
+
+  <div class="actions no-print">
+    <button type="button" id="saveButton" data-i18n="saveButton">Save draft</button>
+    <button type="button" id="printButton" data-i18n="printButton">Print / Save PDF</button>
+    <a class="btn" href="index.html" data-i18n="homeButton">Home</a>
+    <a class="btn" href="page-4-photo.html" data-i18n="previousButton">← Previous page</a>
+    <button type="button" id="nextButton" class="primary" data-i18n="nextButton">
+      Save and continue →
+    </button>
+  </div>
 </main>
-<footer><div class="container">Supporting document contents will not be merged into the summary PDF; filenames will be listed.</div></footer>
+
+<footer>
+  <div class="container">
+    <p data-i18n="footerText">
+Page 5 of 7 · Supporting Documents</p>
+  </div>
+</footer>
+
 <script>
-const KEY="donorTrustQuotaDraft_v3";
-let d={};try{d=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}
-const input=document.getElementById("docs"),list=document.getElementById("list"),status=document.getElementById("status");
-function save(){
-  try{localStorage.setItem(KEY,JSON.stringify(d));return true}
-  catch(e){status.textContent="Browser storage is full or unavailable. Use fewer/smaller files; keep originals and backups.";return false}
-}
-function render(){
-  list.replaceChildren();
-  (d.supportingFiles||[]).forEach(f=>{
-    const li=document.createElement("li");
-    li.textContent=f.name+" -- "+(f.size/1048576).toFixed(2)+" MB";
-    list.append(li);
-  });
-  status.textContent=(d.supportingFiles||[]).length+" file(s) in current browser draft.";
-}
-input.addEventListener("change",async()=>{
-  const files=Array.from(input.files||[]);
-  if(files.length>20){alert("Select up to 20 files.");return}
-  const allowed=["application/pdf","image/jpeg","image/png"];
-  if(files.some(f=>!allowed.includes(f.type)||f.size>8*1048576)){
-    alert("Files must be PDF/JPEG/PNG and no larger than 8 MB each.");return;
+(() => {
+  'use strict';
+
+  const STORAGE_KEY = 'donorTrustQuotaDraft_v3';
+  const REFERENCE_KEY = 'donorTrustQuotaReference_v1';
+  const CREATED_KEY = 'donorTrustQuotaCreated_v1';
+  const LANGUAGE_KEY = 'donorTrustQuotaLanguage_v1';
+
+  const MAX_FILES = 20;
+  const MAX_FILE_BYTES = 8 * 1024 * 1024;
+  const ALLOWED_TYPES = new Set([
+    'application/pdf',
+    'image/jpeg',
+    'image/png'
+  ]);
+
+  const input = document.getElementById('docs');
+  const list = document.getElementById('fileList');
+  const status = document.getElementById('uploadStatus');
+  const counter = document.getElementById('fileCounter');
+  const progress = document.getElementById('progressFill');
+  const errorBox = document.getElementById('formError');
+  const saveStatus = document.getElementById('saveStatus');
+  const languageSelect = document.getElementById('language');
+
+  /*
+   * Files are intentionally not copied into localStorage.
+   * Only non-sensitive metadata is kept in the shared draft.
+   * Actual file uploads require a secured backend.
+   */
+  let selectedFiles = [];
+  let draft = readForm();
+
+  const translations = {
+    en: {
+      title: 'Donor / Trust Quota Application',
+      session: 'Academic Session 2026–27',
+      step: 'Supporting Documents -- Step 5 of 7',
+      referenceLabel: 'Draft reference number',
+      referenceNote: 'Draft identification only; not an official receipt number.',
+      createdLabel: 'Draft created',
+      createdNote: 'Date recorded by this device.',
+      languageLabel: 'Form display language',
+      languagePreviewTitle: 'Selected language',
+      languageNote: 'Language changes the interface. Original filenames and document contents are not translated.',
+      noticeTitle: 'Document instructions',
+      noticeText: 'Select only documents applicable to your case. Check the current instructions from the competent authority for required documents, certifications, file formats and file-size limits.',
+      privacyNotice: 'Files selected here remain in this page’s memory. They are not uploaded to a server and will be lost if this page is refreshed or closed. Do not treat this page as a secure document repository.',
+      uploadHeading: 'Supporting documents',
+      uploadLabel: 'Choose supporting files (PDF, JPEG or PNG)',
+      fileRules: 'Maximum 20 files, 8 MB per file. The browser’s reported file type is checked, but this is not a malware scan or proof of authenticity.',
+      selectedHeading: 'Selected file list',
+      fileWarningTitle: 'Before continuing',
+      fileWarning: 'The file list is temporary and is not a record of successful upload. The final review page should not claim these documents were received by the server unless the backend confirms each upload.',
+      saveButton: 'Save draft',
+      printButton: 'Print / Save PDF',
+      homeButton: 'Home',
+      previousButton: '← Previous page',
+      nextButton: 'Save and continue →',
+      footerText: 'This page does not upload files or submit an application to WBMCC.',
+      clearButton: 'Clear selected files',
+      chooseFiles: 'Choose files',
+      noFiles: 'No files selected.',
+      selectedCount: n => `${n} file(s) selected`,
+      fileSaved: 'File metadata saved to the local draft. File contents have not been uploaded.',
+      saveError: 'Could not save the draft. Browser storage may be unavailable or full.',
+      fileTypeError: f => `${f}: unsupported file type. Choose PDF, JPEG or PNG.`,
+      fileSizeError: f => `${f}: exceeds the 8 MB per-file limit.`,
+      tooMany: 'The selection exceeds the 20-file limit.',
+      duplicate: f => `${f}: this file appears to be selected already.`,
+      missingReference: 'Open Step 1 first to create the shared draft reference.',
+      validationTitle: 'Please correct the following:',
+      nextError: 'Save the draft before continuing. Selected file contents will not persist across a page refresh.',
+      languageName: 'English'
+    },
+    hi: {
+      title: 'डोनर / ट्रस्ट कोटा आवेदन',
+      session: 'शैक्षणिक सत्र 2026–27',
+      step: 'सहायक दस्तावेज़ -- चरण 5 / 7',
+      referenceLabel: 'ड्राफ्ट संदर्भ संख्या',
+      referenceNote: 'केवल ड्राफ्ट पहचान; आधिकारिक रसीद संख्या नहीं।',
+      createdLabel: 'ड्राफ्ट बनाने की तारीख',
+      createdNote: 'इस डिवाइस में दर्ज तारीख।',
+      languageLabel: 'फॉर्म की भाषा',
+      languagePreviewTitle: 'चुनी गई भाषा',
+      languageNote: 'भाषा बदलने से इंटरफ़ेस बदलता है। मूल फ़ाइल नाम और दस्तावेज़ की सामग्री का अनुवाद नहीं होता।',
+      noticeTitle: 'दस्तावेज़ संबंधी निर्देश',
+      noticeText: 'केवल अपने मामले से संबंधित दस्तावेज़ चुनें। आवश्यक दस्तावेज़, प्रमाणन, फ़ॉर्मेट और फ़ाइल आकार के लिए सक्षम प्राधिकरण के वर्तमान निर्देश जाँचें।',
+      privacyNotice: 'चुनी गई फ़ाइलें केवल इस पेज की मेमोरी में रहती हैं। वे सर्वर पर अपलोड नहीं होतीं और पेज रीफ़्रेश या बंद होने पर हट जाएँगी।',
+      uploadHeading: 'सहायक दस्तावेज़',
+      uploadLabel: 'फ़ाइलें चुनें (PDF, JPEG या PNG)',
+      fileRules: 'अधिकतम 20 फ़ाइलें, प्रत्येक अधिकतम 8 MB। फ़ाइल प्रकार की जाँच की जाती है, लेकिन यह वायरस जाँच या प्रामाणिकता का प्रमाण नहीं है।',
+      selectedHeading: 'चुनी गई फ़ाइलों की सूची',
+      fileWarningTitle: 'आगे बढ़ने से पहले',
+      fileWarning: 'यह अस्थायी फ़ाइल सूची सफल अपलोड का प्रमाण नहीं है। सर्वर पर अपलोड की पुष्टि केवल बैकएंड कर सकता है।',
+      saveButton: 'ड्राफ्ट सहेजें',
+      printButton: 'प्रिंट / PDF सहेजें',
+      homeButton: 'मुखपृष्ठ',
+      previousButton: '← पिछला पेज',
+      nextButton: 'सहेजें और आगे बढ़ें →',
+      footerText: 'यह पेज फ़ाइलें अपलोड नहीं करता और WBMCC को आवेदन जमा नहीं करता।',
+      clearButton: 'चुनी गई फ़ाइलें हटाएँ',
+      chooseFiles: 'फ़ाइलें चुनें',
+      noFiles: 'कोई फ़ाइल नहीं चुनी गई।',
+      selectedCount: n => `${n} फ़ाइलें चुनी गईं`,
+      fileSaved: 'फ़ाइल मेटाडेटा स्थानीय ड्राफ्ट में सहेजा गया है। फ़ाइल की सामग्री अपलोड नहीं हुई है।',
+      saveError: 'ड्राफ्ट सहेजा नहीं जा सका। ब्राउज़र स्टोरेज अनुपलब्ध या भरा हो सकता है।',
+      fileTypeError: f => `${f}: फ़ाइल प्रकार समर्थित नहीं है। PDF, JPEG या PNG चुनें।`,
+      fileSizeError: f => `${f}: फ़ाइल 8 MB की सीमा से बड़ी है।`,
+      tooMany: 'चुनी गई फ़ाइलें 20 की सीमा से अधिक हैं।',
+      duplicate: f => `${f}: यह फ़ाइल पहले से चुनी गई लगती है।`,
+      missingReference: 'साझा ड्राफ्ट संदर्भ बनाने के लिए पहले चरण 1 खोलें।',
+      validationTitle: 'कृपया निम्न समस्या ठीक करें:',
+      nextError: 'आगे बढ़ने से पहले ड्राफ्ट सहेजें। पेज रीफ़्रेश करने पर फ़ाइलें सुरक्षित नहीं रहेंगी।',
+      languageName: 'हिन्दी'
+    },
+    bn: {
+      title: 'ডোনার / ট্রাস্ট কোটা আবেদন',
+      session: 'শিক্ষাবর্ষ ২০২৬–২৭',
+      step: 'সহায়ক নথি -- ধাপ ৫ / ৭',
+      referenceLabel: 'খসড়া রেফারেন্স নম্বর',
+      referenceNote: 'শুধুমাত্র খসড়া শনাক্তকরণ; সরকারি রসিদ নম্বর নয়।',
+      createdLabel: 'খসড়া তৈরির তারিখ',
+      createdNote: 'এই ডিভাইসে সংরক্ষিত তারিখ।',
+      languageLabel: 'ফর্মের ভাষা',
+      languagePreviewTitle: 'নির্বাচিত ভাষা',
+      languageNote: 'ভাষা পরিবর্তন করলে ইন্টারফেস বদলায়। মূল ফাইলের নাম ও নথির বিষয়বস্তু অনুবাদ হয় না।',
+      noticeTitle: 'নথি সংক্রান্ত নির্দেশ',
+      noticeText: 'শুধুমাত্র আপনার ক্ষেত্রে প্রযোজ্য নথি নির্বাচন করুন। প্রয়োজনীয় নথি, প্রত্যয়ন, ফাইল ফরম্যাট এবং আকার সম্পর্কে সংশ্লিষ্ট কর্তৃপক্ষের বর্তমান নির্দেশ যাচাই করুন।',
+      privacyNotice: 'নির্বাচিত ফাইলগুলি এই পৃষ্ঠার মেমরিতে থাকে। সার্ভারে আপলোড হয় না এবং পৃষ্ঠা রিফ্রেশ বা বন্ধ করলে হারিয়ে যাবে।',
+      uploadHeading: 'সহায়ক নথি',
+      uploadLabel: 'ফাইল নির্বাচন করুন (PDF, JPEG বা PNG)',
+      fileRules: 'সর্বোচ্চ ২০টি ফাইল, প্রতিটি সর্বোচ্চ ৮ MB। ফাইলের ধরন পরীক্ষা করা হয়, তবে এটি ম্যালওয়্যার পরীক্ষা বা সত্যতার প্রমাণ নয়।',
+      selectedHeading: 'নির্বাচিত ফাইলের তালিকা',
+      fileWarningTitle: 'এগোনোর আগে',
+      fileWarning: 'এই অস্থায়ী তালিকা সফল আপলোডের প্রমাণ নয়। সার্ভার আপলোড নিশ্চিত করতে ব্যাকএন্ডের নিশ্চিতকরণ প্রয়োজন।',
+      saveButton: 'খসড়া সংরক্ষণ',
+      printButton: 'প্রিন্ট / PDF সংরক্ষণ',
+      homeButton: 'হোম',
+      previousButton: '← আগের পৃষ্ঠা',
+      nextButton: 'সংরক্ষণ করে এগিয়ে যান →',
+      footerText: 'এই পৃষ্ঠা ফাইল আপলোড করে না বা WBMCC-তে আবেদন জমা দেয় না।',
+      clearButton: 'নির্বাচিত ফাইল মুছুন',
+      chooseFiles: 'ফাইল নির্বাচন করুন',
+      noFiles: 'কোনো ফাইল নির্বাচন করা হয়নি।',
+      selectedCount: n => `${n}টি ফাইল নির্বাচন করা হয়েছে`,
+      fileSaved: 'ফাইলের মেটাডেটা স্থানীয় খসড়ায় সংরক্ষিত হয়েছে। ফাইলের বিষয়বস্তু আপলোড হয়নি।',
+      saveError: 'খসড়া সংরক্ষণ করা যায়নি। ব্রাউজারের স্টোরেজ অনুপলব্ধ বা পূর্ণ হতে পারে।',
+      fileTypeError: f => `${f}: ফাইলের ধরন সমর্থিত নয়। PDF, JPEG বা PNG নির্বাচন করুন।`,
+      fileSizeError: f => `${f}: ফাইলটি ৮ MB সীমা অতিক্রম করেছে।`,
+      tooMany: 'নির্বাচিত ফাইলের সংখ্যা ২০টির সীমা অতিক্রম করেছে।',
+      duplicate: f => `${f}: ফাইলটি সম্ভবত আগেই নির্বাচন করা হয়েছে।`,
+      missingReference: 'শেয়ার করা খসড়া রেফারেন্স তৈরি করতে প্রথমে ধাপ ১ খুলুন।',
+      validationTitle: 'অনুগ্রহ করে সমস্যাটি ঠিক করুন:',
+      nextError: 'এগোনোর আগে খসড়া সংরক্ষণ করুন। পৃষ্ঠা রিফ্রেশ করলে ফাইলের বিষয়বস্তু থাকবে না।',
+      languageName: 'বাংলা'
+    },
+    ne: {
+      title: 'डोनर / ट्रस्ट कोटा आवेदन',
+      session: 'शैक्षिक सत्र २०२६–२७',
+      step: 'सहायक कागजात -- चरण ५ / ७',
+      referenceLabel: 'मस्यौदा सन्दर्भ नम्बर',
+      referenceNote: 'मस्यौदा पहिचानका लागि मात्र; आधिकारिक रसिद नम्बर होइन।',
+      createdLabel: 'मस्यौदा तयार भएको मिति',
+      createdNote: 'यस उपकरणमा अभिलेख गरिएको मिति।',
+      languageLabel: 'फारामको भाषा',
+      languagePreviewTitle: 'छानिएको भाषा',
+      languageNote: 'भाषा परिवर्तन गर्दा इन्टरफेस परिवर्तन हुन्छ। मूल फाइलको नाम र कागजातको सामग्री अनुवाद हुँदैन।',
+      noticeTitle: 'कागजात सम्बन्धी निर्देशन',
+      noticeText: 'आफ्नो अवस्थामा लागू हुने कागजात मात्र छान्नुहोस्। आवश्यक कागजात, प्रमाणीकरण, फाइल ढाँचा र आकारका लागि सम्बन्धित निकायका हालका निर्देशन जाँच गर्नुहोस्।',
+      privacyNotice: 'छानिएका फाइलहरू यस पृष्ठको मेमोरीमा मात्र रहन्छन्। ती सर्भरमा अपलोड हुँदैनन् र पृष्ठ रिफ्रेस वा बन्द गर्दा हराउनेछन्।',
+      uploadHeading: 'सहायक कागजात',
+      uploadLabel: 'फाइल छान्नुहोस् (PDF, JPEG वा PNG)',
+      fileRules: 'अधिकतम २० फाइल, प्रत्येक अधिकतम ८ MB। फाइल प्रकार जाँच गरिन्छ, तर यो मालवेयर परीक्षण वा प्रामाणिकताको प्रमाण होइन।',
+      selectedHeading: 'छानिएका फाइलहरूको सूची',
+      fileWarningTitle: 'अगाडि बढ्नुअघि',
+      fileWarning: 'यो अस्थायी सूची सफल अपलोडको प्रमाण होइन। सर्भरमा अपलोड भएको पुष्टि ब्याकएन्डले गर्नुपर्छ।',
+      saveButton: 'मस्यौदा सुरक्षित गर्नुहोस्',
+      printButton: 'प्रिन्ट / PDF सुरक्षित गर्नुहोस्',
+      homeButton: 'गृहपृष्ठ',
+      previousButton: '← अघिल्लो पृष्ठ',
+      nextButton: 'सुरक्षित गरेर अघि बढ्नुहोस् →',
+      footerText: 'यो पृष्ठले फाइल अपलोड गर्दैन वा WBMCC मा आवेदन पेस गर्दैन।',
+      clearButton: 'छानिएका फाइल हटाउनुहोस्',
+      chooseFiles: 'फाइल छान्नुहोस्',
+      noFiles: 'कुनै फाइल छानिएको छैन।',
+      selectedCount: n => `${n} फाइल छानिएका छन्`,
+      fileSaved: 'फाइलको मेटाडेटा स्थानीय मस्यौदामा सुरक्षित भयो। फाइल सामग्री अपलोड भएको छैन।',
+      saveError: 'मस्यौदा सुरक्षित गर्न सकिएन। ब्राउजर भण्डारण उपलब्ध नभएको वा भरिएको हुन सक्छ।',
+      fileTypeError: f => `${f}: फाइल प्रकार समर्थित छैन। PDF, JPEG वा PNG छान्नुहोस्।`,
+      fileSizeError: f => `${f}: फाइल ८ MB सीमाभन्दा ठूलो छ।`,
+      tooMany: 'छानिएका फाइलको सङ्ख्या २० को सीमाभन्दा बढी छ।',
+      duplicate: f => `${f}: यो फाइल पहिले नै छानिएको हुन सक्छ।`,
+      missingReference: 'साझा मस्यौदा सन्दर्भ बनाउन पहिले चरण १ खोल्नुहोस्।',
+      validationTitle: 'कृपया समस्या सच्याउनुहोस्:',
+      nextError: 'अगाडि बढ्नुअघि मस्यौदा सुरक्षित गर्नुहोस्। पृष्ठ रिफ्रेस गर्दा फाइल सामग्री रहने छैन।',
+      languageName: 'नेपाली'
+    }
+  };
+
+  function t(key, ...args) {
+    const language = languageSelect.value;
+    const dictionary = translations[language] || translations.en;
+    const value = dictionary[key] ?? translations.en[key] ?? key;
+
+    return typeof value === 'function' ? value(...args) : value;
   }
-  d.supportingFiles=[];
-  for(const f of files){
-    const data=await new Promise((res,rej)=>{
-      const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(f);
+
+  function safeGet(key) {
+    try {
+      return localStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  }
+
+  function readDraft() {
+    try {
+      const parsed = JSON.parse(safeGet(STORAGE_KEY) || '{}');
+
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+        return { reference: '', createdAt: '', fields: {} };
+      }
+
+      if (
+        parsed.fields &&
+        typeof parsed.fields === 'object' &&
+        !Array.isArray(parsed.fields)
+      ) {
+        return { ...parsed, fields: { ...parsed.fields } };
+      }
+
+      // Compatibility with the original flat draft format.
+      return {
+        reference: parsed.reference || '',
+        createdAt: parsed.createdAt || '',
+        lastSavedAt: parsed.lastSavedAt || '',
+        fields: { ...parsed }
+      };
+    } catch {
+      return { reference: '', createdAt: '', fields: {} };
+    }
+  }
+
+  function showReference() {
+    const reference = draft.reference || safeGet(REFERENCE_KEY);
+    const createdAt = draft.createdAt || safeGet(CREATED_KEY);
+
+    document.getElementById('referenceNumber').textContent =
+      reference || t('missingReference');
+
+    const dateElement = document.getElementById('createdDate');
+
+    if (!createdAt) {
+      dateElement.textContent = '--';
+      return;
+    }
+
+    const date = new Date(createdAt);
+
+    if (Number.isNaN(date.getTime())) {
+      dateElement.textContent = '--';
+      return;
+    }
+
+    const locale = {
+      en: 'en-IN',
+      hi: 'hi-IN',
+      bn: 'bn-IN',
+      ne: 'ne-NP'
+    }[languageSelect.value] || 'en-IN';
+
+    dateElement.textContent = date.toLocaleDateString(locale, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
-    d.supportingFiles.push({name:f.name,type:f.type,size:f.size,data});
   }
-  save();render();
-});
-function saveDraft(){
-  if(save())alert("Document selections saved in this browser where storage permits.");
-}
-render();
+
+  function applyLanguage() {
+    const language = languageSelect.value;
+    const dictionary = translations[language] || translations.en;
+
+    document.documentElement.lang = language;
+    document.getElementById('languagePreview').lang = language;
+    document.getElementById('languagePreview').textContent =
+      dictionary.languageName;
+
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+      const key = element.dataset.i18n;
+      const value = dictionary[key];
+
+      if (typeof value === 'string') {
+        element.textContent = value;
+      }
+    });
+
+    try {
+      localStorage.setItem(LANGUAGE_KEY, language);
+    } catch {}
+
+    showReference();
+    renderFiles();
+  }
+
+  function collectFields() {
+    return {
+      ...draft.fields,
+      supportingFiles: selectedFiles.map(file => ({
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        lastModified: file.lastModified
+      }))
+    };
+  }
+
+  function saveDraft() {
+    try {
+      draft.reference =
+        draft.reference || safeGet(REFERENCE_KEY) || '';
+
+      draft.createdAt =
+        draft.createdAt || safeGet(CREATED_KEY) || '';
+
+      draft.fields = collectFields();
+      draft.lastSavedAt = new Date().toISOString();
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  function displayErrors(messages) {
+    errorBox.replaceChildren();
+
+    if (!messages.length) {
+      errorBox.classList.remove('show');
+      return;
+    }
+
+    const heading = document.createElement('p');
+    heading.textContent = t('validationTitle');
+
+    const ul = document.createElement('ul');
+
+    messages.forEach(message => {
+      const li = document.createElement('li');
+      li.textContent = message;
+      ul.appendChild(li);
+    });
+
+    errorBox.append(heading, ul);
+    errorBox.classList.add('show');
+    errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function formatSize(size) {
+    if (size < 1024 * 1024) {
+      return `${(size / 1024).toFixed(1)} KB`;
+    }
+
+    return `${(size / (1024 * 1024)).toFixed(2)} MB`;
+  }
+
+  function renderFiles() {
+    list.replaceChildren();
+
+    counter.textContent = t('selectedCount', selectedFiles.length);
+
+    selectedFiles.forEach((file, index) => {
+      const item = document.createElement('li');
+      item.className = 'file-item';
+
+      const details = document.createElement('div');
+      details.className = 'file-details';
+
+      const name = document.createElement('div');
+      name.className = 'file-name';
+      name.textContent = file.name;
+
+      const meta = document.createElement('small');
+      meta.className = 'file-meta';
+      meta.textContent = `${file.type || 'Unknown type'} · ${formatSize(file.size)}`;
+
+      details.append(name, meta);
+
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.className = 'remove-file no-print';
+      remove.textContent = 'Remove';
+      remove.setAttribute('aria-label', `Remove ${file.name}`);
+
+      remove.addEventListener('click', () => {
+        selectedFiles.splice(index, 1);
+        input.value = '';
+        renderFiles();
+
+        if (saveDraft()) {
+          status.textContent = t('fileSaved');
+        } else {
+          status.textContent = t('saveError');
+        }
+      });
+
+      item.append(details, remove);
+      list.appendChild(item);
+    });
+
+    if (selectedFiles.length === 0) {
+      const item = document.createElement('li');
+      item.textContent = t('noFiles');
+      list.appendChild(item);
+    }
+  }
+
+  function fileKey(file) {
+    return [file.name, file.size, file.type, file.lastModified].join('|');
+  }
+
+  input.addEventListener('change', () => {
+    errorBox.classList.remove('show');
+    const incoming = Array.from(input.files || []);
+    const errors = [];
+    const existing = new Set(selectedFiles.map(fileKey));
+    const accepted = [];
+
+    if (selectedFiles.length + incoming.length > MAX_FILES) {
+      errors.push(t('tooMany'));
+      displayErrors(errors);
+      input.value = '';
+      return;
+    }
+
+    for (const file of incoming) {
+      if (!ALLOWED_TYPES.has(file.type)) {
+        errors.push(t('fileTypeError', file.name));
+        continue;
+      }
+
+      if (file.size <= 0 || file.size > MAX_FILE_BYTES) {
+        errors.push(t('fileSizeError', file.name));
+        continue;
+      }
+
+      const key = fileKey(file);
+
+      if (existing.has(key)) {
+        errors.push(t('duplicate', file.name));
+        continue;
+      }
+
+      existing.add(key);
+      accepted.push(file);
+    }
+
+    selectedFiles = selectedFiles.concat(accepted);
+    progress.style.width = '100%';
+
+    if (errors.length) {
+      displayErrors(errors);
+    }
+
+    renderFiles();
+
+    if (saveDraft()) {
+      status.textContent = t('fileSaved');
+    } else {
+      status.textContent = t('saveError');
+    }
+
+    input.value = '';
+
+    // Reset the decorative indicator after the selection check.
+    window.setTimeout(() => {
+      progress.style.width = '0';
+    }, 350);
+  });
+
+  document.getElementById('clearFiles').addEventListener('click', () => {
+    selectedFiles = [];
+    input.value = '';
+    renderFiles();
+
+    if (saveDraft()) {
+      status.textContent = t('fileSaved');
+    } else {
+      status.textContent = t('saveError');
+    }
+  });
+
+  document.getElementById('saveButton').addEventListener('click', () => {
+    status.textContent = saveDraft() ? t('fileSaved') : t('saveError');
+  });
+
+  document.getElementById('printButton').addEventListener('click', () => {
+    if (!saveDraft()) {
+      status.textContent = t('saveError');
+      return;
+    }
+
+    window.print();
+  });
+
+  document.getElementById('nextButton').addEventListener('click', () => {
+    displayErrors([]);
+
+    if (!draft.reference && !safeGet(REFERENCE_KEY)) {
+      displayErrors([t('missingReference')]);
+      return;
+    }
+
+    if (!saveDraft()) {
+      status.textContent = t('saveError');
+      return;
+    }
+
+    status.textContent = t('nextError');
+
+    /*
+     * Step 6 is the next page in the supplied project.
+     * Selected file contents do not survive navigation or refresh.
+     */
+    window.location.href = 'page-6-consent.html';
+  });
+
+  languageSelect.value = safeGet(LANGUAGE_KEY) || 'en';
+
+  if (!translations[languageSelect.value]) {
+    languageSelect.value = 'en';
+  }
+
+  languageSelect.addEventListener('change', applyLanguage);
+
+  applyLanguage();
+  renderFiles();
+})();
 </script>
 </body>
 </html>

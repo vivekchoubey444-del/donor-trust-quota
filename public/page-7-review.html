@@ -2,188 +2,1861 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Step 7 -- Final Review and Submit</title>
-<link rel="stylesheet" href="styles.css">
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-</head>
-<body>
-<header><div class="container">
-<p class="eyebrow">Donor / Trust Quota Application</p>
-<h1>Step 7 -- Final Review, Validate and Submit</h1>
-<div class="status">INDEPENDENT PROPOSAL -- NOT OFFICIAL</div>
-</div></header>
-<main class="container">
-<div class="notice"><strong>Final stage:</strong> Review all data. Validation, submit, preview, print and download controls are located only on this page. Submission to this prototype creates a local/server reference record; it is not a submission to WBMCC.</div>
-<h2>Application summary</h2>
-<table><tbody id="summary"></tbody></table>
-<h2>Selected files</h2>
-<ul id="fileSummary"></ul>
-<div class="error" id="validation" role="alert"></div>
-<p id="submissionStatus" role="status"></p>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Final review of a saved application draft, declarations and supporting-document checklist.">
+  <title>Step 7 -- Review Application</title>
 
-<div id="submittedPanel" hidden>
-  <h2>Submission receipt</h2>
-  <p>Your reference number: <strong id="reference"></strong></p>
-  <p>Keep this number. It is a prototype receipt, not an official WBMCC acknowledgement.</p>
-  <h2>Preview</h2>
-  <div id="previewText"></div>
-  <h2>Encrypted export</h2>
-  <p>After an administrator issues a separate encryption phrase for this reference, enter it below. It encrypts a JSON export in your browser; the phrase is not sent to the server.</p>
-  <label>Admin-issued export encryption phrase</label>
-  <input id="encryptPhrase" type="password" autocomplete="off">
-  <button id="encryptedDownload" type="button">Download encrypted submitted data</button>
-  <div class="actions">
-    <button id="printReceipt" type="button">Print receipt / Save as PDF</button>
-    <button id="downloadPDF" class="primary" type="button">Download application PDF</button>
-  </div>
-</div>
-
-<div class="actions" id="finalActions">
-  <button type="button" id="saveDraft">Save</button>
-  <a class="btn" href="index.html">Home</a>
-  <a class="btn" href="page-6-consent.html">← Previous</a>
-  <button type="button" id="validate" class="primary">Validate application</button>
-  <button type="button" id="submit" class="primary">Submit application</button>
-</div>
-</main>
-<footer><div class="container">This independent prototype is not affiliated with WBMCC. Screenshot and screen recording cannot be reliably blocked by a website.</div></footer>
-
-<script>
-const KEY="donorTrustQuotaDraft_v3";
-let d={};try{d=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}
-const required=[
-["academicSession","Academic session"],["course","Course"],["applicationRoute","Application route"],
-["institution","Institution"],["fullName","Candidate name"],["dob","Date of birth"],
-["neetYear","NEET year"],["neetRoll","NEET roll number"],["phone","Mobile"],
-["email","Email"],["address","Address"],["city","City"],["district","District"],
-["state","State"],["pin","PIN code"],["guardianName","Guardian name"],
-["relationship","Guardian relationship"],["guardianPhone","Guardian mobile"],
-["neetQualified","NEET qualification"],["neetScoreProof","NEET scorecard status"],
-["class12Qualified","Class XII status"],["documentsReady","Document status"],
-["request","Request"],["typedName","Declaration name"],["signedDate","Declaration date"],
-["consentTruth","Accuracy declaration"],["consentPrivacy","Privacy acknowledgement"],
-["consentAuthority","Authority acknowledgement"]
-];
-const labels={};required.forEach(([k,v])=>labels[k]=v);
-function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function draw(){
-  const tb=document.getElementById("summary");tb.replaceChildren();
-  Object.keys(d).filter(k=>!["passportPhoto","signatureImage","livePhoto","supportingFiles"].includes(k)&&!k.startsWith("_")).forEach(k=>{
-    if(d[k]===""||d[k]===undefined)return;
-    const tr=document.createElement("tr"),th=document.createElement("th"),td=document.createElement("td");
-    th.textContent=labels[k]||k;
-    td.textContent=typeof d[k]==="boolean"?(d[k]?"Confirmed":"Not confirmed"):String(d[k]);
-    tr.append(th,td);tb.append(tr);
-  });
-  const ul=document.getElementById("fileSummary");ul.replaceChildren();
-  ["passportPhoto","signatureImage","livePhoto"].forEach(k=>{
-    if(d[k]){const li=document.createElement("li");li.textContent=({passportPhoto:"Passport-size photo",signatureImage:"Signature image",livePhoto:"Live photo"})[k]+" -- available in draft";ul.append(li)}
-  });
-  (d.supportingFiles||[]).forEach(f=>{
-    const li=document.createElement("li");li.textContent=f.name+" ("+(f.size/1048576).toFixed(2)+" MB)";ul.append(li);
-  });
-  if(!ul.children.length){const li=document.createElement("li");li.textContent="No image/document files saved";ul.append(li)}
-}
-function errors(){
-  const e=[];
-  required.forEach(([k,l])=>{const v=d[k];if(v===true)return;if(v===false||v===undefined||v===null||String(v).trim()==="")e.push(l)});
-  ["passportPhoto","signatureImage","livePhoto"].forEach(k=>{if(!d[k])e.push(({passportPhoto:"Passport-size photograph",signatureImage:"Signature image",livePhoto:"Live student photo"})[k])});
-  if(!(d.supportingFiles||[]).length)e.push("At least one supporting document");
-  if(d.pin&&!/^[0-9]{6}$/.test(d.pin))e.push("PIN code must contain six digits");
-  if(d.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email))e.push("Valid email address");
-  return e;
-}
-document.getElementById("saveDraft").onclick=()=>{
-  localStorage.setItem(KEY,JSON.stringify(d));
-  document.getElementById("submissionStatus").textContent="Draft saved in this browser.";
-};
-document.getElementById("validate").onclick=()=>{
-  const es=errors(),box=document.getElementById("validation");box.replaceChildren();
-  if(es.length){
-    const p=document.createElement("p");p.textContent="Complete these required items before submission:";
-    const ul=document.createElement("ul");
-    es.forEach(x=>{const li=document.createElement("li");li.textContent=x;ul.append(li)});
-    box.append(p,ul);box.className="error show";
-  }else{
-    box.textContent="All required fields and selected-file checks passed. Review every entry before submission.";
-    box.className="notice";
-  }
-};
-document.getElementById("submit").onclick=async()=>{
-  document.getElementById("validate").click();
-  if(errors().length)return;
-  const status=document.getElementById("submissionStatus");status.textContent="Submitting…";
-  try{
-    const r=await fetch("/api/submit",{
-      method:"POST",headers:{"content-type":"application/json"},
-      body:JSON.stringify({payload:d})
-    });
-    const j=await r.json();
-    if(!r.ok)throw Error(j.error||"Submission failed");
-    d._reference=j.reference;d._submittedAt=j.createdAt;
-    localStorage.setItem(KEY,JSON.stringify(d));
-    document.getElementById("reference").textContent=j.reference;
-    document.getElementById("submittedPanel").hidden=false;
-    document.getElementById("finalActions").hidden=true;
-    document.getElementById("previewText").innerHTML="<p><strong>Applicant:</strong> "+esc(d.fullName)+"</p><p><strong>Course:</strong> "+esc(d.course)+"</p><p><strong>Institution:</strong> "+esc(d.institution)+"</p><p><strong>Reference:</strong> "+esc(j.reference)+"</p>";
-    status.textContent="Submission recorded by this independent prototype. This is not a WBMCC submission receipt.";
-    draw();
-  }catch(e){status.textContent="Could not submit to the configured backend: "+e.message+". Verify deployment and D1 setup."}
-};
-document.getElementById("printReceipt").onclick=()=>window.print();
-async function pdf(){
-  if(!window.jspdf){alert("PDF library did not load. Check your connection.");return}
-  const {jsPDF}=window.jspdf,doc=new jsPDF({unit:"mm",format:"a4"});
-  let y=17;const m=15,w=180;
-  function ensure(h){if(y+h>280){doc.addPage();y=17}}
-  function line(k,v){
-    if(!v||typeof v==="object")return;
-    ensure(9);doc.setFont("helvetica","bold");doc.setFontSize(9);doc.text(String(k)+":",m,y);
-    doc.setFont("helvetica","normal");
-    const lines=doc.splitTextToSize(String(v),w-38);
-    doc.text(lines,m+38,y);y+=Math.max(5,lines.length*4.5)+2;
-  }
-  doc.setFont("helvetica","bold");doc.setFontSize(15);
-  doc.text("DONOR / TRUST QUOTA APPLICATION",m,y);y+=8;
-  doc.setFontSize(9);doc.setFont("helvetica","normal");
-  doc.text("Independent proposal -- not an official WBMCC form",m,y);y+=9;
-  line("Reference",d._reference);line("Submitted at",d._submittedAt);
-  Object.entries(d).forEach(([k,v])=>{
-    if(["passportPhoto","signatureImage","livePhoto","supportingFiles"].includes(k)||k.startsWith("_")||typeof v==="object")return;
-    line(labels[k]||k,v===true?"Confirmed":v===false?"Not confirmed":v);
-  });
-  for(const [k,title] of [["passportPhoto","Passport-size photograph"],["livePhoto","Live student photo"],["signatureImage","Signature image"]]){
-    if(d[k]){
-      try{
-        const img=new Image();img.src=d[k];
-        await new Promise((res,rej)=>{img.onload=res;img.onerror=rej});
-        ensure(45);doc.setFont("helvetica","bold");doc.text(title,m,y);y+=3;
-        doc.addImage(d[k],d[k].startsWith("data:image/png")?"PNG":"JPEG",m,y,k==="signatureImage"?48:30,k==="signatureImage"?18:35);y+=40;
-      }catch(e){}
+  <style>
+    :root {
+      color-scheme: light;
+      --black: #111;
+      --dark: #292929;
+      --gray: #626262;
+      --muted: #777;
+      --line: #d4d4d4;
+      --soft: #f5f5f5;
+      --white: #fff;
+      --danger: #a00000;
+      --success: #175d2b;
+      --focus: #175fcc;
+      --radius: 8px;
+      --content-width: 960px;
     }
-  }
-  ensure(15);doc.setFontSize(8);
-  doc.text("Supporting document files are listed by filename only; their contents are not merged into this PDF.",m,y);y+=6;
-  (d.supportingFiles||[]).forEach(f=>{ensure(7);doc.text("- "+f.name,m,y);y+=5});
-  doc.save("donor-trust-quota-application.pdf");
-}
-document.getElementById("downloadPDF").onclick=pdf;
-async function encryptedExport(){
-  const phrase=document.getElementById("encryptPhrase").value;
-  if(phrase.length<12){alert("Use the separate admin-issued encryption phrase (at least 12 characters).");return}
-  const enc=new TextEncoder(),salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));
-  const material=await crypto.subtle.importKey("raw",enc.encode(phrase),"PBKDF2",false,["deriveKey"]);
-  const key=await crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:250000,hash:"SHA-256"},material,{name:"AES-GCM",length:256},false,["encrypt"]);
-  const cipher=await crypto.subtle.encrypt({name:"AES-GCM",iv},key,enc.encode(JSON.stringify(d)));
-  const bytes=new Uint8Array(salt.length+iv.length+cipher.byteLength);
-  bytes.set(salt,0);bytes.set(iv,salt.length);bytes.set(new Uint8Array(cipher),salt.length+iv.length);
-  const blob=new Blob([bytes],{type:"application/octet-stream"}),url=URL.createObjectURL(blob),a=document.createElement("a");
-  a.href=url;a.download=(d._reference||"application")+"-encrypted.bin";a.click();URL.revokeObjectURL(url);
-}
-document.getElementById("encryptedDownload").onclick=()=>encryptedExport().catch(e=>alert("Encryption failed: "+e.message));
-draw();
-</script>
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      color: var(--black);
+      background: var(--white);
+      font-family:
+        "Noto Sans",
+        "Noto Sans Devanagari",
+        "Noto Sans Bengali",
+        "Noto Sans Nepali",
+        "Nirmala UI",
+        "Mangal",
+        "Vrinda",
+        "Kohinoor Devanagari",
+        "Kohinoor Bangla",
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    button, input, select { font: inherit; }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    a:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    a {
+      color: var(--black);
+      text-underline-offset: 3px;
+    }
+
+    .page {
+      width: min(100% - 32px, var(--content-width));
+      margin: 0 auto;
+      padding: 18px 0 42px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+      color: var(--gray);
+      font-size: 13px;
+    }
+
+    .language-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .language-control label { font-weight: 700; }
+
+    .language-control select {
+      min-height: 40px;
+      padding: 6px 10px;
+      border: 1px solid var(--black);
+      border-radius: 4px;
+      background: var(--white);
+      color: var(--black);
+    }
+
+    header {
+      padding: 25px 0 22px;
+      text-align: center;
+      border-bottom: 2px solid var(--black);
+    }
+
+    .logo-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 15px;
+    }
+
+    .logo {
+      display: block;
+      width: auto;
+      max-width: 125px;
+      height: 70px;
+      object-fit: contain;
+    }
+
+    .logo-placeholder {
+      display: none;
+      width: 100px;
+      min-height: 60px;
+      padding: 8px;
+      border: 1px solid var(--line);
+      align-items: center;
+      justify-content: center;
+      color: var(--gray);
+      font-size: 11px;
+    }
+
+    .eyebrow {
+      margin: 0 0 5px;
+      color: var(--gray);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3 { line-height: 1.3; }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(26px, 4vw, 36px);
+      letter-spacing: -.02em;
+    }
+
+    .subtitle {
+      max-width: 720px;
+      margin: 10px auto 0;
+      color: var(--gray);
+      font-size: 14px;
+    }
+
+    .notice {
+      margin: 20px 0;
+      padding: 14px 16px;
+      border: 1px solid var(--black);
+      border-left-width: 5px;
+      background: var(--soft);
+    }
+
+    .notice strong { display: block; margin-bottom: 4px; }
+    .notice p { margin: 0; font-size: 14px; }
+
+    .progress { margin: 22px 0; }
+
+    .progress-heading {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .progress-track {
+      height: 7px;
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 100%;
+      height: 100%;
+      background: var(--black);
+    }
+
+    .reference-panel {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 20px 0;
+      padding: 14px;
+      border: 1px solid var(--line);
+    }
+
+    .reference-panel small {
+      display: block;
+      color: var(--gray);
+      font-size: 12px;
+    }
+
+    .reference-panel strong {
+      display: block;
+      overflow-wrap: anywhere;
+    }
+
+    .section {
+      margin: 22px 0;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .section h2 {
+      margin: 0 0 8px;
+      font-size: 21px;
+    }
+
+    .section-intro {
+      margin: 0 0 16px;
+      color: var(--gray);
+      font-size: 14px;
+    }
+
+    .section-heading-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .section-heading-row h2 { margin-bottom: 8px; }
+
+    .review-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .review-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+      gap: 12px;
+      padding: 11px 0;
+      border-bottom: 1px solid #e8e8e8;
+    }
+
+    .review-item:last-child { border-bottom: 0; }
+
+    .review-label {
+      color: var(--gray);
+      font-size: 13px;
+      overflow-wrap: anywhere;
+    }
+
+    .review-value {
+      font-weight: 650;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .empty {
+      padding: 13px;
+      border: 1px dashed var(--line);
+      color: var(--gray);
+      font-size: 14px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      padding: 3px 9px;
+      border: 1px solid var(--line);
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .status-pill.good {
+      border-color: var(--success);
+      color: var(--success);
+    }
+
+    .status-pill.bad {
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .status-pill.neutral { color: var(--gray); }
+
+    .checklist {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .checklist-item {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+    }
+
+    .checklist-item strong {
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .checklist-item p {
+      margin: 0;
+      color: var(--gray);
+      font-size: 13px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 45px;
+      padding: 10px 17px;
+      border: 1px solid var(--black);
+      border-radius: 4px;
+      background: var(--white);
+      color: var(--black);
+      font-weight: 750;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .button.primary {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .submit-warning {
+      margin-top: 14px;
+      padding: 13px;
+      border: 1px solid var(--line);
+      background: var(--soft);
+      font-size: 13px;
+    }
+
+    .status-message {
+      display: none;
+      margin: 16px 0;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      overflow-wrap: anywhere;
+    }
+
+    .status-message.visible { display: block; }
+    .status-message.error { color: var(--danger); border-color: var(--danger); }
+    .status-message.success { color: var(--success); border-color: var(--success); }
+
+    .footer {
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      color: var(--gray);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .footer p { margin: 5px 0; }
+
+    .loading { opacity: .7; }
+
+    @media (max-width: 620px) {
+      .page { width: min(100% - 22px, var(--content-width)); }
+      .section { padding: 15px; }
+      .review-item { grid-template-columns: 1fr; gap: 3px; }
+      .checklist, .reference-panel { grid-template-columns: 1fr; }
+      .actions { flex-direction: column; }
+      .actions .button { width: 100%; }
+      .language-control { width: 100%; justify-content: space-between; }
+      .language-control select { max-width: 220px; }
+    }
+
+    @media print {
+      body { font-size: 10pt; }
+      .page { width: 100%; padding: 0; }
+      .topbar, .progress, .actions, .status-message, .no-print { display: none !important; }
+      .section, .notice, .reference-panel { break-inside: avoid; }
+      .section { padding: 12px; }
+      a { text-decoration: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <div class="topbar">
+      <span data-i18n="stepLabel">Application form · Step 7 of 7</span>
+
+      <div class="language-control">
+        <label for="language" data-i18n="languageLabel">Language</label>
+        <select id="language" name="language">
+          <option value="en">English</option>
+          <option value="hi">हिन्दी</option>
+          <option value="bn">বাংলা</option>
+          <option value="ne">नेपाली</option>
+        </select>
+      </div>
+    </div>
+
+    <header>
+   
+      <p class="eyebrow" data-i18n="eyebrow">Final review</p>
+      <h1 data-i18n="pageTitle">Review Application</h1>
+    
+    </header>
+
+    <div class="notice" role="note">
+      <strong data-i18n="importantTitle">IMPORTANT -- REVIEW THE DETAILS CAREFULLY BEFORE SUBMISSION</strong>
+        </div>
+
+    <section class="progress" aria-label="Application progress">
+      <div class="progress-heading">
+        <strong data-i18n="progressTitle">Application progress</strong>
+        <span data-i18n="progressValue">Step 7 of 7 · 100%</span>
+      </div>
+      <div
+        class="progress-track"
+        role="progressbar"
+        aria-valuemin="1"
+        aria-valuemax="7"
+        aria-valuenow="7"
+        aria-label="Step 7 of 7"
+      >
+        <div class="progress-fill"></div>
+      </div>
+    </section>
+
+    <section class="reference-panel" aria-label="Application draft reference">
+      <div>
+        <small data-i18n="referenceLabel">Draft reference</small>
+        <strong id="applicationReference">Loading…</strong>
+      </div>
+      <div>
+        <small data-i18n="createdLabel">Draft created</small>
+        <strong id="draftCreated">--</strong>
+      </div>
+      <div>
+        <small data-i18n="savedLabel">Last saved</small>
+        <strong id="lastSaved">--</strong>
+      </div>
+      <div>
+        <small data-i18n="reviewStatusLabel">Review status</small>
+        <strong><span class="status-pill neutral" id="reviewStatus">Draft only</span></strong>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-heading-row">
+        <h2 data-i18n="readinessTitle">1. Readiness checks</h2>
+        <span class="status-pill neutral" id="readinessPill">Checking…</span>
+      </div>
+      <p class="section-intro" data-i18n="readinessIntro">
+        These checks indicate whether key information appears in the local draft. 
+      </p>
+      <div id="readinessList" class="checklist"></div>
+    </section>
+
+    <section class="section">
+      <h2 data-i18n="applicantTitle">2. Applicant and application details</h2>
+      <p class="section-intro" data-i18n="applicantIntro">
+        Confirm your application route, academic details and personal information.
+      </p>
+      <div id="applicantReview"></div>
+      <div class="actions no-print">
+        <a class="button" href="page-1-applicant.html" data-i18n="editApplicant">
+          Edit Step 1
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-i18n="contactTitle">3. Contact and guardian details</h2>
+      <p class="section-intro" data-i18n="contactIntro">
+        Confirm that your contact details are correct.
+      </p>
+      <div id="contactReview"></div>
+      <div class="actions no-print">
+        <a class="button" href="page-2-contact.html" data-i18n="editContact">
+          Edit Step 2
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-i18n="eligibilityTitle">4. Eligibility information</h2>
+      <p class="section-intro" data-i18n="eligibilityIntro">
+        Review the eligibility information and supporting statements saved in the draft.
+      </p>
+      <div id="eligibilityReview"></div>
+      <div class="actions no-print">
+        <a class="button" href="page-3-eligibility.html" data-i18n="editEligibility">
+          Edit Step 3
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-i18n="photoTitle">5. Photograph and signature</h2>
+      <p class="section-intro" data-i18n="photoIntro">
+        Review any photograph or signature metadata saved by the previous step.
+        A filename alone does not mean an image was uploaded to a server.
+      </p>
+      <div id="photoReview"></div>
+      <div class="actions no-print">
+        <a class="button" href="page-4-photo.html" data-i18n="editPhoto">
+          Edit Step 4
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-i18n="documentsTitle">6. Supporting documents</h2>
+      <p class="section-intro" data-i18n="documentsIntro">
+        Review the available file list. This browser-based review cannot confirm server receipt,
+        file authenticity or document validity.
+      </p>
+      <div id="documentsReview"></div>
+      <div class="actions no-print">
+        <a class="button" href="page-5-documents.html" data-i18n="editDocuments">
+          Edit Step 5
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-i18n="consentTitle">7. Declarations and privacy acknowledgement</h2>
+      <p class="section-intro" data-i18n="consentIntro">
+        Confirm that the required declarations and acknowledgement details are saved.
+      </p>
+      <div id="consentReview"></div>
+      <div class="actions no-print">
+        <a class="button" href="page-6-consent.html" data-i18n="editConsent">
+          Edit Step 6
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-i18n="allFieldsTitle">Additional saved fields</h2>
+      <p class="section-intro" data-i18n="allFieldsIntro">
+        Any additional values stored in the draft are listed here so that information is not
+        silently omitted from your review.
+      </p>
+      <div id="additionalReview"></div>
+    </section>
+
+    <section class="section">
+      <h2 data-i18n="nextStepsTitle">Final actions</h2>
+      <p class="section-intro" data-i18n="nextStepsIntro">
+        Save a local copy or print this review for your records. Online submission is available
+        only when the server endpoint is configured and reachable.
+      </p>
+
+      <div id="statusMessage" class="status-message" role="status" aria-live="polite" tabindex="-1"></div>
+
+      <div class="actions no-print">
+        <button class="button" type="button" id="saveDraftButton" data-i18n="saveDraft">
+          Save draft
+        </button>
+        <button class="button" type="button" id="downloadJsonButton" data-i18n="downloadCopy">
+          Download JSON copy
+        </button>
+        <button class="button" type="button" id="printButton" data-i18n="printReview">
+          Print / Save as PDF
+        </button>
+        <button class="button primary" type="button" id="submitButton" data-i18n="submitOnline">
+          Submit online
+        </button>
+      </div>
+
+ 
+    <footer class="footer">
+     <p data-i18n="footerVerify">
+        Verify the official process and privacy notice before sending personal information or documents.
+      </p>
+      <p class="no-print" data-i18n="footerStep">Step 7 · Final review</p>
+    </footer>
+  </main>
+
+  <script>
+    "use strict";
+
+    (() => {
+      const DRAFT_KEY = "donorTrustQuotaDraft_v3";
+      const REFERENCE_KEY = "donorTrustQuotaReference_v1";
+      const CREATED_KEY = "donorTrustQuotaCreated_v1";
+      const LANGUAGE_KEY = "donorTrustQuotaLanguage_v1";
+
+      const translations = {
+        en: {
+          stepLabel: "Application form · Step 7 of 7",
+          languageLabel: "Language",
+          emblemPlaceholder: "Emblem image",
+          logoPlaceholder: "WBMCC image",
+          eyebrow: "Final review",
+          pageTitle: "Review Application",
+          subtitle: "Review the information saved in your browser before deciding whether to continue. Correct any missing details on the relevant step.",
+          importantTitle: "IMPORTANT -- REVIEW THE DETAILS CAREFULLY BEFIRE SUBMISSION",
+          
+          progressTitle: "Application progress",
+          progressValue: "Step 7 of 7 · 100%",
+          referenceLabel: "Draft reference",
+          createdLabel: "Draft created",
+          savedLabel: "Last saved",
+          reviewStatusLabel: "Review status",
+          readinessTitle: "1. Readiness checks",
+          readinessIntro: "These checks indicate whether key information appears in the local draft. They do not verify the truth, authenticity or official acceptance of any information.",
+          applicantTitle: "2. Applicant and application details",
+          applicantIntro: "Confirm your application route, academic details and personal information.",
+          contactTitle: "3. Contact and guardian details",
+          contactIntro: "Confirm that your contact details are correct.",
+          eligibilityTitle: "4. Eligibility information",
+          eligibilityIntro: "Review the eligibility information and supporting statements saved in the draft.",
+          photoTitle: "5. Photograph and signature",
+          photoIntro: "Review any photograph or signature metadata saved by the previous step. A filename alone does not mean an image was uploaded to a server.",
+          documentsTitle: "6. Supporting documents",
+          documentsIntro: "Review the available file list. This browser-based review cannot confirm server receipt, file authenticity or document validity.",
+          consentTitle: "7. Declarations and privacy acknowledgement",
+          consentIntro: "Confirm that the required declarations and acknowledgement details are saved.",
+          allFieldsTitle: "Additional saved fields",
+          allFieldsIntro: "Any additional values stored in the draft are listed here so that information is not silently omitted from your review.",
+          editApplicant: "Edit Step 1",
+          editContact: "Edit Step 2",
+          editEligibility: "Edit Step 3",
+          editPhoto: "Edit Step 4",
+          editDocuments: "Edit Step 5",
+          editConsent: "Edit Step 6",
+          nextStepsTitle: "Final actions",
+          nextStepsIntro: "Save a local copy or print this review for your records. Online submission is available only when the server endpoint is configured and reachable.",
+          saveDraft: "Save draft",
+          downloadCopy: "Download JSON copy",
+          printReview: "Print / Save as PDF",
+          submitOnline: "Submit online",
+          submitWarning: "Online submission sends personal information to the configured server. Submit only after confirming that the endpoint is controlled by the intended service and that its privacy and security arrangements are appropriate. This page does not establish official WBMCC status.",
+          footerDraft: "Local draft review only. A local save or downloaded copy is not proof of official submission.",
+          footerVerify: "Verify the official process and privacy notice before sending personal information or documents.",
+          footerStep: "Step 7 · Final review",
+          notGenerated: "Not generated",
+          notAvailable: "Not available",
+          yes: "Yes",
+          no: "No",
+          missing: "Missing",
+          present: "Present",
+          draftOnly: "Draft only",
+          ready: "Basic checks passed",
+          incomplete: "Incomplete",
+          checkApplicant: "Applicant name",
+          checkContact: "Contact details",
+          checkRoute: "Application details",
+          checkConsent: "Required declarations",
+          checkReference: "Draft reference",
+          checkPhoto: "Photograph / signature metadata",
+          checkDocuments: "Supporting file list",
+          labelName: "Full name",
+          labelDOB: "Date of birth",
+          labelGender: "Gender",
+          labelNationality: "Nationality",
+          labelCourse: "Course",
+          labelSession: "Academic session",
+          labelRoute: "Application route",
+          labelTrust: "Trust name",
+          labelInstitution: "Institution",
+          labelOtherInstitution: "Other institution",
+          labelMemo: "Memo number",
+          labelNoticeDate: "Notice date",
+          labelTrustReference: "Trust reference",
+          labelNEETYear: "NEET year",
+          labelNEETRoll: "NEET roll number",
+          labelNEETApplication: "NEET application number",
+          labelNEETScore: "NEET score",
+          labelNEETRank: "NEET rank",
+          labelCategory: "Category",
+          labelClassXII: "Class XII details",
+          labelPhone: "Phone",
+          labelEmail: "Email",
+          labelAddress: "Address",
+          labelCity: "City",
+          labelDistrict: "District",
+          labelState: "State",
+          labelPIN: "PIN code",
+          labelGuardian: "Parent / guardian",
+          labelRelationship: "Relationship",
+          labelGuardianPhone: "Guardian phone",
+          labelGuardianEmail: "Guardian email",
+          labelGuardianAddress: "Guardian address",
+          labelNEETQualified: "NEET qualified",
+          labelNEETExamYear: "NEET exam year",
+          labelScorecardReference: "Scorecard reference",
+          labelClass12Qualified: "Class XII qualified",
+          labelDocumentsReady: "Documents ready",
+          labelBasis: "Eligibility basis",
+          labelRequest: "Request",
+          labelAdditionalInfo: "Additional information",
+          labelEligibilityAcknowledged: "Eligibility acknowledgement",
+          labelPhoto: "Photograph",
+          labelSignature: "Signature",
+          labelLivePhoto: "Live photograph",
+          labelSupportingFiles: "Supporting files",
+          labelConsentTruth: "Accuracy declaration",
+          labelConsentAuthority: "Verification declaration",
+          labelConsentPrivacy: "Privacy acknowledgement",
+          labelDeclarant: "Declarant name",
+          labelSignedDate: "Acknowledgement date",
+          labelSigningRelationship: "Declarant relationship",
+          labelConsentLanguage: "Consent language",
+          labelConsentRecordedAt: "Consent recorded in draft",
+          yesChecked: "Checked",
+          notChecked: "Not checked",
+          fileCount: "File count",
+          fileName: "File name",
+          fileSize: "Size",
+          fileType: "Type",
+          noData: "No saved information for this section.",
+          noAdditional: "No additional fields were found.",
+          fileMetadataOnly: "Only file metadata is available in the saved draft. The actual files are not confirmed as uploaded.",
+          photoMetadataOnly: "Image data may not persist when navigating between pages. Check Step 4 again before proceeding.",
+          saveSuccess: "Draft saved in this browser.",
+          saveError: "Unable to save the draft. Check browser storage settings and available space.",
+          downloadError: "Unable to create the JSON copy.",
+          submitConfirm: "Submit the saved application information to the configured server? Personal information will be transmitted. Continue only if you trust the destination.",
+          submitSuccess: "The server reported that the application was received. Reference: ",
+          submitError: "Submission was not confirmed. Your local draft has been kept. Check the server configuration and try again only after checking whether a submission was already received.",
+          submitMissing: "Some basic checks are incomplete. Review the marked sections before submitting.",
+          referenceError: "No draft reference was found. Return to Step 1 and create or restore the draft.",
+          serverRejected: "The server did not accept the application. The local draft remains saved.",
+          sending: "Sending application…",
+          requestFailed: "The server request failed. Submission is not confirmed.",
+          responseInvalid: "The server response could not be verified. Submission is not confirmed.",
+          fileNotUploaded: "Not verified as uploaded",
+          submittedStatus: "Server response received"
+        },
+
+        hi: {
+          stepLabel: "आवेदन फ़ॉर्म · चरण 7 / 7",
+          languageLabel: "भाषा",
+          emblemPlaceholder: "प्रतीक चित्र",
+          logoPlaceholder: "WBMCC चित्र",
+          eyebrow: "अंतिम समीक्षा",
+          pageTitle: "आवेदन की समीक्षा",
+          subtitle: "आगे बढ़ने से पहले ब्राउज़र में सहेजी गई जानकारी की समीक्षा करें। छूटी हुई जानकारी संबंधित चरण में सुधारें।",
+          importantTitle: "महत्वपूर्ण -- केवल ड्राफ़्ट समीक्षा",
+          importantText: "यह पृष्ठ स्थानीय रूप से सहेजी गई जानकारी की समीक्षा करता है। यह आधिकारिक WBMCC पोर्टल नहीं है और पात्रता, सीट आवंटन, दस्तावेज़ सत्यापन या आवेदन जमा होने की पुष्टि नहीं करता। आवेदन जमा तभी मानें जब कॉन्फ़िगर किया गया सर्वर इसकी पुष्टि करे।",
+          progressTitle: "आवेदन की प्रगति",
+          progressValue: "चरण 7 / 7 · 100%",
+          referenceLabel: "ड्राफ़्ट संदर्भ",
+          createdLabel: "ड्राफ़्ट बनाया गया",
+          savedLabel: "अंतिम बार सहेजा गया",
+          reviewStatusLabel: "समीक्षा स्थिति",
+          readinessTitle: "1. तैयारी जाँच",
+          readinessIntro: "ये जाँच बताती हैं कि मुख्य जानकारी स्थानीय ड्राफ़्ट में मौजूद है या नहीं। ये जानकारी की सत्यता, प्रामाणिकता या आधिकारिक स्वीकृति सत्यापित नहीं करतीं।",
+          applicantTitle: "2. आवेदक और आवेदन विवरण",
+          applicantIntro: "आवेदन मार्ग, शैक्षणिक विवरण और व्यक्तिगत जानकारी की पुष्टि करें।",
+          contactTitle: "3. संपर्क और अभिभावक विवरण",
+          contactIntro: "संपर्क विवरण सही होने की पुष्टि करें।",
+          eligibilityTitle: "4. पात्रता जानकारी",
+          eligibilityIntro: "ड्राफ़्ट में सहेजी गई पात्रता जानकारी और सहायक विवरण देखें।",
+          photoTitle: "5. फोटो और हस्ताक्षर",
+          photoIntro: "पिछले चरण से सहेजा गया फोटो या हस्ताक्षर मेटाडेटा देखें। केवल फ़ाइल नाम होने का अर्थ सर्वर पर अपलोड होना नहीं है।",
+          documentsTitle: "6. सहायक दस्तावेज़",
+          documentsIntro: "उपलब्ध फ़ाइल सूची देखें। यह समीक्षा सर्वर पर फ़ाइल प्राप्त होने, प्रामाणिकता या वैधता की पुष्टि नहीं करती।",
+          consentTitle: "7. घोषणाएँ और गोपनीयता स्वीकृति",
+          consentIntro: "पुष्टि करें कि आवश्यक घोषणाएँ और स्वीकृति विवरण सहेजे गए हैं।",
+          allFieldsTitle: "अन्य सहेजे गए फ़ील्ड",
+          allFieldsIntro: "ड्राफ़्ट में मौजूद अतिरिक्त जानकारी यहाँ दिखाई जाती है ताकि समीक्षा में कोई जानकारी छूटे नहीं।",
+          editApplicant: "चरण 1 सुधारें",
+          editContact: "चरण 2 सुधारें",
+          editEligibility: "चरण 3 सुधारें",
+          editPhoto: "चरण 4 सुधारें",
+          editDocuments: "चरण 5 सुधारें",
+          editConsent: "चरण 6 सुधारें",
+          nextStepsTitle: "अंतिम कार्रवाइयाँ",
+          nextStepsIntro: "स्थानीय प्रति सहेजें या रिकॉर्ड के लिए समीक्षा प्रिंट करें। ऑनलाइन जमा तभी संभव है जब सर्वर एंडपॉइंट कॉन्फ़िगर और उपलब्ध हो।",
+          saveDraft: "ड्राफ़्ट सहेजें",
+          downloadCopy: "JSON प्रति डाउनलोड करें",
+          printReview: "प्रिंट / PDF सहेजें",
+          submitOnline: "ऑनलाइन जमा करें",
+          submitWarning: "ऑनलाइन जमा करने पर व्यक्तिगत जानकारी कॉन्फ़िगर किए गए सर्वर को भेजी जाएगी। आगे बढ़ने से पहले गंतव्य और उसकी गोपनीयता व सुरक्षा व्यवस्था की पुष्टि करें। यह पृष्ठ आधिकारिक WBMCC स्थिति स्थापित नहीं करता।",
+          footerDraft: "केवल स्थानीय ड्राफ़्ट समीक्षा। स्थानीय प्रति या डाउनलोड आधिकारिक जमा होने का प्रमाण नहीं है।",
+          footerVerify: "व्यक्तिगत जानकारी या दस्तावेज़ भेजने से पहले आधिकारिक प्रक्रिया और गोपनीयता सूचना की पुष्टि करें।",
+          footerStep: "चरण 7 · अंतिम समीक्षा",
+          notGenerated: "बनाया नहीं गया",
+          notAvailable: "उपलब्ध नहीं",
+          yes: "हाँ",
+          no: "नहीं",
+          missing: "गुम",
+          present: "मौजूद",
+          draftOnly: "केवल ड्राफ़्ट",
+          ready: "बुनियादी जाँच पूरी",
+          incomplete: "अधूरा",
+          checkApplicant: "आवेदक का नाम",
+          checkContact: "संपर्क विवरण",
+          checkRoute: "आवेदन विवरण",
+          checkConsent: "आवश्यक घोषणाएँ",
+          checkReference: "ड्राफ़्ट संदर्भ",
+          checkPhoto: "फोटो / हस्ताक्षर मेटाडेटा",
+          checkDocuments: "सहायक फ़ाइल सूची",
+          labelName: "पूरा नाम",
+          labelDOB: "जन्म तिथि",
+          labelGender: "लिंग",
+          labelNationality: "राष्ट्रीयता",
+          labelCourse: "पाठ्यक्रम",
+          labelSession: "शैक्षणिक सत्र",
+          labelRoute: "आवेदन मार्ग",
+          labelTrust: "ट्रस्ट का नाम",
+          labelInstitution: "संस्था",
+          labelOtherInstitution: "अन्य संस्था",
+          labelMemo: "मेमो नंबर",
+          labelNoticeDate: "सूचना की तारीख",
+          labelTrustReference: "ट्रस्ट संदर्भ",
+          labelNEETYear: "NEET वर्ष",
+          labelNEETRoll: "NEET रोल नंबर",
+          labelNEETApplication: "NEET आवेदन नंबर",
+          labelNEETScore: "NEET अंक",
+          labelNEETRank: "NEET रैंक",
+          labelCategory: "श्रेणी",
+          labelClassXII: "कक्षा 12 विवरण",
+          labelPhone: "फ़ोन",
+          labelEmail: "ईमेल",
+          labelAddress: "पता",
+          labelCity: "शहर",
+          labelDistrict: "ज़िला",
+          labelState: "राज्य",
+          labelPIN: "पिन कोड",
+          labelGuardian: "माता-पिता / अभिभावक",
+          labelRelationship: "संबंध",
+          labelGuardianPhone: "अभिभावक का फ़ोन",
+          labelGuardianEmail: "अभिभावक का ईमेल",
+          labelGuardianAddress: "अभिभावक का पता",
+          labelNEETQualified: "NEET उत्तीर्ण",
+          labelNEETExamYear: "NEET परीक्षा वर्ष",
+          labelScorecardReference: "स्कोरकार्ड संदर्भ",
+          labelClass12Qualified: "कक्षा 12 उत्तीर्ण",
+          labelDocumentsReady: "दस्तावेज़ तैयार",
+          labelBasis: "पात्रता का आधार",
+          labelRequest: "अनुरोध",
+          labelAdditionalInfo: "अतिरिक्त जानकारी",
+          labelEligibilityAcknowledged: "पात्रता स्वीकृति",
+          labelPhoto: "फोटो",
+          labelSignature: "हस्ताक्षर",
+          labelLivePhoto: "लाइव फोटो",
+          labelSupportingFiles: "सहायक फ़ाइलें",
+          labelConsentTruth: "जानकारी की सत्यता घोषणा",
+          labelConsentAuthority: "सत्यापन घोषणा",
+          labelConsentPrivacy: "गोपनीयता स्वीकृति",
+          labelDeclarant: "घोषणा करने वाले का नाम",
+          labelSignedDate: "स्वीकृति की तारीख",
+          labelSigningRelationship: "घोषणा करने वाले का संबंध",
+          labelConsentLanguage: "स्वीकृति की भाषा",
+          labelConsentRecordedAt: "ड्राफ़्ट में स्वीकृति दर्ज",
+          yesChecked: "चुना गया",
+          notChecked: "नहीं चुना गया",
+          fileCount: "फ़ाइलों की संख्या",
+          fileName: "फ़ाइल नाम",
+          fileSize: "आकार",
+          fileType: "प्रकार",
+          noData: "इस भाग के लिए कोई जानकारी सहेजी नहीं गई है।",
+          noAdditional: "कोई अतिरिक्त फ़ील्ड नहीं मिला।",
+          fileMetadataOnly: "ड्राफ़्ट में केवल फ़ाइल मेटाडेटा उपलब्ध है। वास्तविक फ़ाइलें सर्वर पर अपलोड होने की पुष्टि नहीं है।",
+          photoMetadataOnly: "पृष्ठ बदलने पर चित्र डेटा सुरक्षित न रह सकता है। आगे बढ़ने से पहले चरण 4 दोबारा जाँचें।",
+          saveSuccess: "ड्राफ़्ट इस ब्राउज़र में सहेजा गया।",
+          saveError: "ड्राफ़्ट सहेजा नहीं जा सका। ब्राउज़र स्टोरेज सेटिंग और उपलब्ध स्थान जाँचें।",
+          downloadError: "JSON प्रति नहीं बनाई जा सकी।",
+          submitConfirm: "सहेजी गई आवेदन जानकारी कॉन्फ़िगर किए गए सर्वर पर भेजें? व्यक्तिगत जानकारी भेजी जाएगी। केवल विश्वसनीय गंतव्य होने पर आगे बढ़ें।",
+          submitSuccess: "सर्वर ने आवेदन प्राप्त होने की सूचना दी। संदर्भ: ",
+          submitError: "जमा होने की पुष्टि नहीं हुई। स्थानीय ड्राफ़्ट सुरक्षित रखा गया है। सर्वर कॉन्फ़िगरेशन जाँचें और दोबारा प्रयास करने से पहले पुष्टि करें कि आवेदन पहले से प्राप्त तो नहीं हुआ।",
+          submitMissing: "कुछ बुनियादी जाँच अधूरी हैं। जमा करने से पहले चिह्नित भागों की समीक्षा करें।",
+          referenceError: "ड्राफ़्ट संदर्भ नहीं मिला। चरण 1 पर लौटकर ड्राफ़्ट बनाएँ या पुनः प्राप्त करें।",
+          serverRejected: "सर्वर ने आवेदन स्वीकार नहीं किया। स्थानीय ड्राफ़्ट सुरक्षित है।",
+          sending: "आवेदन भेजा जा रहा है…",
+          requestFailed: "सर्वर अनुरोध विफल हुआ। जमा होने की पुष्टि नहीं है।",
+          responseInvalid: "सर्वर प्रतिक्रिया सत्यापित नहीं हो सकी। जमा होने की पुष्टि नहीं है।",
+          fileNotUploaded: "अपलोड की पुष्टि नहीं",
+          submittedStatus: "सर्वर प्रतिक्रिया प्राप्त"
+        },
+
+        bn: {
+          stepLabel: "আবেদন ফর্ম · ধাপ ৭ / ৭",
+          languageLabel: "ভাষা",
+          emblemPlaceholder: "প্রতীকচিহ্নের ছবি",
+          logoPlaceholder: "WBMCC-এর ছবি",
+          eyebrow: "চূড়ান্ত পর্যালোচনা",
+          pageTitle: "আবেদন পর্যালোচনা",
+          subtitle: "এগোনোর আগে ব্রাউজারে সংরক্ষিত তথ্য পর্যালোচনা করুন। কোনও তথ্য অনুপস্থিত থাকলে সংশ্লিষ্ট ধাপে সংশোধন করুন।",
+          importantTitle: "গুরুত্বপূর্ণ -- শুধু খসড়া পর্যালোচনা",
+          importantText: "এই পৃষ্ঠা স্থানীয়ভাবে সংরক্ষিত তথ্য পর্যালোচনা করে। এটি কোনও সরকারি WBMCC পোর্টাল নয় এবং যোগ্যতা, আসন বরাদ্দ, নথি যাচাই বা আবেদন জমার নিশ্চয়তা দেয় না। কনফিগার করা সার্ভার গ্রহণের বিষয়টি নিশ্চিত করলেই কেবল জমা হয়েছে বলে বিবেচনা করুন।",
+          progressTitle: "আবেদনের অগ্রগতি",
+          progressValue: "ধাপ ৭ / ৭ · ১০০%",
+          referenceLabel: "খসড়া রেফারেন্স",
+          createdLabel: "খসড়া তৈরির তারিখ",
+          savedLabel: "সর্বশেষ সংরক্ষণ",
+          reviewStatusLabel: "পর্যালোচনার অবস্থা",
+          readinessTitle: "১. প্রস্তুতি যাচাই",
+          readinessIntro: "এই যাচাইগুলি স্থানীয় খসড়ায় প্রধান তথ্য আছে কি না তা দেখায়। তথ্যের সত্যতা, প্রামাণিকতা বা সরকারি গ্রহণযোগ্যতা যাচাই করে না।",
+          applicantTitle: "২. আবেদনকারী ও আবেদনের তথ্য",
+          applicantIntro: "আবেদনের ধরন, শিক্ষাগত তথ্য ও ব্যক্তিগত তথ্য যাচাই করুন।",
+          contactTitle: "৩. যোগাযোগ ও অভিভাবকের তথ্য",
+          contactIntro: "যোগাযোগের তথ্য সঠিক কি না নিশ্চিত করুন।",
+          eligibilityTitle: "৪. যোগ্যতার তথ্য",
+          eligibilityIntro: "খসড়ায় সংরক্ষিত যোগ্যতার তথ্য ও সহায়ক বিবৃতি পর্যালোচনা করুন।",
+          photoTitle: "৫. ছবি ও স্বাক্ষর",
+          photoIntro: "আগের ধাপে সংরক্ষিত ছবি বা স্বাক্ষরের মেটাডেটা দেখুন। শুধু ফাইলের নাম থাকলেই সার্ভারে আপলোড হয়েছে বোঝায় না।",
+          documentsTitle: "৬. সহায়ক নথি",
+          documentsIntro: "উপলব্ধ ফাইলের তালিকা দেখুন। এই ব্রাউজারভিত্তিক পর্যালোচনা সার্ভারে ফাইল পৌঁছানো, সত্যতা বা বৈধতা নিশ্চিত করে না।",
+          consentTitle: "৭. ঘোষণা ও গোপনীয়তা স্বীকৃতি",
+          consentIntro: "প্রয়োজনীয় ঘোষণা ও স্বীকৃতির তথ্য সংরক্ষিত হয়েছে কি না নিশ্চিত করুন।",
+          allFieldsTitle: "অন্যান্য সংরক্ষিত তথ্য",
+          allFieldsIntro: "খসড়ায় থাকা অতিরিক্ত তথ্য এখানে দেখানো হবে, যাতে পর্যালোচনায় কোনও তথ্য বাদ না যায়।",
+          editApplicant: "ধাপ ১ সম্পাদনা",
+          editContact: "ধাপ ২ সম্পাদনা",
+          editEligibility: "ধাপ ৩ সম্পাদনা",
+          editPhoto: "ধাপ ৪ সম্পাদনা",
+          editDocuments: "ধাপ ৫ সম্পাদনা",
+          editConsent: "ধাপ ৬ সম্পাদনা",
+          nextStepsTitle: "চূড়ান্ত পদক্ষেপ",
+          nextStepsIntro: "স্থানীয় কপি সংরক্ষণ করুন বা রেকর্ডের জন্য প্রিন্ট করুন। সার্ভার এন্ডপয়েন্ট কনফিগার ও সচল থাকলেই অনলাইনে জমা সম্ভব।",
+          saveDraft: "খসড়া সংরক্ষণ",
+          downloadCopy: "JSON কপি ডাউনলোড",
+          printReview: "প্রিন্ট / PDF সংরক্ষণ",
+          submitOnline: "অনলাইনে জমা",
+          submitWarning: "অনলাইনে জমা দিলে ব্যক্তিগত তথ্য কনফিগার করা সার্ভারে পাঠানো হবে। গন্তব্য ও তার গোপনীয়তা এবং নিরাপত্তা ব্যবস্থা যাচাই করার পরেই এগোন। এই পৃষ্ঠা সরকারি WBMCC মর্যাদা প্রতিষ্ঠা করে না।",
+          footerDraft: "শুধু স্থানীয় খসড়া পর্যালোচনা। স্থানীয় কপি বা ডাউনলোড সরকারি জমার প্রমাণ নয়।",
+          footerVerify: "ব্যক্তিগত তথ্য বা নথি পাঠানোর আগে সরকারি প্রক্রিয়া ও গোপনীয়তা বিজ্ঞপ্তি যাচাই করুন।",
+          footerStep: "ধাপ ৭ · চূড়ান্ত পর্যালোচনা",
+          notGenerated: "তৈরি হয়নি",
+          notAvailable: "পাওয়া যায়নি",
+          yes: "হ্যাঁ",
+          no: "না",
+          missing: "অনুপস্থিত",
+          present: "আছে",
+          draftOnly: "শুধু খসড়া",
+          ready: "প্রাথমিক যাচাই সম্পূর্ণ",
+          incomplete: "অসম্পূর্ণ",
+          checkApplicant: "আবেদনকারীর নাম",
+          checkContact: "যোগাযোগের তথ্য",
+          checkRoute: "আবেদনের তথ্য",
+          checkConsent: "প্রয়োজনীয় ঘোষণা",
+          checkReference: "খসড়া রেফারেন্স",
+          checkPhoto: "ছবি / স্বাক্ষর মেটাডেটা",
+          checkDocuments: "সহায়ক ফাইলের তালিকা",
+          labelName: "পূর্ণ নাম",
+          labelDOB: "জন্মতারিখ",
+          labelGender: "লিঙ্গ",
+          labelNationality: "জাতীয়তা",
+          labelCourse: "কোর্স",
+          labelSession: "শিক্ষাবর্ষ",
+          labelRoute: "আবেদনের ধরন",
+          labelTrust: "ট্রাস্টের নাম",
+          labelInstitution: "প্রতিষ্ঠান",
+          labelOtherInstitution: "অন্য প্রতিষ্ঠান",
+          labelMemo: "মেমো নম্বর",
+          labelNoticeDate: "বিজ্ঞপ্তির তারিখ",
+          labelTrustReference: "ট্রাস্ট রেফারেন্স",
+          labelNEETYear: "NEET বছর",
+          labelNEETRoll: "NEET রোল নম্বর",
+          labelNEETApplication: "NEET আবেদন নম্বর",
+          labelNEETScore: "NEET নম্বর",
+          labelNEETRank: "NEET র‍্যাঙ্ক",
+          labelCategory: "শ্রেণি",
+          labelClassXII: "দ্বাদশ শ্রেণির তথ্য",
+          labelPhone: "ফোন",
+          labelEmail: "ইমেল",
+          labelAddress: "ঠিকানা",
+          labelCity: "শহর",
+          labelDistrict: "জেলা",
+          labelState: "রাজ্য",
+          labelPIN: "পিন কোড",
+          labelGuardian: "অভিভাবক",
+          labelRelationship: "সম্পর্ক",
+          labelGuardianPhone: "অভিভাবকের ফোন",
+          labelGuardianEmail: "অভিভাবকের ইমেল",
+          labelGuardianAddress: "অভিভাবকের ঠিকানা",
+          labelNEETQualified: "NEET উত্তীর্ণ",
+          labelNEETExamYear: "NEET পরীক্ষার বছর",
+          labelScorecardReference: "স্কোরকার্ড রেফারেন্স",
+          labelClass12Qualified: "দ্বাদশ শ্রেণি উত্তীর্ণ",
+          labelDocumentsReady: "নথি প্রস্তুত",
+          labelBasis: "যোগ্যতার ভিত্তি",
+          labelRequest: "অনুরোধ",
+          labelAdditionalInfo: "অতিরিক্ত তথ্য",
+          labelEligibilityAcknowledged: "যোগ্যতার স্বীকৃতি",
+          labelPhoto: "ছবি",
+          labelSignature: "স্বাক্ষর",
+          labelLivePhoto: "লাইভ ছবি",
+          labelSupportingFiles: "সহায়ক ফাইল",
+          labelConsentTruth: "তথ্যের সত্যতার ঘোষণা",
+          labelConsentAuthority: "যাচাইয়ের ঘোষণা",
+          labelConsentPrivacy: "গোপনীয়তার স্বীকৃতি",
+          labelDeclarant: "ঘোষণাকারীর নাম",
+          labelSignedDate: "স্বীকৃতির তারিখ",
+          labelSigningRelationship: "ঘোষণাকারীর সম্পর্ক",
+          labelConsentLanguage: "স্বীকৃতির ভাষা",
+          labelConsentRecordedAt: "খসড়ায় স্বীকৃতির সময়",
+          yesChecked: "নির্বাচিত",
+          notChecked: "নির্বাচিত নয়",
+          fileCount: "ফাইলের সংখ্যা",
+          fileName: "ফাইলের নাম",
+          fileSize: "আকার",
+          fileType: "ধরন",
+          noData: "এই অংশে কোনও তথ্য সংরক্ষিত নেই।",
+          noAdditional: "অতিরিক্ত কোনও ক্ষেত্র পাওয়া যায়নি।",
+          fileMetadataOnly: "খসড়ায় শুধু ফাইলের মেটাডেটা আছে। প্রকৃত ফাইল সার্ভারে আপলোড হয়েছে বলে নিশ্চিত নয়।",
+          photoMetadataOnly: "পৃষ্ঠা বদলালে ছবির তথ্য হারিয়ে যেতে পারে। এগোনোর আগে ধাপ ৪ আবার পরীক্ষা করুন।",
+          saveSuccess: "খসড়াটি এই ব্রাউজারে সংরক্ষিত হয়েছে।",
+          saveError: "খসড়া সংরক্ষণ করা যায়নি। ব্রাউজারের স্টোরেজ সেটিং ও খালি জায়গা পরীক্ষা করুন।",
+          downloadError: "JSON কপি তৈরি করা যায়নি।",
+          submitConfirm: "সংরক্ষিত আবেদন তথ্য কনফিগার করা সার্ভারে পাঠাবেন? ব্যক্তিগত তথ্য পাঠানো হবে। গন্তব্য বিশ্বস্ত হলেই এগোন।",
+          submitSuccess: "সার্ভার আবেদন পাওয়ার কথা জানিয়েছে। রেফারেন্স: ",
+          submitError: "জমা নিশ্চিত হয়নি। স্থানীয় খসড়া রাখা হয়েছে। সার্ভার সেটিং পরীক্ষা করুন এবং আবার চেষ্টা করার আগে আবেদনটি আগে থেকেই গৃহীত হয়েছে কি না যাচাই করুন।",
+          submitMissing: "কিছু প্রাথমিক যাচাই অসম্পূর্ণ। জমা দেওয়ার আগে চিহ্নিত অংশগুলি দেখুন।",
+          referenceError: "খসড়া রেফারেন্স পাওয়া যায়নি। ধাপ ১-এ ফিরে খসড়া তৈরি বা পুনরুদ্ধার করুন।",
+          serverRejected: "সার্ভার আবেদন গ্রহণ করেনি। স্থানীয় খসড়া সংরক্ষিত আছে।",
+          sending: "আবেদন পাঠানো হচ্ছে…",
+          requestFailed: "সার্ভার অনুরোধ ব্যর্থ হয়েছে। জমা নিশ্চিত নয়।",
+          responseInvalid: "সার্ভারের উত্তর যাচাই করা যায়নি। জমা নিশ্চিত নয়।",
+          fileNotUploaded: "আপলোড নিশ্চিত নয়",
+          submittedStatus: "সার্ভারের উত্তর পাওয়া গেছে"
+        },
+
+        ne: {
+          stepLabel: "आवेदन फाराम · चरण ७ / ७",
+          languageLabel: "भाषा",
+          emblemPlaceholder: "प्रतीकको तस्बिर",
+          logoPlaceholder: "WBMCC को तस्बिर",
+          eyebrow: "अन्तिम समीक्षा",
+          pageTitle: "आवेदन समीक्षा",
+          subtitle: "अगाडि बढ्नुअघि ब्राउजरमा सुरक्षित गरिएको जानकारी समीक्षा गर्नुहोस्। छुटेका विवरण सम्बन्धित चरणमा सच्याउनुहोस्।",
+          importantTitle: "महत्त्वपूर्ण -- मस्यौदा समीक्षा मात्र",
+          importantText: "यो पृष्ठले स्थानीय रूपमा सुरक्षित गरिएको जानकारी समीक्षा गर्छ। यो आधिकारिक WBMCC पोर्टल होइन र योग्यता, सिट बाँडफाँट, कागजात जाँच वा आवेदन बुझाइएको पुष्टि गर्दैन। कन्फिगर गरिएको सर्भरले प्राप्ति पुष्टि गरेपछि मात्र आवेदन बुझाइएको मान्नुहोस्।",
+          progressTitle: "आवेदनको प्रगति",
+          progressValue: "चरण ७ / ७ · १००%",
+          referenceLabel: "मस्यौदा सन्दर्भ",
+          createdLabel: "मस्यौदा सिर्जना",
+          savedLabel: "अन्तिम पटक सुरक्षित",
+          reviewStatusLabel: "समीक्षा स्थिति",
+          readinessTitle: "१. तयारी जाँच",
+          readinessIntro: "यी जाँचले मुख्य जानकारी स्थानीय मस्यौदामा छ कि छैन देखाउँछन्। तिनले जानकारीको सत्यता, प्रामाणिकता वा आधिकारिक स्वीकृति प्रमाणित गर्दैनन्।",
+          applicantTitle: "२. आवेदक र आवेदन विवरण",
+          applicantIntro: "आवेदनको प्रकार, शैक्षिक विवरण र व्यक्तिगत जानकारी पुष्टि गर्नुहोस्।",
+          contactTitle: "३. सम्पर्क र अभिभावक विवरण",
+          contactIntro: "सम्पर्क विवरण सही छन् कि छैनन् जाँच गर्नुहोस्।",
+          eligibilityTitle: "४. योग्यता जानकारी",
+          eligibilityIntro: "मस्यौदामा सुरक्षित गरिएको योग्यता जानकारी र सहायक विवरण समीक्षा गर्नुहोस्।",
+          photoTitle: "५. तस्बिर र हस्ताक्षर",
+          photoIntro: "अघिल्लो चरणबाट सुरक्षित गरिएको तस्बिर वा हस्ताक्षर मेटाडेटा हेर्नुहोस्। फाइलको नाम मात्र हुनु भनेको सर्भरमा अपलोड भएको प्रमाण होइन।",
+          documentsTitle: "६. सहायक कागजात",
+          documentsIntro: "उपलब्ध फाइल सूची समीक्षा गर्नुहोस्। यस ब्राउजर समीक्षाले सर्भरमा फाइल पुगेको, प्रामाणिकता वा वैधता पुष्टि गर्दैन।",
+          consentTitle: "७. घोषणा र गोपनीयता स्वीकृति",
+          consentIntro: "आवश्यक घोषणा र स्वीकृतिका विवरण सुरक्षित छन् कि छैनन् पुष्टि गर्नुहोस्।",
+          allFieldsTitle: "अन्य सुरक्षित गरिएका विवरण",
+          allFieldsIntro: "मस्यौदामा भएका थप विवरण यहाँ देखाइन्छन् ताकि समीक्षा गर्दा कुनै जानकारी छुट्न नपाओस्।",
+          editApplicant: "चरण १ सम्पादन",
+          editContact: "चरण २ सम्पादन",
+          editEligibility: "चरण ३ सम्पादन",
+          editPhoto: "चरण ४ सम्पादन",
+          editDocuments: "चरण ५ सम्पादन",
+          editConsent: "चरण ६ सम्पादन",
+          nextStepsTitle: "अन्तिम कार्यहरू",
+          nextStepsIntro: "स्थानीय प्रतिलिपि सुरक्षित गर्नुहोस् वा अभिलेखका लागि प्रिन्ट गर्नुहोस्। सर्भर एन्डपोइन्ट कन्फिगर र उपलब्ध भएमा मात्र अनलाइन बुझाउन सकिन्छ।",
+          saveDraft: "मस्यौदा सुरक्षित गर्नुहोस्",
+          downloadCopy: "JSON प्रतिलिपि डाउनलोड",
+          printReview: "प्रिन्ट / PDF सुरक्षित",
+          submitOnline: "अनलाइन बुझाउनुहोस्",
+          submitWarning: "अनलाइन बुझाउँदा व्यक्तिगत जानकारी कन्फिगर गरिएको सर्भरमा पठाइनेछ। गन्तव्य र यसको गोपनीयता तथा सुरक्षा व्यवस्था पुष्टि गरेपछि मात्र अगाडि बढ्नुहोस्। यो पृष्ठले आधिकारिक WBMCC स्थिति स्थापित गर्दैन।",
+          footerDraft: "स्थानीय मस्यौदा समीक्षा मात्र। स्थानीय प्रतिलिपि वा डाउनलोड आधिकारिक बुझाइको प्रमाण होइन।",
+          footerVerify: "व्यक्तिगत जानकारी वा कागजात पठाउनुअघि आधिकारिक प्रक्रिया र गोपनीयता सूचना जाँच गर्नुहोस्।",
+          footerStep: "चरण ७ · अन्तिम समीक्षा",
+          notGenerated: "बनाइएको छैन",
+          notAvailable: "उपलब्ध छैन",
+          yes: "हो",
+          no: "होइन",
+          missing: "छुटेको",
+          present: "उपलब्ध",
+          draftOnly: "मस्यौदा मात्र",
+          ready: "आधारभूत जाँच पूरा",
+          incomplete: "अपूर्ण",
+          checkApplicant: "आवेदकको नाम",
+          checkContact: "सम्पर्क विवरण",
+          checkRoute: "आवेदन विवरण",
+          checkConsent: "आवश्यक घोषणा",
+          checkReference: "मस्यौदा सन्दर्भ",
+          checkPhoto: "तस्बिर / हस्ताक्षर मेटाडेटा",
+          checkDocuments: "सहायक फाइल सूची",
+          labelName: "पूरा नाम",
+          labelDOB: "जन्म मिति",
+          labelGender: "लिङ्ग",
+          labelNationality: "राष्ट्रियता",
+          labelCourse: "पाठ्यक्रम",
+          labelSession: "शैक्षिक सत्र",
+          labelRoute: "आवेदन प्रकार",
+          labelTrust: "ट्रस्टको नाम",
+          labelInstitution: "संस्था",
+          labelOtherInstitution: "अन्य संस्था",
+          labelMemo: "मेमो नम्बर",
+          labelNoticeDate: "सूचनाको मिति",
+          labelTrustReference: "ट्रस्ट सन्दर्भ",
+          labelNEETYear: "NEET वर्ष",
+          labelNEETRoll: "NEET रोल नम्बर",
+          labelNEETApplication: "NEET आवेदन नम्बर",
+          labelNEETScore: "NEET अंक",
+          labelNEETRank: "NEET श्रेणी",
+          labelCategory: "वर्ग",
+          labelClassXII: "कक्षा १२ विवरण",
+          labelPhone: "फोन",
+          labelEmail: "इमेल",
+          labelAddress: "ठेगाना",
+          labelCity: "सहर",
+          labelDistrict: "जिल्ला",
+          labelState: "राज्य",
+          labelPIN: "पिन कोड",
+          labelGuardian: "अभिभावक",
+          labelRelationship: "सम्बन्ध",
+          labelGuardianPhone: "अभिभावकको फोन",
+          labelGuardianEmail: "अभिभावकको इमेल",
+          labelGuardianAddress: "अभिभावकको ठेगाना",
+          labelNEETQualified: "NEET उत्तीर्ण",
+          labelNEETExamYear: "NEET परीक्षा वर्ष",
+          labelScorecardReference: "स्कोरकार्ड सन्दर्भ",
+          labelClass12Qualified: "कक्षा १२ उत्तीर्ण",
+          labelDocumentsReady: "कागजात तयार",
+          labelBasis: "योग्यताको आधार",
+          labelRequest: "अनुरोध",
+          labelAdditionalInfo: "थप जानकारी",
+          labelEligibilityAcknowledged: "योग्यता स्वीकृति",
+          labelPhoto: "तस्बिर",
+          labelSignature: "हस्ताक्षर",
+          labelLivePhoto: "लाइभ तस्बिर",
+          labelSupportingFiles: "सहायक फाइल",
+          labelConsentTruth: "जानकारीको सत्यताको घोषणा",
+          labelConsentAuthority: "जाँचसम्बन्धी घोषणा",
+          labelConsentPrivacy: "गोपनीयता स्वीकृति",
+          labelDeclarant: "घोषणा गर्ने व्यक्तिको नाम",
+          labelSignedDate: "स्वीकृतिको मिति",
+          labelSigningRelationship: "घोषणा गर्ने व्यक्तिको सम्बन्ध",
+          labelConsentLanguage: "स्वीकृतिको भाषा",
+          labelConsentRecordedAt: "मस्यौदामा स्वीकृति रेकर्ड",
+          yesChecked: "चयन गरिएको",
+          notChecked: "चयन नगरिएको",
+          fileCount: "फाइल संख्या",
+          fileName: "फाइलको नाम",
+          fileSize: "आकार",
+          fileType: "प्रकार",
+          noData: "यस भागका लागि कुनै जानकारी सुरक्षित गरिएको छैन।",
+          noAdditional: "थप विवरण भेटिएन।",
+          fileMetadataOnly: "मस्यौदामा फाइलको मेटाडेटा मात्र छ। वास्तविक फाइल सर्भरमा अपलोड भएको पुष्टि छैन।",
+          photoMetadataOnly: "पृष्ठ परिवर्तन गर्दा तस्बिरको डेटा हराउन सक्छ। अगाडि बढ्नुअघि चरण ४ फेरि जाँच गर्नुहोस्।",
+          saveSuccess: "मस्यौदा यस ब्राउजरमा सुरक्षित भयो।",
+          saveError: "मस्यौदा सुरक्षित गर्न सकिएन। ब्राउजर स्टोरेज सेटिङ र उपलब्ध ठाउँ जाँच गर्नुहोस्।",
+          downloadError: "JSON प्रतिलिपि बनाउन सकिएन।",
+          submitConfirm: "सुरक्षित गरिएको आवेदन जानकारी कन्फिगर गरिएको सर्भरमा पठाउने हो? व्यक्तिगत जानकारी पठाइनेछ। गन्तव्यमा विश्वास भएमा मात्र अगाडि बढ्नुहोस्।",
+          submitSuccess: "सर्भरले आवेदन प्राप्त भएको जानकारी दिएको छ। सन्दर्भ: ",
+          submitError: "बुझाइएको पुष्टि भएन। स्थानीय मस्यौदा सुरक्षित छ। सर्भर कन्फिगरेसन जाँच गर्नुहोस् र फेरि प्रयास गर्नुअघि आवेदन पहिले नै प्राप्त भएको छ कि छैन पुष्टि गर्नुहोस्।",
+          submitMissing: "केही आधारभूत जाँच अपूर्ण छन्। बुझाउनुअघि चिन्हित भाग समीक्षा गर्नुहोस्।",
+          referenceError: "मस्यौदा सन्दर्भ भेटिएन। चरण १ मा फर्केर मस्यौदा बनाउनुहोस् वा पुनः प्राप्त गर्नुहोस्।",
+          serverRejected: "सर्भरले आवेदन स्वीकार गरेन। स्थानीय मस्यौदा सुरक्षित छ।",
+          sending: "आवेदन पठाउँदै…",
+          requestFailed: "सर्भर अनुरोध असफल भयो। बुझाइएको पुष्टि छैन।",
+          responseInvalid: "सर्भरको प्रतिक्रिया पुष्टि गर्न सकिएन। बुझाइएको पुष्टि छैन।",
+          fileNotUploaded: "अपलोड पुष्टि छैन",
+          submittedStatus: "सर्भरको प्रतिक्रिया प्राप्त"
+        }
+      };
+
+      const labels = {
+        fullName: "labelName",
+        dob: "labelDOB",
+        gender: "labelGender",
+        nationality: "labelNationality",
+        course: "labelCourse",
+        academicSession: "labelSession",
+        applicationRoute: "labelRoute",
+        trustName: "labelTrust",
+        institution: "labelInstitution",
+        otherInstitution: "labelOtherInstitution",
+        memoNumber: "labelMemo",
+        noticeDate: "labelNoticeDate",
+        trustReference: "labelTrustReference",
+        neetYear: "labelNEETYear",
+        neetRoll: "labelNEETRoll",
+        neetApplication: "labelNEETApplication",
+        neetScore: "labelNEETScore",
+        neetRank: "labelNEETRank",
+        category: "labelCategory",
+        classXII: "labelClassXII",
+        phone: "labelPhone",
+        email: "labelEmail",
+        address: "labelAddress",
+        city: "labelCity",
+        district: "labelDistrict",
+        state: "labelState",
+        pin: "labelPIN",
+        guardianName: "labelGuardian",
+        relationship: "labelRelationship",
+        guardianPhone: "labelGuardianPhone",
+        guardianEmail: "labelGuardianEmail",
+        guardianAddress: "labelGuardianAddress",
+        neetQualified: "labelNEETQualified",
+        neetExamYear: "labelNEETExamYear",
+        scorecardReference: "labelScorecardReference",
+        class12Qualified: "labelClass12Qualified",
+        documentsReady: "labelDocumentsReady",
+        basis: "labelBasis",
+        request: "labelRequest",
+        additionalInfo: "labelAdditionalInfo",
+        eligibilityAcknowledged: "labelEligibilityAcknowledged",
+        passportPhoto: "labelPhoto",
+        photo: "labelPhoto",
+        photoFile: "labelPhoto",
+        signatureImage: "labelSignature",
+        signature: "labelSignature",
+        livePhoto: "labelLivePhoto",
+        supportingFiles: "labelSupportingFiles",
+        consentTruth: "labelConsentTruth",
+        consentAuthority: "labelConsentAuthority",
+        consentPrivacy: "labelConsentPrivacy",
+        typedName: "labelDeclarant",
+        signedDate: "labelSignedDate",
+        signingRelationship: "labelSigningRelationship",
+        consentLanguage: "labelConsentLanguage",
+        consentRecordedAt: "labelConsentRecordedAt"
+      };
+
+      const applicantKeys = [
+        "academicSession", "course", "applicationRoute", "trustName",
+        "institution", "otherInstitution", "memoNumber", "noticeDate",
+        "trustReference", "fullName", "dob", "gender", "nationality",
+        "neetYear", "neetRoll", "neetApplication", "neetScore", "neetRank",
+        "category", "classXII"
+      ];
+
+      const contactKeys = [
+        "phone", "email", "address", "city", "district", "state", "pin",
+        "guardianName", "relationship", "guardianPhone", "guardianEmail",
+        "guardianAddress"
+      ];
+
+      const eligibilityKeys = [
+        "neetQualified", "neetExamYear", "neetScoreProof",
+        "scorecardReference", "class12Qualified", "documentsReady",
+        "basis", "request", "additionalInfo", "eligibilityAcknowledged"
+      ];
+
+      const photoKeys = [
+        "passportPhoto", "photo", "photoFile", "signatureImage",
+        "signature", "livePhoto"
+      ];
+
+      const consentKeys = [
+        "consentTruth", "consentAuthority", "consentPrivacy",
+        "typedName", "signedDate", "signingRelationship",
+        "consentLanguage", "consentRecordedAt"
+      ];
+
+      const knownKeys = new Set([
+        ...applicantKeys, ...contactKeys, ...eligibilityKeys,
+        ...photoKeys, ...consentKeys, "supportingFiles"
+      ]);
+
+      let language = "en";
+      let draft = null;
+      let submitting = false;
+
+      const $ = (id) => document.getElementById(id);
+
+      function t(key) {
+        return translations[language]?.[key] ?? translations.en[key] ?? key;
+      }
+
+      function readStorage(key) {
+        try {
+          return localStorage.getItem(key);
+        } catch {
+          return null;
+        }
+      }
+
+      function readDraft() {
+        try {
+          const raw = localStorage.getItem(DRAFT_KEY);
+          if (!raw) return null;
+
+          const parsed = JSON.parse(raw);
+          if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+            return null;
+          }
+
+          if (!parsed.fields || typeof parsed.fields !== "object" || Array.isArray(parsed.fields)) {
+            const legacyFields = { ...parsed };
+            delete legacyFields.reference;
+            delete legacyFields.createdAt;
+            delete legacyFields.lastSavedAt;
+
+            return {
+              reference: parsed.reference || "",
+              createdAt: parsed.createdAt || "",
+              lastSavedAt: parsed.lastSavedAt || "",
+              fields: legacyFields
+            };
+          }
+
+          return { ...parsed, fields: { ...parsed.fields } };
+        } catch {
+          return null;
+        }
+      }
+
+      function getReference() {
+        return draft?.reference || readStorage(REFERENCE_KEY) || "";
+      }
+
+      function getCreatedAt() {
+        return draft?.createdAt || readStorage(CREATED_KEY) || "";
+      }
+
+      function formatDate(value) {
+        if (!value) return t("notAvailable");
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return String(value);
+
+        const locale = language === "hi" ? "hi-IN"
+          : language === "bn" ? "bn-BD"
+          : language === "ne" ? "ne-NP"
+          : "en-IN";
+
+        try {
+          return new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(date);
+        } catch {
+          return date.toLocaleDateString();
+        }
+      }
+
+      function formatDateTime(value) {
+        if (!value) return t("notAvailable");
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return String(value);
+
+        const locale = language === "hi" ? "hi-IN"
+          : language === "bn" ? "bn-BD"
+          : language === "ne" ? "ne-NP"
+          : "en-IN";
+
+        try {
+          return new Intl.DateTimeFormat(locale, {
+            dateStyle: "medium",
+            timeStyle: "short"
+          }).format(date);
+        } catch {
+          return date.toLocaleString();
+        }
+      }
+
+      function isFilled(value) {
+        if (value === false || value === 0) return true;
+        if (value === null || value === undefined) return false;
+        if (typeof value === "string") return value.trim().length > 0;
+        if (Array.isArray(value)) return value.length > 0;
+        if (typeof value === "object") return Object.keys(value).length > 0;
+        return true;
+      }
+
+      function displayValue(value) {
+        if (value === null || value === undefined || value === "") return t("notAvailable");
+        if (typeof value === "boolean") return value ? t("yes") : t("no");
+        if (typeof value === "number") return String(value);
+        if (Array.isArray(value)) {
+          if (!value.length) return t("notAvailable");
+          return value.map((item) => {
+            if (item && typeof item === "object") {
+              return item.name || item.filename || item.fileName || item.reference || "[file metadata]";
+            }
+            return String(item);
+          }).join(", ");
+        }
+        if (typeof value === "object") return "[structured data]";
+        return String(value);
+      }
+
+      function make(tag, className, text) {
+        const node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text !== undefined && text !== null) node.textContent = String(text);
+        return node;
+      }
+
+      function getLabel(key) {
+        const translationKey = labels[key];
+        if (translationKey) return t(translationKey);
+
+        return key
+          .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+          .replace(/[_-]+/g, " ")
+          .replace(/\b\w/g, (letter) => letter.toUpperCase());
+      }
+
+      function renderPairs(container, keys, fields, options = {}) {
+        container.replaceChildren();
+
+        const list = make("ul", "review-list");
+        let count = 0;
+
+        keys.forEach((key) => {
+          if (!Object.prototype.hasOwnProperty.call(fields, key)) return;
+          if (options.onlyFilled && !isFilled(fields[key])) return;
+
+          const item = make("li", "review-item");
+          item.append(
+            make("div", "review-label", getLabel(key)),
+            make("div", "review-value", displayValue(fields[key]))
+          );
+          list.append(item);
+          count++;
+        });
+
+        if (!count) {
+          container.append(make("div", "empty", t("noData")));
+        } else {
+          container.append(list);
+        }
+      }
+
+      function renderAllFields(container, fields) {
+        container.replaceChildren();
+
+        const entries = Object.entries(fields).filter(([key]) => !knownKeys.has(key));
+
+        if (!entries.length) {
+          container.append(make("div", "empty", t("noAdditional")));
+          return;
+        }
+
+        const list = make("ul", "review-list");
+
+        entries.forEach(([key, value]) => {
+          const item = make("li", "review-item");
+          item.append(
+            make("div", "review-label", getLabel(key)),
+            make("div", "review-value", displayValue(value))
+          );
+          list.append(item);
+        });
+
+        container.append(list);
+      }
+
+      function renderFiles(container, fields) {
+        container.replaceChildren();
+
+        const files = fields.supportingFiles;
+
+        if (!Array.isArray(files) || files.length === 0) {
+          container.append(make("div", "empty", t("noData")));
+          return;
+        }
+
+        const list = make("ul", "review-list");
+
+        files.forEach((file, index) => {
+          const item = make("li", "review-item");
+          const title = file && typeof file === "object"
+            ? (file.name || file.filename || file.fileName || `File ${index + 1}`)
+            : `File ${index + 1}`;
+
+          const details = [];
+          if (file && typeof file === "object") {
+            if (file.size !== undefined) {
+              const bytes = Number(file.size);
+              details.push(`${t("fileSize")}: ${Number.isFinite(bytes) ? `${(bytes / 1024).toFixed(1)} KB` : displayValue(file.size)}`);
+            }
+            if (file.type) details.push(`${t("fileType")}: ${String(file.type)}`);
+          }
+
+          const left = make("div");
+          left.append(make("div", "review-label", `${t("fileName")} ${index + 1}`));
+          left.append(make("div", "review-value", title));
+
+          const right = make("div");
+          right.append(make("div", "review-value", details.join(" · ") || t("notAvailable")));
+          right.append(make("div", "review-label", t("fileNotUploaded")));
+
+          item.append(left, right);
+          list.append(item);
+        });
+
+        container.append(list);
+        container.append(make("p", "help-text", t("fileMetadataOnly")));
+      }
+
+      function addChecklistItem(container, title, passed, description) {
+        const item = make("div", "checklist-item");
+        const status = make("span", `status-pill ${passed ? "good" : "bad"}`, passed ? t("present") : t("missing"));
+        item.append(make("strong", "", title), status);
+
+        if (description) {
+          item.append(make("p", "", description));
+        }
+
+        container.append(item);
+      }
+
+      function renderReadiness(fields) {
+        const container = $("readinessList");
+        container.replaceChildren();
+
+        const applicantOK = isFilled(fields.fullName);
+        const contactOK = isFilled(fields.phone) && isFilled(fields.email);
+        const routeOK = isFilled(fields.course) && isFilled(fields.applicationRoute);
+        const consentOK = fields.consentTruth === true
+          && fields.consentAuthority === true
+          && fields.consentPrivacy === true
+          && isFilled(fields.typedName)
+          && isFilled(fields.signedDate);
+        const referenceOK = Boolean(getReference());
+
+        addChecklistItem(container, t("checkApplicant"), applicantOK);
+        addChecklistItem(container, t("checkContact"), contactOK);
+        addChecklistItem(container, t("checkRoute"), routeOK);
+        addChecklistItem(container, t("checkConsent"), consentOK);
+        addChecklistItem(container, t("checkReference"), referenceOK);
+
+        const hasPhotoMetadata = photoKeys.some((key) => isFilled(fields[key]));
+        addChecklistItem(container, t("checkPhoto"), hasPhotoMetadata, t("photoMetadataOnly"));
+
+        const hasFiles = Array.isArray(fields.supportingFiles) && fields.supportingFiles.length > 0;
+        addChecklistItem(container, t("checkDocuments"), hasFiles, hasFiles ? t("fileMetadataOnly") : "");
+
+        const ready = applicantOK && contactOK && routeOK && consentOK && referenceOK;
+        const pill = $("readinessPill");
+        pill.textContent = ready ? t("ready") : t("incomplete");
+        pill.className = `status-pill ${ready ? "good" : "bad"}`;
+      }
+
+      function renderConsent(fields) {
+        const keys = consentKeys.filter((key) =>
+          Object.prototype.hasOwnProperty.call(fields, key)
+        );
+        renderPairs($("consentReview"), keys, fields);
+
+        const allRequired = fields.consentTruth === true
+          && fields.consentAuthority === true
+          && fields.consentPrivacy === true;
+
+        const summary = make("div", "submit-warning",
+          `${t("checkConsent")}: ${allRequired ? t("yesChecked") : t("notChecked")}`);
+        $("consentReview").append(summary);
+      }
+
+      function renderReference() {
+        $("applicationReference").textContent = getReference() || t("notGenerated");
+        $("draftCreated").textContent = formatDateTime(getCreatedAt());
+        $("lastSaved").textContent = formatDateTime(draft?.lastSavedAt || "");
+      }
+
+      function renderPage() {
+        draft = readDraft();
+
+        if (!draft) {
+          $("applicationReference").textContent = t("notGenerated");
+          $("draftCreated").textContent = t("notAvailable");
+          $("lastSaved").textContent = t("notAvailable");
+
+          ["applicantReview", "contactReview", "eligibilityReview", "photoReview", "documentsReview", "consentReview", "additionalReview"]
+            .forEach((id) => $(id).replaceChildren(make("div", "empty", t("noData"))));
+
+          $("readinessList").replaceChildren();
+          $("readinessPill").textContent = t("incomplete");
+          $("readinessPill").className = "status-pill bad";
+          $("reviewStatus").textContent = t("draftOnly");
+          $("reviewStatus").className = "status-pill neutral";
+          showStatus(t("referenceError"), "error");
+          return;
+        }
+
+        const fields = draft.fields || {};
+
+        renderReference();
+        renderReadiness(fields);
+        renderPairs($("applicantReview"), applicantKeys, fields);
+        renderPairs($("contactReview"), contactKeys, fields);
+        renderPairs($("eligibilityReview"), eligibilityKeys, fields);
+        renderPairs($("photoReview"), photoKeys, fields);
+        renderFiles($("documentsReview"), fields);
+        renderConsent(fields);
+        renderAllFields($("additionalReview"), fields);
+
+        $("reviewStatus").textContent = t("draftOnly");
+        $("reviewStatus").className = "status-pill neutral";
+      }
+
+      function showStatus(message, type = "") {
+        const box = $("statusMessage");
+        box.textContent = message;
+        box.className = "status-message visible";
+        if (type) box.classList.add(type);
+      }
+
+      function clearStatus() {
+        const box = $("statusMessage");
+        box.textContent = "";
+        box.className = "status-message";
+      }
+
+      function applyLanguage(nextLanguage) {
+        language = translations[nextLanguage] ? nextLanguage : "en";
+        document.documentElement.lang = language;
+        $("language").value = language;
+
+        document.querySelectorAll("[data-i18n]").forEach((node) => {
+          const key = node.getAttribute("data-i18n");
+          if (translations[language][key]) {
+            node.textContent = translations[language][key];
+          }
+        });
+
+        renderPage();
+      }
+
+      function saveDraft() {
+        clearStatus();
+
+        try {
+          const latest = readDraft();
+
+          if (!latest) {
+            showStatus(t("referenceError"), "error");
+            return false;
+          }
+
+          latest.reference = latest.reference || readStorage(REFERENCE_KEY) || "";
+          latest.createdAt = latest.createdAt || readStorage(CREATED_KEY) || new Date().toISOString();
+          latest.lastSavedAt = new Date().toISOString();
+          latest.fields = {
+            ...(latest.fields || {}),
+            reviewLanguage: language
+          };
+
+          localStorage.setItem(DRAFT_KEY, JSON.stringify(latest));
+
+         }
+      }
+
+      function downloadJson() {
+        clearStatus();
+
+        try {
+          const latest = readDraft();
+
+          if (!latest) {
+            showStatus(t("referenceError"), "error");
+            return;
+          }
+
+          const exportData = {
+            exportedAt: new Date().toISOString(),
+            exportType: "local-draft-copy",
+            officialSubmissionConfirmed: false,
+            application: latest
+          };
+
+          const blob = new Blob(
+            [JSON.stringify(exportData, null, 2)],
+            { type: "application/json;charset=utf-8" }
+          );
+
+          const url = URL.createObjectURL(blob);
+          const anchor = document.createElement("a");
+          const reference = (latest.reference || "application-draft")
+            .replace(/[^a-zA-Z0-9_-]/g, "-");
+
+          anchor.href = url;
+          anchor.download = `${reference}-draft.json`;
+          document.body.append(anchor);
+          anchor.click();
+          anchor.remove();
+          URL.revokeObjectURL(url);
+
+          showStatus(t("saveSuccess"), "success");
+        } catch {
+          showStatus(t("downloadError"), "error");
+        }
+      }
+
+      async function submitOnline() {
+        if (submitting) return;
+
+        clearStatus();
+
+        const latest = readDraft();
+        if (!latest) {
+          showStatus(t("referenceError"), "error");
+          return;
+        }
+
+        const fields = latest.fields || {};
+        const basicReady = isFilled(fields.fullName)
+          && isFilled(fields.phone)
+          && isFilled(fields.email)
+          && isFilled(fields.course)
+          && isFilled(fields.applicationRoute)
+          && fields.consentTruth === true
+          && fields.consentAuthority === true
+          && fields.consentPrivacy === true
+          && isFilled(fields.typedName)
+          && isFilled(fields.signedDate)
+          && Boolean(latest.reference || readStorage(REFERENCE_KEY));
+
+        if (!basicReady) {
+          showStatus(t("submitMissing"), "error");
+          return;
+        }
+
+        if (!window.confirm(t("submitConfirm"))) return;
+
+        if (!saveDraft()) return;
+
+        const saved = readDraft();
+        if (!saved) {
+          showStatus(t("saveError"), "error");
+          return;
+        }
+
+        submitting = true;
+        $("submitButton").disabled = true;
+        $("submitButton").textContent = t("sending");
+
+        try {
+          const payload = {
+            applicantName: String(fields.fullName).trim(),
+            applicantEmail: String(fields.email).trim(),
+            applicantPhone: String(fields.phone).trim(),
+            consent: {
+              accepted: true,
+              truth: fields.consentTruth === true,
+              authority: fields.consentAuthority === true,
+              privacy: fields.consentPrivacy === true,
+              declarantName: String(fields.typedName).trim(),
+              signedDate: fields.signedDate,
+              relationship: fields.signingRelationship || "applicant",
+              language: fields.consentLanguage || language,
+              recordedAt: fields.consentRecordedAt || null
+            },
+            payload: saved
+          };
+
+          const response = await fetch("/api/submit", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            },
+            credentials: "same-origin",
+            body: JSON.stringify(payload)
+          });
+
+          const responseText = await response.text();
+          let result = null;
+
+          try {
+            result = responseText ? JSON.parse(responseText) : null;
+          } catch {
+            result = null;
+          }
+
+          if (!response.ok) {
+            showStatus(
+              result?.message || result?.error || t("serverRejected"),
+              "error"
+            );
+            return;
+          }
+
+          if (!result || result.ok !== true || !result.reference) {
+            showStatus(t("responseInvalid"), "error");
+            return;
+          }
+
+          const confirmedAt = new Date().toISOString();
+
+          try {
+            const latestAfterResponse = readDraft() || saved;
+            latestAfterResponse.submission = {
+              status: "server_response_received",
+              reference: String(result.reference),
+              confirmedAt,
+              // This is a client-recorded response, not an independently verified government receipt.
+              officialStatusVerified: false
+            };
+            latestAfterResponse.lastSavedAt = confirmedAt;
+            localStorage.setItem(DRAFT_KEY, JSON.stringify(latestAfterResponse));
+          } catch {
+            // A valid server response is still shown even if browser storage is full.
+          }
+
+          $("reviewStatus").textContent = t("submittedStatus");
+          $("reviewStatus").className = "status-pill good";
+          showStatus(t("submitSuccess") + String(result.reference), "success");
+        } catch {
+          showStatus(t("requestFailed"), "error");
+        } finally {
+          submitting = false;
+          $("submitButton").disabled = false;
+          $("submitButton").textContent = t("submitOnline");
+        }
+      }
+
+      $("language").addEventListener("change", () => {
+        const next = $("language").value;
+        applyLanguage(next);
+
+        try {
+          localStorage.setItem(LANGUAGE_KEY, next);
+        } catch {
+          // Language selection still applies for this page view.
+        }
+      });
+
+      $("saveDraftButton").addEventListener("click", saveDraft);
+      $("downloadJsonButton").addEventListener("click", downloadJson);
+      $("printButton").addEventListener("click", () => window.print());
+      $("submitButton").addEventListener("click", submitOnline);
+
+      const savedLanguage = readStorage(LANGUAGE_KEY) || "en";
+      applyLanguage(savedLanguage);
+    })();
+  </script>
 </body>
 </html>

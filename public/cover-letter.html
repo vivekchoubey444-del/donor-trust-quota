@@ -1,53 +1,603 @@
-
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Applicant Cover Letter</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Prepare, save and print an applicant cover letter with the Donor Trust Quota application workspace.">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Applicant Cover Letter | Donor Trust Quota</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    :root {
+      --letter-ink: #171717;
+      --letter-muted: #666;
+      --letter-border: #dedede;
+      --letter-paper: #fff;
+      --letter-background: #f7f7f7;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--letter-ink);
+      background: var(--letter-background);
+      font: 15px/1.65 system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+    }
+    .container {
+      width: min(100% - 32px, 1040px);
+      margin-inline: auto;
+    }
+    .site-header {
+      background: #fff;
+      border-bottom: 1px solid var(--letter-border);
+    }
+    .header-inner {
+      padding-block: 20px;
+    }
+    .brand {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -.03em;
+    }
+    .brand-subtitle {
+      margin: 3px 0 0;
+      color: var(--letter-muted);
+      font-size: .88rem;
+    }
+    .navigation {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px 0;
+      border-top: 1px solid var(--letter-border);
+    }
+    .navigation a {
+      padding: 7px 10px;
+      color: var(--letter-ink);
+      text-decoration: none;
+      border: 1px solid var(--letter-border);
+      border-radius: 4px;
+      font-size: .88rem;
+    }
+    .navigation a[aria-current="page"] {
+      background: var(--letter-ink);
+      color: #fff;
+      border-color: var(--letter-ink);
+    }
+    main { padding-block: 28px 48px; }
+    .page-heading { margin-bottom: 20px; }
+    h1 {
+      margin: 0;
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      line-height: 1.2;
+      letter-spacing: -.04em;
+    }
+    h2 {
+      margin: 0 0 12px;
+      font-size: 1.1rem;
+    }
+    .muted { color: var(--letter-muted); }
+    .notice {
+      margin-bottom: 18px;
+      padding: 14px 16px;
+      background: #fff;
+      border: 1px solid var(--letter-border);
+      border-left: 4px solid var(--letter-ink);
+    }
+    .notice p { margin: 5px 0 0; }
+    .panel {
+      margin-bottom: 20px;
+      padding: 22px;
+      background: #fff;
+      border: 1px solid var(--letter-border);
+      border-radius: 5px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .field { min-width: 0; }
+    .full { grid-column: 1 / -1; }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+    input, textarea {
+      display: block;
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid #bdbdbd;
+      border-radius: 4px;
+      background: #fff;
+      color: var(--letter-ink);
+      font: inherit;
+    }
+    textarea {
+      min-height: 280px;
+      resize: vertical;
+      white-space: pre-wrap;
+    }
+    input:focus-visible,
+    textarea:focus-visible,
+    button:focus-visible,
+    a:focus-visible {
+      outline: 2px solid var(--letter-ink);
+      outline-offset: 3px;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 18px;
+    }
+    .btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 42px;
+      padding: 9px 14px;
+      border: 1px solid var(--letter-ink);
+      border-radius: 4px;
+      background: #fff;
+      color: var(--letter-ink);
+      font: inherit;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--letter-ink);
+      color: #fff;
+    }
+    button:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+    .status {
+      min-height: 24px;
+      margin-top: 12px;
+      overflow-wrap: anywhere;
+    }
+    .error { color: #b42318; }
+    .success { color: #166534; }
+    .letter-paper {
+      min-height: 480px;
+      margin-top: 20px;
+      padding: clamp(22px, 5vw, 52px);
+      background: var(--letter-paper);
+      border: 1px solid var(--letter-border);
+      box-shadow: 0 2px 8px rgb(0 0 0 / 3%);
+    }
+    .letter-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding-bottom: 18px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--letter-border);
+      color: var(--letter-muted);
+      font-size: .88rem;
+    }
+    .letter-content {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1rem;
+      line-height: 1.85;
+    }
+    footer {
+      padding: 20px 0;
+      background: #fff;
+      border-top: 1px solid var(--letter-border);
+      color: var(--letter-muted);
+      font-size: .84rem;
+    }
+    [hidden] { display: none !important; }
+    @media (max-width: 640px) {
+      .grid { grid-template-columns: 1fr; }
+      .full { grid-column: auto; }
+      .panel { padding: 16px; }
+      .actions .btn { flex: 1 1 100%; }
+    }
+    @media print {
+      @page {
+        size: A4;
+        margin: 20mm;
+      }
+      body {
+        background: #fff;
+        color: #000;
+        font-size: 11pt;
+      }
+      .no-print,
+      header,
+      footer,
+      .editor-panel,
+      .notice,
+      .page-heading {
+        display: none !important;
+      }
+      main {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      .letter-paper {
+        min-height: 0;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        box-shadow: none;
+      }
+      .letter-meta {
+        color: #000;
+      }
+      .letter-content {
+        font-size: 11pt;
+        line-height: 1.65;
+      }
+    }
+  </style>
 </head>
 <body>
-<header><div class="container">
-<h1>Applicant Cover Letter</h1>
-<div class="status">INDEPENDENT PROPOSAL -- NOT OFFICIAL</div>
-</div></header>
-<main class="container">
-<p>Editable cover letter to accompany applicant-prepared documents. Confirm the correct recipient before use.</p>
-<div class="grid">
-  <div><label>Recipient</label><input id="recipient" value="The Concerned Admissions Authority"></div>
-  <div><label>Date</label><input id="date" type="date"></div>
-  <div class="full"><label>Subject</label><input id="subject" value="Request for consideration under the applicable category"></div>
-  <div><label>Applicant name</label><input id="name"></div>
-  <div><label>Requested institution</label><input id="institution"></div>
-  <div class="full"><label>Letter text</label>
-  <textarea id="message">Respected Sir / Madam,
-
-I respectfully submit the accompanying applicant information and supporting documents for consideration under the applicable rules and current official notice.
-
-I understand that the competent authority determines eligibility, applicable process and any decision. This letter does not presume that a category or seat is available.
-
-Yours faithfully,</textarea></div>
-</div>
-<div class="actions">
-  <a class="btn" href="index.html">Home</a>
-  <button class="primary" onclick="print()">Print / Save as PDF</button>
-</div>
-<div id="letter"></div>
-</main>
-<script>
-date.value=new Date().toISOString().slice(0,10);
-const d=(()=>{
-  try{return JSON.parse(localStorage.getItem("donorTrustQuotaDraft_v3")||"{}")}
-  catch(e){return {}}
-})();
-name.value=d.fullName||"";
-institution.value=d.institution||"";
-function update(){
-  letter.textContent=recipient.value+"\n"+date.value+"\n\nSubject: "+subject.value+"\n\n"+message.value+"\n\n"+name.value;
-}
-document.querySelectorAll("input,textarea").forEach(e=>e.addEventListener("input",update));
-update();
-</script>
+  <header class="site-header no-print">
+    <div class="container header-inner">
+      <p class="brand">DONOR TRUST QUOTA</p>
+      <p class="brand-subtitle">Applicant document workspace</p>
+    </div>
+    <nav class="container navigation" aria-label="Application navigation">
+      <a href="index.html">Home</a>
+      <a href="applicant-instructions.html">Instructions</a>
+      <a href="consent.html">Consent</a>
+      <a href="document-upload.html">Documents</a>
+      <a href="cover-letter.html" aria-current="page">Cover letter</a>
+    </nav>
+  </header>
+  <main class="container">
+    <section class="page-heading no-print">
+      <h1>Applicant Cover Letter</h1>
+      <p class="muted">
+        Prepare, review, save and print your accompanying letter.
+      </p>
+    </section>
+    <section class="notice no-print">
+      <strong>Applicant-prepared document</strong>
+      <p>
+        This workspace prepares a letter for the applicant to review.
+        Confirm the recipient, applicable rules and current official
+        instructions before sending it. The letter is not an official
+        authority-issued document and does not establish eligibility
+        or guarantee approval.
+      </p>
+    </section>
+    <section class="panel editor-panel no-print">
+      <h2>Letter details</h2>
+      <p class="muted">
+        Information saved by other pages can be loaded from this browser
+        when it uses the same shared draft.
+      </p>
+      <form id="letterForm">
+        <div class="grid">
+          <div class="field">
+            <label for="recipient">Recipient</label>
+            <input
+              id="recipient"
+              name="recipient"
+              maxlength="180"
+              value="The Concerned Admissions Authority"
+              autocomplete="off"
+              required
+            >
+          </div>
+          <div class="field">
+            <label for="letterDate">Date</label>
+            <input id="letterDate" name="date" type="date" required>
+          </div>
+          <div class="field full">
+            <label for="subject">Subject</label>
+            <input
+              id="subject"
+              name="subject"
+              maxlength="240"
+              value="Request for consideration under the applicable category"
+              required
+            >
+          </div>
+          <div class="field">
+            <label for="applicantName">Applicant's full name</label>
+            <input
+              id="applicantName"
+              name="applicantName"
+              maxlength="150"
+              autocomplete="name"
+            >
+          </div>
+          <div class="field">
+            <label for="institution">Requested institution</label>
+            <input
+              id="institution"
+              name="institution"
+              maxlength="200"
+              autocomplete="organization"
+            >
+          </div>
+          <div class="field full">
+            <label for="message">Letter text</label>
+            <textarea id="message" name="message" maxlength="12000" required>Respected Sir/Madam,
+I respectfully submit this application and the accompanying supporting documents for consideration under the applicable rules and current official instructions.
+I request that the competent authority examine the submitted information and determine eligibility in accordance with the applicable procedure. I understand that any decision rests solely with the competent authority.
+Thank you for your time and consideration.
+Yours faithfully,</textarea>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" type="submit">
+            Save draft
+          </button>
+          <button class="btn" id="loadDraftButton" type="button">
+            Load shared draft
+          </button>
+          <button class="btn" id="resetButton" type="button">
+            Reset letter
+          </button>
+        </div>
+        <p id="draftStatus" class="status" role="status"
+           aria-live="polite"></p>
+      </form>
+    </section>
+    <section class="panel">
+      <div class="no-print">
+        <h2>Letter preview</h2>
+        <p class="muted">
+          Review the letter below before printing or saving it as a PDF.
+        </p>
+      </div>
+      <article class="letter-paper" id="letterPreview">
+        <div class="letter-meta">
+          <span id="previewRecipient"></span>
+          <span id="previewDate"></span>
+        </div>
+        <p><strong>Subject: <span id="previewSubject"></span></strong></p>
+        <div id="previewMessage" class="letter-content"></div>
+        <p id="previewName"></p>
+        <p id="previewInstitution"></p>
+      </article>
+      <div class="actions no-print">
+        <button class="btn btn-primary" id="printButton" type="button">
+          Print / Save as PDF
+        </button>
+        <button class="btn" id="sharePageButton" type="button">
+          Share website
+        </button>
+        <button class="btn" id="copyLetterButton" type="button">
+          Copy letter text
+        </button>
+      </div>
+      <p id="actionStatus" class="status no-print" role="status"
+         aria-live="polite"></p>
+    </section>
+  </main>
+  <footer class="no-print">
+    <div class="container">
+      Applicant document workspace · Review all details before submission.
+    </div>
+  </footer>
+  <script>
+    "use strict";
+    /*
+     * Use the same storage key and field names across application pages.
+     * localStorage is browser-specific and is not a server-side database.
+     */
+    const DRAFT_KEY = "donorTrustQuotaDraft_v3";
+    const $ = (id) => document.getElementById(id);
+    const fields = {
+      recipient: $("recipient"),
+      date: $("letterDate"),
+      subject: $("subject"),
+      name: $("applicantName"),
+      institution: $("institution"),
+      message: $("message")
+    };
+    const form = $("letterForm");
+    const draftStatus = $("draftStatus");
+    const actionStatus = $("actionStatus");
+    function localDateValue() {
+      const now = new Date();
+      const local = new Date(
+        now.getTime() - now.getTimezoneOffset() * 60000
+      );
+      return local.toISOString().slice(0, 10);
+    }
+    function setStatus(element, message, type = "") {
+      element.textContent = message;
+      element.className = "status" + (type ? " " + type : "");
+    }
+    function readSharedDraft() {
+      try {
+        const value = localStorage.getItem(DRAFT_KEY);
+        if (!value) return {};
+        const parsed = JSON.parse(value);
+        return parsed &&
+          typeof parsed === "object" &&
+          !Array.isArray(parsed)
+            ? parsed
+            : {};
+      } catch {
+        return {};
+      }
+    }
+    function saveSharedDraft() {
+      const existing = readSharedDraft();
+      const updated = {
+        ...existing,
+        fullName: fields.name.value.trim(),
+        institution: fields.institution.value.trim(),
+        coverLetter: {
+          recipient: fields.recipient.value.trim(),
+          date: fields.date.value,
+          subject: fields.subject.value.trim(),
+          message: fields.message.value,
+          updatedAt: new Date().toISOString()
+        }
+      };
+      try {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(updated));
+        setStatus(draftStatus, "Draft saved in this browser.", "success");
+        return true;
+      } catch {
+        setStatus(
+          draftStatus,
+          "Draft could not be saved. Browser storage may be unavailable.",
+          "error"
+        );
+        return false;
+      }
+    }
+    function loadSharedDraft() {
+      const draft = readSharedDraft();
+      const letter = draft.coverLetter || {};
+      if (typeof draft.fullName === "string") {
+        fields.name.value = draft.fullName.slice(0, 150);
+      }
+      if (typeof draft.institution === "string") {
+        fields.institution.value = draft.institution.slice(0, 200);
+      }
+      if (typeof letter.recipient === "string") {
+        fields.recipient.value = letter.recipient.slice(0, 180);
+      }
+      if (typeof letter.date === "string" &&
+          /^\d{4}-\d{2}-\d{2}$/.test(letter.date)) {
+        fields.date.value = letter.date;
+      }
+      if (typeof letter.subject === "string") {
+        fields.subject.value = letter.subject.slice(0, 240);
+      }
+      if (typeof letter.message === "string") {
+        fields.message.value = letter.message.slice(0, 12000);
+      }
+      updatePreview();
+      setStatus(
+        draftStatus,
+        Object.keys(draft).length
+          ? "Shared draft loaded from this browser."
+          : "No saved draft was found in this browser.",
+        Object.keys(draft).length ? "success" : ""
+      );
+    }
+    function updatePreview() {
+      $("previewRecipient").textContent = fields.recipient.value.trim();
+      $("previewDate").textContent = fields.date.value;
+      $("previewSubject").textContent = fields.subject.value.trim();
+      $("previewMessage").textContent = fields.message.value;
+      $("previewName").textContent = fields.name.value.trim();
+      $("previewInstitution").textContent =
+        fields.institution.value.trim()
+          ? "Requested institution: " + fields.institution.value.trim()
+          : "";
+    }
+    function getLetterText() {
+      return [
+        fields.recipient.value.trim(),
+        fields.date.value,
+        "",
+        "Subject: " + fields.subject.value.trim(),
+        "",
+        fields.message.value.trim(),
+        "",
+        fields.name.value.trim(),
+        fields.institution.value.trim()
+          ? "Requested institution: " + fields.institution.value.trim()
+          : ""
+      ].filter((line, index, array) => {
+        // Preserve intentional blank lines while removing trailing empties.
+        return index < array.length - 1 || line !== "";
+      }).join("\n");
+    }
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+      saveSharedDraft();
+      updatePreview();
+    });
+    $("loadDraftButton").addEventListener("click", loadSharedDraft);
+    $("resetButton").addEventListener("click", () => {
+      if (!window.confirm("Reset the letter fields? Saved shared data will not be deleted.")) {
+        return;
+      }
+      fields.recipient.value = "The Concerned Admissions Authority";
+      fields.date.value = localDateValue();
+      fields.subject.value =
+        "Request for consideration under the applicable category";
+      fields.name.value = "";
+      fields.institution.value = "";
+      fields.message.value =
+        "Respected Sir/Madam,\n\n" +
+        "I respectfully submit this application and the accompanying supporting documents for consideration under the applicable rules and current official instructions.\n\n" +
+        "I request that the competent authority examine the submitted information and determine eligibility in accordance with the applicable procedure. I understand that any decision rests solely with the competent authority.\n\n" +
+        "Thank you for your time and consideration.\n\n" +
+        "Yours faithfully,";
+      updatePreview();
+      setStatus(draftStatus, "Letter fields reset. Save to retain these changes.");
+    });
+    $("printButton").addEventListener("click", () => {
+      updatePreview();
+      window.print();
+    });
+    $("sharePageButton").addEventListener("click", async () => {
+      const websiteUrl = new URL("./", window.location.href).href;
+      try {
+        if (navigator.share) {
+          await navigator.share({
+            title: "Donor Trust Quota application workspace",
+            text: "Open the application workspace to access its available pages.",
+            url: websiteUrl
+          });
+          setStatus(actionStatus, "Share dialog opened.", "success");
+        } else if (navigator.clipboard) {
+          await navigator.clipboard.writeText(websiteUrl);
+          setStatus(
+            actionStatus,
+            "Website link copied. Share this link to open the application workspace.",
+            "success"
+          );
+        } else {
+          setStatus(
+            actionStatus,
+            "Copy the website address from your browser to share the workspace.",
+            "error"
+          );
+        }
+      } catch (error) {
+        if (error && error.name !== "AbortError") {
+          setStatus(actionStatus, "Unable to share the website link.", "error");
+        }
+      }
+    });
+    $("copyLetterButton").addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(getLetterText());
+        setStatus(actionStatus, "Letter text copied.", "success");
+      } catch {
+        setStatus(
+          actionStatus,
+          "Copy failed. Use Print / Save as PDF instead.",
+          "error"
+        );
+      }
+    });
+    Object.values(fields).forEach((field) => {
+      field.addEventListener("input", updatePreview);
+    });
+    fields.date.value = localDateValue();
+    loadSharedDraft();
+    updatePreview();
+  </script>
 </body>
 </html>

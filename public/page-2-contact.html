@@ -2,59 +2,585 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Step 2 -- Contact</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Applicant contact, residential address, and parent or guardian details.">
+  <title>Step 2 -- Contact and Address | Applicant Preparation Portal</title>
+
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="override.css">
+
+  <style>
+    /* Page-specific layout: no logos or image elements. */
+
+    .official-heading {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      padding: 18px 0;
+      border-bottom: 2px solid #000;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .heading-text {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      text-align: center;
+      overflow-wrap: break-word;
+      word-break: normal;
+    }
+
+    .heading-text .eyebrow {
+      margin: 0 0 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      line-height: 1.5;
+    }
+
+    .heading-text h1 {
+      width: 100%;
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: clamp(23px, 4vw, 32px);
+      font-weight: 700;
+      line-height: 1.3;
+      letter-spacing: normal;
+      overflow-wrap: break-word;
+      word-break: normal;
+    }
+
+    .heading-text p {
+      margin: 7px 0 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .reference-panel {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+      gap: 16px;
+      margin: 18px 0;
+      padding: 16px;
+      border: 1px solid #000;
+      background: #fff;
+    }
+
+    .reference-panel > div {
+      min-width: 0;
+    }
+
+    .reference-value {
+      display: block;
+      margin-top: 5px;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+      word-break: normal;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .notice {
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .field-note {
+      display: block;
+      margin-top: 5px;
+      color: #555;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .section-number {
+      display: inline-block;
+      margin-right: 7px;
+      font-weight: 700;
+    }
+
+    .form-section {
+      margin-top: 24px;
+    }
+
+    .form-section h2 {
+      padding-bottom: 8px;
+      border-bottom: 1px solid #000;
+      font-size: 20px;
+      line-height: 1.4;
+    }
+
+    .error {
+      display: none;
+      margin: 16px 0;
+      padding: 12px;
+      border: 1px solid #000;
+      background: #fff;
+    }
+
+    .error.show {
+      display: block;
+    }
+
+    @media (max-width: 600px) {
+      .heading-text h1 {
+        font-size: clamp(22px, 6vw, 28px);
+      }
+
+      .reference-panel {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+        padding: 13px;
+      }
+
+      .reference-value {
+        font-size: 17px;
+      }
+
+      .form-section h2 {
+        font-size: 18px;
+      }
+    }
+
+    @media print {
+      .no-print,
+      .actions,
+      button {
+        display: none !important;
+      }
+
+      .official-heading,
+      .reference-panel {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      body {
+        color: #000;
+        background: #fff;
+      }
+    }
+ 
+</style>
 </head>
+
 <body>
-<header><div class="container">
-<p class="eyebrow">Donor / Trust Quota Application</p>
-<h1>Step 2 -- Contact and Address</h1>
-<div class="status">INDEPENDENT PROPOSAL -- NOT OFFICIAL</div>
-</div></header>
-<main class="container">
-<p>Use contact details that the applicant or guardian can access. Do not enter unrelated sensitive information.</p>
-<form>
-<div class="grid">
-  <div><label>Candidate mobile number *</label><input name="phone" data-field required type="tel"></div>
-  <div><label>Candidate email *</label><input name="email" data-field required type="email"></div>
-  <div class="full"><label>Residential address *</label><textarea name="address" data-field required></textarea></div>
-  <div><label>City / town *</label><input name="city" data-field required></div>
-  <div><label>District *</label><input name="district" data-field required></div>
-  <div><label>State *</label><input name="state" data-field required></div>
-  <div><label>PIN code *</label><input name="pin" data-field required pattern="[0-9]{6}" maxlength="6"></div>
-  <div class="full"><h2>Parent / guardian</h2></div>
-  <div><label>Full name *</label><input name="guardianName" data-field required></div>
-  <div><label>Relationship *</label><select name="relationship" data-field required><option value="">Select</option><option>Father</option><option>Mother</option><option>Legal guardian</option><option>Other</option></select></div>
-  <div><label>Guardian mobile *</label><input name="guardianPhone" data-field required type="tel"></div>
-  <div><label>Guardian email</label><input name="guardianEmail" data-field type="email"></div>
-  <div class="full"><label>Guardian address if different</label><textarea name="guardianAddress" data-field></textarea></div>
-</div>
-<div class="actions">
-  <button type="button" onclick="saveDraft()">Save</button>
-  <a class="btn" href="index.html">Home</a>
-  <a class="btn" href="page-1-applicant.html">← Previous</a>
-  <a class="btn primary" href="page-3-eligibility.html">Next page →</a>
-</div>
-</form>
-</main>
-<footer><div class="container">Validation, print and submit are on the final page only.</div></footer>
-<script>
-const KEY="donorTrustQuotaDraft_v3";
-let d={};try{d=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}
-document.querySelectorAll("[data-field]").forEach(e=>{
-  if(d[e.name]!=null)e.value=d[e.name];
-  e.addEventListener("input",()=>{
-    d[e.name]=e.value;
-    localStorage.setItem(KEY,JSON.stringify(d));
-  });
-});
-function saveDraft(){
-  document.querySelectorAll("[data-field]").forEach(e=>d[e.name]=e.value);
-  localStorage.setItem(KEY,JSON.stringify(d));
-  alert("Draft saved in this browser.");
-}
-</script>
+  <header>
+    <div class="container">
+
+      <div class="official-heading">
+        <div class="heading-text">
+          <p class="eyebrow">APPLICANT INFORMATION FORM -- WBMCC Authorised</p>
+          <h1>DONOR/TRUST QUOTA APPLICATION FOR MBBS</h1>
+          <p>Academic Session 2026–27</p>
+          <p>Contact and Address -- Step 2 of 5</p>
+        </div>
+      </div>
+
+           <p class="status">
+                 <strong>Independent Application -- Preparation Service -- WBMCC Authorised
+            </p></strong>
+
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section class="reference-panel" aria-label="Draft information">
+      <div class="reference-item">
+        <strong>Generate Reference Number.....</strong>
+        <span class="reference-value" id="referenceNumber">
+          Loading…
+        </span>
+        <small class="field-note">
+          For reference number identification only; not an official receipt number.
+        </small>
+      </div>
+
+      <div class="reference-item">
+        <strong>Reference Number Created</strong>
+        <span class="reference-value" id="createdDate">--</span>
+        <small class="field-note">
+          Date recorded by this device.
+        </small>
+      </div>
+    </section>
+
+    <section class="notice" aria-label="Contact information instructions">
+      <strong>Contact Information</strong>
+      <p>
+        Enter accurate contact details for the applicant and parent or
+        guardian. Use an email address and telephone number that can receive
+        important communications. Provide only information required for
+        application preparation.
+      </p>
+    </section>
+    
+    <form id="stepForm">
+      <section class="form-section">
+        <h2>
+          <span class="section-number">03.</span>
+          Applicant contact details
+        </h2>
+
+        <div class="grid">
+          <div>
+            <label for="phone">Candidate mobile number *</label>
+            <input
+              id="phone"
+              name="phone"
+              data-field
+              required
+              type="tel"
+              autocomplete="tel"
+              inputmode="tel"
+              maxlength="20"
+              pattern="[+0-9() -]{7,20}"
+              title="Enter a valid telephone number."
+            >
+          </div>
+
+          <div>
+            <label for="email">Candidate email address *</label>
+            <input
+              id="email"
+              name="email"
+              data-field
+              required
+              type="email"
+              autocomplete="email"
+              maxlength="254"
+            >
+          </div>
+
+          <div class="full">
+            <label for="address">Full residential address *</label>
+            <textarea
+              id="address"
+              name="address"
+              data-field
+              required
+              maxlength="1000"
+              autocomplete="street-address"
+            ></textarea>
+          </div>
+
+          <div>
+            <label for="city">City / town / village *</label>
+            <input
+              id="city"
+              name="city"
+              data-field
+              required
+              maxlength="120"
+              autocomplete="address-level2"
+            >
+          </div>
+
+          <div>
+            <label for="district">District *</label>
+            <input
+              id="district"
+              name="district"
+              data-field
+              required
+              maxlength="120"
+            >
+          </div>
+
+          <div>
+            <label for="state">State / Union Territory *</label>
+            <input
+              id="state"
+              name="state"
+              data-field
+              required
+              maxlength="120"
+              autocomplete="address-level1"
+            >
+          </div>
+
+          <div>
+            <label for="pin">PIN code *</label>
+            <input
+              id="pin"
+              name="pin"
+              data-field
+              required
+              inputmode="numeric"
+              autocomplete="postal-code"
+              pattern="[0-9]{6}"
+              maxlength="6"
+              title="Enter a six-digit Indian PIN code."
+            >
+          </div>
+        </div>
+      </section>
+
+      <section class="form-section">
+        <h2>
+          <span class="section-number">04.</span>
+          Parent / guardian details
+        </h2>
+
+        <div class="grid">
+          <div class="full">
+            <label for="guardianName">
+              Parent / guardian full name *
+            </label>
+            <input
+              id="guardianName"
+              name="guardianName"
+              data-field
+              required
+              maxlength="150"
+              autocomplete="name"
+            >
+          </div>
+
+          <div>
+            <label for="relationship">
+              Relationship to applicant *
+            </label>
+            <select
+              id="relationship"
+              name="relationship"
+              data-field
+              required
+            >
+              <option value="">Select relationship</option>
+              <option value="Father">Father</option>
+              <option value="Mother">Mother</option>
+              <option value="Legal guardian">Legal guardian</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="guardianPhone">Guardian mobile number *</label>
+            <input
+              id="guardianPhone"
+              name="guardianPhone"
+              data-field
+              required
+              type="tel"
+              autocomplete="tel"
+              inputmode="tel"
+              maxlength="20"
+              pattern="[+0-9() -]{7,20}"
+              title="Enter a valid telephone number."
+            >
+          </div>
+
+          <div>
+            <label for="guardianEmail">Guardian email address</label>
+            <input
+              id="guardianEmail"
+              name="guardianEmail"
+              data-field
+              type="email"
+              autocomplete="email"
+              maxlength="254"
+            >
+          </div>
+
+          <div class="full">
+            <label for="guardianAddress">
+              Guardian address, if different from applicant's
+            </label>
+            <textarea
+              id="guardianAddress"
+              name="guardianAddress"
+              data-field
+              maxlength="1000"
+            ></textarea>
+          </div>
+        </div>
+      </section>
+
+      <div class="error" id="formError" role="alert"></div>
+
+      <p id="saveStatus" role="status" aria-live="polite"></p>
+
+      <div class="actions no-print">
+        <button type="button" id="saveButton">Save draft</button>
+        <button type="button" id="printButton">Print / Save PDF</button>
+        <a class="btn" href="index.html">Home</a>
+        <a class="btn" href="page-1-applicant.html">
+          ← Previous page
+        </a>
+        <button type="submit" class="primary">
+          Save and continue →
+        </button>
+      </div>
+    </form>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>Page 2 of 5 · Contact and Address</p>
+      </div>
+  </footer>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const STORAGE_KEY = "donorTrustQuotaDraft_v3";
+      const REFERENCE_KEY = "donorTrustQuotaReference_v1";
+      const CREATED_KEY = "donorTrustQuotaCreated_v1";
+
+      const form = document.getElementById("stepForm");
+      const referenceElement = document.getElementById("referenceNumber");
+      const createdElement = document.getElementById("createdDate");
+      const statusElement = document.getElementById("saveStatus");
+      const errorElement = document.getElementById("formError");
+
+      function readStorage(key, fallback = "") {
+        try {
+          const value = localStorage.getItem(key);
+          return value === null ? fallback : value;
+        } catch {
+          return fallback;
+        }
+      }
+
+      function readDraft() {
+        try {
+          const raw = readStorage(STORAGE_KEY, "{}");
+          const draft = JSON.parse(raw);
+
+          if (!draft || typeof draft !== "object" ||
+              Array.isArray(draft)) {
+            return {};
+          }
+
+          if (
+            draft.fields &&
+            typeof draft.fields === "object" &&
+            !Array.isArray(draft.fields)
+          ) {
+            return draft.fields;
+          }
+
+          return draft;
+        } catch {
+          return {};
+        }
+      }
+
+      function showReference() {
+        const reference = readStorage(REFERENCE_KEY, "");
+        const createdAt = readStorage(CREATED_KEY, "");
+
+        referenceElement.textContent =
+          reference || "Not available -- open Step 1 first";
+
+        if (!createdAt) {
+          createdElement.textContent = "Not available";
+          return;
+        }
+
+        const date = new Date(createdAt);
+
+        createdElement.textContent = Number.isNaN(date.getTime())
+          ? "Unavailable"
+          : date.toLocaleDateString("en-IN", {
+              year: "numeric",
+              month: "long",
+              day: "numeric"
+            });
+      }
+
+      function collectFields() {
+        const result = {};
+
+        document.querySelectorAll("[data-field]").forEach(field => {
+          result[field.name] = field.value;
+        });
+
+        return result;
+      }
+
+      function saveDraft(showMessage = true) {
+        try {
+          const oldFields = readDraft();
+
+          const saved = {
+            reference: readStorage(REFERENCE_KEY, ""),
+            createdAt: readStorage(CREATED_KEY, ""),
+            lastSavedAt: new Date().toISOString(),
+            fields: {
+              ...oldFields,
+              ...collectFields()
+            }
+          };
+
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+
+          if (showMessage) {
+            statusElement.textContent =
+              "Draft saved on this device. It has not been submitted online.";
+          }
+
+          return true;
+        } catch {
+          statusElement.textContent =
+            "The draft could not be saved. Check browser storage availability.";
+          return false;
+        }
+      }
+
+      const fields = readDraft();
+
+      document.querySelectorAll("[data-field]").forEach(field => {
+        if (Object.prototype.hasOwnProperty.call(fields, field.name)) {
+          field.value = fields[field.name] ?? "";
+        }
+
+        field.addEventListener("input", () => {
+          statusElement.textContent = "Unsaved changes.";
+        });
+      });
+
+      document.getElementById("saveButton").addEventListener("click", () => {
+        saveDraft();
+      });
+
+      document.getElementById("printButton").addEventListener("click", () => {
+        saveDraft(false);
+        window.print();
+      });
+
+      form.addEventListener("submit", event => {
+        event.preventDefault();
+
+        errorElement.classList.remove("show");
+        errorElement.textContent = "";
+
+        if (!form.reportValidity()) {
+          return;
+        }
+
+        if (!saveDraft(false)) {
+          errorElement.textContent =
+            "The draft could not be saved. Please try again.";
+          errorElement.classList.add("show");
+          return;
+        }
+
+        statusElement.textContent =
+          "Step 2 saved locally. Continuing to Step 3.";
+
+        window.location.href = "page-3-eligibility.html";
+      });
+
+      showReference();
+    })();
+  </script>
 </body>
 </html>

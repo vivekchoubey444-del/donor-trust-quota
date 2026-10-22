@@ -2,53 +2,1482 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Step 3 -- Eligibility and request</title>
-<link rel="stylesheet" href="styles.css">
-</head>
-<body>
-<header><div class="container">
-<p class="eyebrow">Donor / Trust Quota Application</p>
-<h1>Step 3 -- Eligibility and Request</h1>
-<div class="status">INDEPENDENT PROPOSAL -- NOT OFFICIAL</div>
-</div></header>
-<main class="container">
-<p>Record facts only. This form cannot determine eligibility or whether any quota is available.</p>
-<form>
-<div class="grid">
-  <div><label>NEET-UG qualification status *</label><select name="neetQualified" data-field required><option value="">Select</option><option>Qualified</option><option>Not qualified</option><option>Awaiting result</option></select></div>
-  <div><label>NEET scorecard available? *</label><select name="neetScoreProof" data-field required><option value="">Select</option><option>Yes</option><option>No</option></select></div>
-  <div><label>Class XII/equivalent passed? *</label><select name="class12Qualified" data-field required><option value="">Select</option><option>Yes</option><option>No</option></select></div>
-  <div><label>Relevant documents available? *</label><select name="documentsReady" data-field required><option value="">Select</option><option>Yes</option><option>Some pending</option><option>No</option></select></div>
-  <div class="full"><label>Basis of donor / trust request, if applicable</label><textarea name="basis" data-field></textarea></div>
-  <div class="full"><label>Request to the competent authority *</label><textarea name="request" data-field required></textarea></div>
-  <div class="full"><label>Additional information</label><textarea name="additionalInfo" data-field></textarea></div>
-</div>
-<div class="actions">
-  <button type="button" onclick="saveDraft()">Save</button>
-  <a class="btn" href="index.html">Home</a>
-  <a class="btn" href="page-2-contact.html">← Previous</a>
-  <a class="btn primary" href="page-4-photo.html">Next page →</a>
-</div>
-</form>
-</main>
-<footer><div class="container">No print or submission action on this step.</div></footer>
-<script>
-const KEY="donorTrustQuotaDraft_v3";
-let d={};try{d=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){}
-document.querySelectorAll("[data-field]").forEach(e=>{
-  if(d[e.name]!=null)e.value=d[e.name];
-  e.addEventListener("input",()=>{
-    d[e.name]=e.value;
-    localStorage.setItem(KEY,JSON.stringify(d));
-  });
-});
-function saveDraft(){
-  document.querySelectorAll("[data-field]").forEach(e=>d[e.name]=e.value);
-  localStorage.setItem(KEY,JSON.stringify(d));
-  alert("Draft saved in this browser.");
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Applicant eligibility information and request details for a donor or trust quota application draft.">
+  <title>Step 3 -- Eligibility and Request</title>
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Multilingual typography. System fonts remain the fallback. -->
+  <style>
+    :root {
+      --form-black: #171717;
+      --form-white: #ffffff;
+      --form-muted: #5f6368;
+      --form-border: #333333;
+      --form-soft-border: #d5d5d5;
+      --form-surface: #f7f7f7;
+      --form-radius: 5px;
+      --form-control-height: 46px;
+    }
+
+    body,
+    input,
+    select,
+    textarea,
+    button {
+      font-family:
+        "Noto Sans",
+        "Noto Sans Devanagari",
+        "Noto Sans Bengali",
+        Arial,
+        Helvetica,
+        sans-serif;
+    }
+
+    body {
+      background: var(--form-white);
+      color: var(--form-black);
+      line-height: 1.65;
+    }
+
+    header {
+      background: var(--form-white);
+      border-bottom: 2px solid var(--form-black);
+      padding: 20px;
+    }
+
+    main.container,
+    header .container,
+    footer .container {
+      width: 100%;
+      max-width: 1040px;
+      margin-right: auto;
+      margin-left: auto;
+    }
+
+    main.container {
+      padding: 28px 20px 40px;
+    }
+
+    .official-heading {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      margin: 0 0 18px;
+      padding: 22px 16px;
+      border: 2px solid var(--form-black);
+      background: var(--form-white);
+      text-align: center;
+    }
+
+    .official-heading img {
+      display: block;
+      width: 100%;
+      max-width: 82px;
+      max-height: 90px;
+      margin: 0 auto;
+      object-fit: contain;
+    }
+
+    .heading-text {
+      min-width: 0;
+      text-align: center;
+    }
+
+    .heading-text h1 {
+      margin: 0 0 8px;
+      font-size: clamp(22px, 4vw, 30px);
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+
+    .heading-text p {
+      margin: 5px 0 0;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .eyebrow {
+      color: var(--form-muted);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .status {
+      margin: 12px 0 0;
+      padding: 10px 14px;
+      border: 1px solid var(--form-black);
+      background: var(--form-surface);
+      color: var(--form-black);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.5;
+      text-align: center;
+      overflow-wrap: anywhere;
+    }
+
+    .reference-panel {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 18px 0;
+      padding: 18px;
+      border: 1px solid var(--form-black);
+      border-radius: var(--form-radius);
+      background: var(--form-white);
+    }
+
+    .reference-panel > div {
+      min-width: 0;
+    }
+
+    .reference-panel label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--form-muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .reference-value {
+      font-size: 15px;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .field-note {
+      display: block;
+      margin-top: 5px;
+      color: var(--form-muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .section-number {
+      display: inline-block;
+      margin-right: 7px;
+    }
+
+    .language-bar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(150px, 240px);
+      gap: 14px;
+      align-items: center;
+      margin: 18px 0;
+      padding: 14px;
+      border: 1px solid var(--form-black);
+      border-radius: var(--form-radius);
+      background: var(--form-white);
+    }
+
+    .language-bar label {
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .language-bar select {
+      margin: 0;
+    }
+
+    .language-preview {
+      margin: 14px 0;
+      padding: 15px;
+      border: 1px solid var(--form-soft-border);
+      border-left: 4px solid var(--form-black);
+      border-radius: 3px;
+      background: var(--form-surface);
+    }
+
+    .language-preview strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .language-preview p {
+      margin: 0 0 8px;
+      font-weight: 700;
+    }
+
+    .language-preview small {
+      color: var(--form-muted);
+      line-height: 1.6;
+    }
+
+    .notice {
+      margin: 18px 0 24px;
+      padding: 16px;
+      border: 1px solid var(--form-black);
+      border-left: 4px solid var(--form-black);
+      border-radius: 3px;
+      background: var(--form-surface);
+    }
+
+    .notice > strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .notice p:last-child {
+      margin-bottom: 0;
+    }
+
+    #stepForm {
+      width: 100%;
+    }
+
+    #stepForm section {
+      min-width: 0;
+      margin: 24px 0;
+      padding: 20px;
+      border: 1px solid var(--form-black);
+      border-radius: var(--form-radius);
+      background: var(--form-white);
+    }
+
+    #stepForm section h2 {
+      margin: 0 0 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--form-black);
+      font-size: clamp(20px, 3vw, 24px);
+      line-height: 1.35;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      width: 100%;
+    }
+
+    .grid > div {
+      min-width: 0;
+    }
+
+    .grid > .full {
+      grid-column: 1 / -1;
+    }
+
+    #stepForm label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--form-black);
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    #stepForm input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]),
+    #stepForm select,
+    #stepForm textarea {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      min-height: var(--form-control-height);
+      margin: 0;
+      padding: 11px 12px;
+      border: 1px solid #666666;
+      border-radius: var(--form-radius);
+      background: #ffffff;
+      color: var(--form-black);
+      font-size: 15px;
+      line-height: 1.5;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    #stepForm textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    #stepForm input::placeholder,
+    #stepForm textarea::placeholder {
+      color: #777777;
+      opacity: 1;
+    }
+
+    #stepForm input:focus,
+    #stepForm select:focus,
+    #stepForm textarea:focus {
+      border-color: var(--form-black);
+      outline: none;
+      box-shadow: 0 0 0 3px rgb(23 23 23 / 10%);
+    }
+
+    #stepForm input[type="checkbox"] {
+      flex: 0 0 19px;
+      width: 19px;
+      min-height: 19px;
+      height: 19px;
+      margin-top: 3px;
+      accent-color: var(--form-black);
+    }
+
+    .field-hint {
+      margin: 6px 0 0;
+      color: var(--form-muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .check-row label {
+      margin: 0 !important;
+      font-weight: 400 !important;
+    }
+
+    .error {
+      display: none;
+      margin: 18px 0;
+      padding: 14px 16px;
+      border: 1px solid #9b1c1c;
+      border-left: 4px solid #9b1c1c;
+      border-radius: 3px;
+      background: #fff8f8;
+      color: #7f1d1d;
+    }
+
+    .error.show {
+      display: block;
+    }
+
+    .error p {
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .error ul {
+      margin: 0;
+      padding-left: 22px;
+    }
+
+    #saveStatus {
+      margin: 12px 0;
+      color: var(--form-muted);
+      font-size: 13px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0;
+      padding: 18px;
+      border: 1px solid var(--form-black);
+      border-radius: var(--form-radius);
+      background: var(--form-surface);
+    }
+
+    .actions button,
+    .actions .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      max-width: 100%;
+      margin: 0;
+      padding: 11px 16px;
+      border: 1px solid var(--form-black);
+      border-radius: var(--form-radius);
+      background: var(--form-black);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.45;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      overflow-wrap: anywhere;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .actions button:hover,
+    .actions .btn:hover {
+      border-color: #444444;
+      background: #444444;
+      color: #ffffff;
+    }
+
+    .actions button:focus-visible,
+    .actions .btn:focus-visible {
+      outline: 3px solid #777777;
+      outline-offset: 3px;
+    }
+
+    .actions button.primary {
+      background: #173b32;
+      border-color: #173b32;
+    }
+
+.actions button.primary {
+  background: #171717;
+  border-color: #171717;
+  color: #ffffff;
 }
+
+.actions button.primary:hover {
+  background: #333333;
+  border-color: #333333;
+  color: #ffffff;
+}
+    footer {
+      margin-top: 28px;
+      padding: 18px 20px;
+      border-top: 2px solid var(--form-black);
+      background: var(--form-white);
+      color: var(--form-muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    footer p {
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    a {
+      color: #173b32;
+      text-underline-offset: 3px;
+    }
+
+    :focus-visible {
+      outline-offset: 3px;
+    }
+
+    @media (max-width: 760px) {
+      header {
+        padding: 14px;
+      }
+
+      main.container {
+        padding: 20px 14px 30px;
+      }
+
+      .official-heading {
+        padding: 18px 12px;
+      }
+
+      #stepForm section {
+        padding: 16px;
+      }
+
+      .grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+      }
+
+      .grid > .full {
+        grid-column: auto;
+      }
+
+      .actions {
+        gap: 10px;
+        padding: 14px;
+      }
+
+      .actions button,
+      .actions .btn {
+        flex: 1 1 150px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .official-heading {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 8px;
+      }
+
+      .official-heading img {
+        max-height: 75px;
+      }
+
+      .heading-text h1 {
+        font-size: 22px;
+      }
+
+      .heading-text p {
+        font-size: 11px;
+      }
+
+      .reference-panel {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+        padding: 14px;
+      }
+
+      .language-bar {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 8px;
+        padding: 12px;
+      }
+
+      #stepForm section {
+        margin: 18px 0;
+        padding: 13px;
+      }
+
+      #stepForm section h2 {
+        font-size: 20px;
+      }
+
+      .notice,
+      .language-preview {
+        padding: 13px;
+      }
+
+      .actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .actions button,
+      .actions .btn {
+        width: 100%;
+        flex: 1 1 auto;
+      }
+    }
+
+    @media (max-width: 360px) {
+      header {
+        padding: 10px;
+      }
+
+      main.container {
+        padding: 16px 10px 24px;
+      }
+
+      .heading-text h1 {
+        font-size: 20px;
+      }
+
+      #stepForm input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]),
+      #stepForm select,
+      #stepForm textarea {
+        padding: 10px;
+        font-size: 16px;
+      }
+    }
+
+    @media print {
+      body {
+        border: 0;
+        background: #ffffff;
+        color: #000000;
+      }
+
+      header,
+      footer {
+        border-color: #000000;
+      }
+
+      .no-print,
+      .language-bar,
+      .language-preview,
+      .actions,
+      #saveStatus {
+        display: none !important;
+      }
+
+      main.container {
+        max-width: none;
+        padding: 0;
+      }
+
+      .official-heading,
+      .reference-panel,
+      .notice,
+      #stepForm section {
+        border-color: #000000;
+        border-radius: 0;
+        box-shadow: none;
+        break-inside: avoid;
+      }
+
+      #stepForm input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]),
+      #stepForm select,
+      #stepForm textarea {
+        border: 1px solid #000000 !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+        box-shadow: none !important;
+      }
+
+      #stepForm textarea {
+        min-height: 65px;
+      }
+
+      a {
+        color: #000000;
+        text-decoration: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<header>
+
+  <div class="container">
+    <div class="official-heading">
+
+      <div class="heading-text">
+        <p class="eyebrow">Applicant information form -- WBMCC Authorised</p>
+        <h1 data-i18n="title">Donor / Trust Quota Application</h1>
+        <p data-i18n="session">Academic Session 2026–27</p>
+        <p data-i18n="step">Eligibility and Request -- Step 3 of 7</p>
+      </div>
+
+   
+    </div>
+
+    <div class="status">
+      APPLICATION DRAFT -- OFFICIAL AUTHORIZATION  --VERIFIED
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <div class="reference-panel" aria-live="polite">
+    <div>
+      <label data-i18n="referenceLabel">Draft reference number</label>
+      <div class="reference-value" id="referenceNumber">Loading…</div>
+   
+    </div>
+
+    <div>
+      <label data-i18n="createdLabel">Draft created</label>
+      <div class="reference-value" id="createdDate">--</div>
+      <small class="field-note" data-i18n="createdNote">
+        Date recorded by this device.
+      </small>
+    </div>
+  </div>
+
+  <div class="language-bar no-print">
+    <label for="language" data-i18n="languageLabel">
+      Form display language
+    </label>
+
+    <select id="language" name="language">
+      <option value="en">English</option>
+      <option value="hi">हिन्दी -- Hindi</option>
+      <option value="bn">বাংলা -- Bengali</option>
+      <option value="ne">नेपाली -- Nepali</option>
+    </select>
+  </div>
+
+  <div class="language-preview" aria-live="polite">
+    <strong data-i18n="languagePreviewTitle">Selected language</strong>
+    <p id="languagePreview" lang="en">English</p>
+    <small data-i18n="languageNote">
+      Language selection changes the interface labels and guidance.
+      Enter official names and references exactly as recorded on documents.
+    </small>
+  </div>
+
+  <div class="notice">
+    <strong data-i18n="noticeTitle">Important information</strong>
+    <p data-i18n="noticeText">
+      Record factual information only. This form does not determine
+      eligibility, confirm quota availability, or guarantee admission.
+      Verify all applicable requirements with the competent authority.
+    </p>
+ 
+  </div>
+
+  <form id="stepForm" novalidate>
+    <section>
+      <h2>
+        <span class="section-number">05.</span>
+        <span data-i18n="eligibilityHeading">Eligibility information</span>
+      </h2>
+
+      <div class="grid">
+        <div>
+          <label for="neetQualified" data-i18n="neetQualifiedLabel">
+            NEET-UG qualification status *
+          </label>
+          <select
+            id="neetQualified"
+            name="neetQualified"
+            data-field
+            required
+          >
+            <option value="" data-i18n="selectOption">Select an option</option>
+            <option value="Qualified" data-i18n="qualified">Qualified</option>
+            <option value="Not qualified" data-i18n="notQualified">Not qualified</option>
+            <option value="Awaiting result" data-i18n="awaiting">Awaiting result</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="neetScoreProof" data-i18n="scorecardLabel">
+            NEET scorecard available? *
+          </label>
+          <select id="neetScoreProof" name="neetScoreProof" data-field required>
+            <option value="" data-i18n="selectOption">Select an option</option>
+            <option value="Yes" data-i18n="yes">Yes</option>
+            <option value="No" data-i18n="no">No</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="class12Qualified" data-i18n="class12Label">
+            Class XII / equivalent passed? *
+          </label>
+          <select id="class12Qualified" name="class12Qualified" data-field required>
+            <option value="" data-i18n="selectOption">Select an option</option>
+            <option value="Yes" data-i18n="yes">Yes</option>
+            <option value="No" data-i18n="no">No</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="documentsReady" data-i18n="documentsLabel">
+            Relevant documents available? *
+          </label>
+          <select id="documentsReady" name="documentsReady" data-field required>
+            <option value="" data-i18n="selectOption">Select an option</option>
+            <option value="Yes" data-i18n="yes">Yes</option>
+            <option value="Some pending" data-i18n="somePending">Some pending</option>
+            <option value="No" data-i18n="no">No</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="neetExamYear" data-i18n="examYearLabel">
+            NEET-UG examination year
+          </label>
+          <input
+            id="neetExamYear"
+            name="neetExamYear"
+            data-field
+            type="number"
+            min="2000"
+            max="2100"
+            inputmode="numeric"
+          >
+        </div>
+
+        <div>
+          <label for="scorecardReference" data-i18n="scorecardReferenceLabel">
+            Scorecard / result reference, if available
+          </label>
+          <input
+            id="scorecardReference"
+            name="scorecardReference"
+            data-field
+            maxlength="120"
+          >
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>
+        <span class="section-number">06.</span>
+        <span data-i18n="requestHeading">Donor / trust request</span>
+      </h2>
+
+      <div class="grid">
+        <div class="full">
+          <label for="basis" data-i18n="basisLabel">
+            Basis of donor / trust request, if applicable
+          </label>
+          <textarea
+            id="basis"
+            name="basis"
+            data-field
+            maxlength="3000"
+            rows="5"
+            placeholder="Enter factual details and relevant references."
+            data-i18n-placeholder="basisPlaceholder"
+          ></textarea>
+          <p class="field-hint" data-i18n="basisHint">
+            Include only verifiable facts. Do not state that a quota or seat
+            is guaranteed.
+          </p>
+        </div>
+
+        <div class="full">
+          <label for="request" data-i18n="requestLabel">
+            Request to the competent authority *
+          </label>
+          <textarea
+            id="request"
+            name="request"
+            data-field
+            required
+            minlength="10"
+            maxlength="5000"
+            rows="7"
+            placeholder="Describe the request and the records supporting it."
+            data-i18n-placeholder="requestPlaceholder"
+          ></textarea>
+          <p class="field-hint" data-i18n="requestHint">
+            This is a request for consideration only. Eligibility and
+            availability remain subject to applicable official rules.
+          </p>
+        </div>
+
+        <div class="full">
+          <label for="additionalInfo" data-i18n="additionalLabel">
+            Additional information
+          </label>
+          <textarea
+            id="additionalInfo"
+            name="additionalInfo"
+            data-field
+            maxlength="3000"
+            rows="5"
+            placeholder="Optional information relevant to the request."
+            data-i18n-placeholder="additionalPlaceholder"
+          ></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 data-i18n="reviewHeading">Applicant acknowledgement</h2>
+
+      <div class="check-row">
+        <input
+          type="checkbox"
+          id="eligibilityAcknowledged"
+          name="eligibilityAcknowledged"
+          data-field
+          required
+        >
+        <label for="eligibilityAcknowledged" data-i18n="acknowledgement">
+          I understand that these answers are declarations of information
+          supplied by me, and that the competent authority determines
+          eligibility and any applicable admission process. *
+        </label>
+      </div>
+    </section>
+
+    <div class="error" id="formError" role="alert" aria-live="assertive"></div>
+    <p id="saveStatus" role="status" aria-live="polite"></p>
+
+    <div class="actions no-print">
+      <button type="button" id="saveButton" data-i18n="saveButton">
+        Save draft
+      </button>
+
+      <button type="button" id="printButton" data-i18n="printButton">
+        Print / Save PDF
+      </button>
+
+      <a class="btn" href="index.html" data-i18n="homeButton">Home</a>
+
+      <a class="btn" href="page-2-contact.html" data-i18n="previousButton">
+        ← Previous page
+      </a>
+
+      <button type="submit" class="primary" data-i18n="nextButton">
+        Save and continue →
+      </button>
+    </div>
+  </form>
+</main>
+
+<footer>
+  <div class="container">
+    <p data-i18n="footerText">
+ 
+   Page 3 of 7 · Eligibility and Request</p>
+  </div>
+</footer>
+
+<script>
+(() => {
+  'use strict';
+
+  const STORAGE_KEY = 'donorTrustQuotaDraft_v3';
+  const REFERENCE_KEY = 'donorTrustQuotaReference_v1';
+  const CREATED_KEY = 'donorTrustQuotaCreated_v1';
+  const LANGUAGE_KEY = 'donorTrustQuotaLanguage_v1';
+
+  const form = document.getElementById('stepForm');
+  const languageSelect = document.getElementById('language');
+  const errorBox = document.getElementById('formError');
+  const statusBox = document.getElementById('saveStatus');
+
+  /*
+   * These dictionaries translate interface text only.
+   * Applicant names, legal references and official records
+   * should be entered exactly as they appear on source documents.
+   */
+  const translations = {
+    en: {
+      title: 'Donor / Trust Quota Application',
+      session: 'Academic Session 2026–27',
+      step: 'Eligibility and Request -- Step 3 of 7',
+      referenceLabel: 'Draft reference number',
+      referenceNote: 'Draft identification only; not an official receipt number.',
+      createdLabel: 'Draft created',
+      createdNote: 'Date recorded by this device.',
+      languageLabel: 'Form display language',
+      languagePreviewTitle: 'Selected language',
+      languageNote: 'Language selection changes the interface labels and guidance. Enter official names and references exactly as recorded on documents.',
+      noticeTitle: 'Important information',
+      noticeText: 'Record factual information only. This form does not determine eligibility, confirm quota availability, or guarantee admission. Verify all applicable requirements with the competent authority.',
+      noticePrivacy: 'This is an independently prepared draft, not an official WBMCC submission. Information is saved in this browser; no submission occurs on this page.',
+      eligibilityHeading: 'Eligibility information',
+      neetQualifiedLabel: 'NEET-UG qualification status *',
+      scorecardLabel: 'NEET scorecard available? *',
+      class12Label: 'Class XII / equivalent passed? *',
+      documentsLabel: 'Relevant documents available? *',
+      examYearLabel: 'NEET-UG examination year',
+      scorecardReferenceLabel: 'Scorecard / result reference, if available',
+      selectOption: 'Select an option',
+      qualified: 'Qualified',
+      notQualified: 'Not qualified',
+      awaiting: 'Awaiting result',
+      yes: 'Yes',
+      no: 'No',
+      somePending: 'Some pending',
+      requestHeading: 'Donor / trust request',
+      basisLabel: 'Basis of donor / trust request, if applicable',
+      basisPlaceholder: 'Enter factual details and relevant references.',
+      basisHint: 'Include only verifiable facts. Do not state that a quota or seat is guaranteed.',
+      requestLabel: 'Request to the competent authority *',
+      requestPlaceholder: 'Describe the request and the records supporting it.',
+      requestHint: 'This is a request for consideration only. Eligibility and availability remain subject to applicable official rules.',
+      additionalLabel: 'Additional information',
+      additionalPlaceholder: 'Optional information relevant to the request.',
+      reviewHeading: 'Applicant acknowledgement',
+      acknowledgement: 'I understand that these answers are declarations of information supplied by me, and that the competent authority determines eligibility and any applicable admission process. *',
+      saveButton: 'Save draft',
+      printButton: 'Print / Save PDF',
+      homeButton: 'Home',
+      previousButton: '← Previous page',
+      nextButton: 'Save and continue →',
+      footerText: 'This page saves draft data in the current browser. It does not submit an application to WBMCC or another authority.',
+      missingReference: 'Not available -- open Step 1 first',
+      unavailable: 'Unavailable',
+      saved: 'Step 3 draft saved on this device. It has not been submitted.',
+      storageError: 'Could not save the draft. Browser storage may be unavailable or full.',
+      validationTitle: 'Please correct the following before continuing:',
+      errorReference: 'Open Step 1 first to create the shared draft reference.',
+      errorRequired: 'Complete all required fields.',
+      errorRequest: 'The request must contain at least 10 characters.',
+      errorYear: 'Enter a valid NEET examination year.',
+      errorAcknowledgement: 'Confirm the applicant acknowledgement to continue.',
+      languageName: 'English'
+    },
+
+    hi: {
+      title: 'डोनर / ट्रस्ट कोटा आवेदन',
+      session: 'शैक्षणिक सत्र 2026–27',
+      step: 'पात्रता और अनुरोध -- चरण 3 / 7',
+      referenceLabel: 'ड्राफ्ट संदर्भ संख्या',
+      referenceNote: 'केवल ड्राफ्ट पहचान; आधिकारिक रसीद संख्या नहीं।',
+      createdLabel: 'ड्राफ्ट बनाने की तारीख',
+      createdNote: 'इस डिवाइस में दर्ज तारीख।',
+      languageLabel: 'फॉर्म की भाषा',
+      languagePreviewTitle: 'चुनी गई भाषा',
+      languageNote: 'भाषा बदलने से फॉर्म के लेबल और निर्देश बदलते हैं। आधिकारिक नाम और संदर्भ मूल दस्तावेज़ के अनुसार भरें।',
+      noticeTitle: 'महत्वपूर्ण जानकारी',
+      noticeText: 'केवल तथ्यात्मक जानकारी दर्ज करें। यह फॉर्म पात्रता या कोटा उपलब्धता निर्धारित नहीं करता और प्रवेश की गारंटी नहीं देता। लागू नियम संबंधित सक्षम प्राधिकरण से सत्यापित करें।',
+      noticePrivacy: 'यह स्वतंत्र रूप से तैयार किया गया ड्राफ्ट है, आधिकारिक WBMCC आवेदन नहीं। जानकारी इस ब्राउज़र में सहेजी जाती है; इस पेज से आवेदन जमा नहीं होता।',
+      eligibilityHeading: 'पात्रता संबंधी जानकारी',
+      neetQualifiedLabel: 'NEET-UG योग्यता की स्थिति *',
+      scorecardLabel: 'NEET स्कोरकार्ड उपलब्ध है? *',
+      class12Label: 'कक्षा 12 या समकक्ष उत्तीर्ण? *',
+      documentsLabel: 'संबंधित दस्तावेज़ उपलब्ध हैं? *',
+      examYearLabel: 'NEET-UG परीक्षा वर्ष',
+      scorecardReferenceLabel: 'स्कोरकार्ड / परिणाम संदर्भ, यदि उपलब्ध हो',
+      selectOption: 'विकल्प चुनें',
+      qualified: 'उत्तीर्ण / योग्य',
+      notQualified: 'योग्य नहीं',
+      awaiting: 'परिणाम प्रतीक्षित',
+      yes: 'हाँ',
+      no: 'नहीं',
+      somePending: 'कुछ दस्तावेज़ लंबित',
+      requestHeading: 'डोनर / ट्रस्ट अनुरोध',
+      basisLabel: 'डोनर / ट्रस्ट अनुरोध का आधार, यदि लागू हो',
+      basisPlaceholder: 'तथ्य और संबंधित संदर्भ दर्ज करें।',
+      basisHint: 'केवल सत्यापित किए जा सकने वाले तथ्य लिखें। सीट की गारंटी का दावा न करें।',
+      requestLabel: 'सक्षम प्राधिकरण से अनुरोध *',
+      requestPlaceholder: 'अपना अनुरोध और समर्थन करने वाले रिकॉर्ड का विवरण लिखें।',
+      requestHint: 'यह केवल विचार हेतु अनुरोध है। पात्रता और उपलब्धता लागू आधिकारिक नियमों पर निर्भर हैं।',
+      additionalLabel: 'अतिरिक्त जानकारी',
+      additionalPlaceholder: 'अनुरोध से संबंधित वैकल्पिक जानकारी।',
+      reviewHeading: 'आवेदक की स्वीकृति',
+      acknowledgement: 'मैं समझता/समझती हूँ कि ये उत्तर मेरे द्वारा दी गई जानकारी के कथन हैं और पात्रता तथा लागू प्रवेश प्रक्रिया का निर्धारण सक्षम प्राधिकरण करता है। *',
+      saveButton: 'ड्राफ्ट सहेजें',
+      printButton: 'प्रिंट / PDF सहेजें',
+      homeButton: 'मुखपृष्ठ',
+      previousButton: '← पिछला पेज',
+      nextButton: 'सहेजें और आगे बढ़ें →',
+      footerText: 'यह पेज ड्राफ्ट को वर्तमान ब्राउज़र में सहेजता है। यह WBMCC या किसी अन्य प्राधिकरण को आवेदन जमा नहीं करता।',
+      missingReference: 'उपलब्ध नहीं -- पहले चरण 1 खोलें',
+      unavailable: 'उपलब्ध नहीं',
+      saved: 'चरण 3 का ड्राफ्ट इस डिवाइस में सहेजा गया। आवेदन जमा नहीं हुआ है।',
+      storageError: 'ड्राफ्ट सहेजा नहीं जा सका। ब्राउज़र स्टोरेज अनुपलब्ध या भरा हो सकता है।',
+      validationTitle: 'आगे बढ़ने से पहले निम्न त्रुटियाँ ठीक करें:',
+      errorReference: 'साझा ड्राफ्ट संदर्भ बनाने के लिए पहले चरण 1 खोलें।',
+      errorRequired: 'सभी आवश्यक फ़ील्ड भरें।',
+      errorRequest: 'अनुरोध कम से कम 10 अक्षरों का होना चाहिए।',
+      errorYear: 'सही NEET परीक्षा वर्ष दर्ज करें।',
+      errorAcknowledgement: 'आगे बढ़ने के लिए आवेदक की स्वीकृति दें।',
+      languageName: 'हिन्दी'
+    },
+
+    bn: {
+      title: 'ডোনার / ট্রাস্ট কোটা আবেদন',
+      session: 'শিক্ষাবর্ষ ২০২৬–২৭',
+      step: 'যোগ্যতা ও আবেদন -- ধাপ ৩ / ৭',
+      referenceLabel: 'খসড়া রেফারেন্স নম্বর',
+      referenceNote: 'শুধুমাত্র খসড়া শনাক্তকরণ; সরকারি রসিদ নম্বর নয়।',
+      createdLabel: 'খসড়া তৈরির তারিখ',
+      createdNote: 'এই ডিভাইসে সংরক্ষিত তারিখ।',
+      languageLabel: 'ফর্মের ভাষা',
+      languagePreviewTitle: 'নির্বাচিত ভাষা',
+      languageNote: 'ভাষা পরিবর্তন করলে ফর্মের লেবেল ও নির্দেশাবলী পরিবর্তিত হয়। সরকারি নাম ও রেফারেন্স মূল নথি অনুযায়ী লিখুন।',
+      noticeTitle: 'গুরুত্বপূর্ণ তথ্য',
+      noticeText: 'শুধুমাত্র সত্য তথ্য লিখুন। এই ফর্ম যোগ্যতা বা কোটা উপলব্ধি নির্ধারণ করে না এবং ভর্তির নিশ্চয়তা দেয় না। প্রযোজ্য নিয়ম সংশ্লিষ্ট কর্তৃপক্ষের কাছে যাচাই করুন।',
+      noticePrivacy: 'এটি স্বাধীনভাবে প্রস্তুত করা খসড়া, সরকারি WBMCC আবেদন নয়। তথ্য এই ব্রাউজারে সংরক্ষিত হয়; এই পৃষ্ঠা থেকে আবেদন জমা হয় না।',
+      eligibilityHeading: 'যোগ্যতা সংক্রান্ত তথ্য',
+      neetQualifiedLabel: 'NEET-UG যোগ্যতার অবস্থা *',
+      scorecardLabel: 'NEET স্কোরকার্ড উপলব্ধ? *',
+      class12Label: 'দ্বাদশ শ্রেণি বা সমতুল্য উত্তীর্ণ? *',
+      documentsLabel: 'প্রাসঙ্গিক নথি উপলব্ধ? *',
+      examYearLabel: 'NEET-UG পরীক্ষার বছর',
+      scorecardReferenceLabel: 'স্কোরকার্ড / ফলাফলের রেফারেন্স, থাকলে',
+      selectOption: 'একটি বিকল্প নির্বাচন করুন',
+      qualified: 'যোগ্য',
+      notQualified: 'যোগ্য নন',
+      awaiting: 'ফলাফলের অপেক্ষায়',
+      yes: 'হ্যাঁ',
+      no: 'না',
+      somePending: 'কিছু নথি বাকি',
+      requestHeading: 'ডোনার / ট্রাস্ট আবেদন',
+      basisLabel: 'প্রযোজ্য হলে ডোনার / ট্রাস্ট আবেদনের ভিত্তি',
+      basisPlaceholder: 'তথ্য ও সংশ্লিষ্ট রেফারেন্স লিখুন।',
+      basisHint: 'শুধুমাত্র যাচাইযোগ্য তথ্য দিন। আসন নিশ্চিত বলে দাবি করবেন না।',
+      requestLabel: 'সংশ্লিষ্ট কর্তৃপক্ষের কাছে আবেদন *',
+      requestPlaceholder: 'আপনার আবেদন এবং সমর্থনকারী নথির বিবরণ লিখুন।',
+      requestHint: 'এটি শুধুমাত্র বিবেচনার অনুরোধ। যোগ্যতা ও আসন প্রাপ্যতা সরকারি নিয়মের অধীন।',
+      additionalLabel: 'অতিরিক্ত তথ্য',
+      additionalPlaceholder: 'আবেদনের সঙ্গে সম্পর্কিত ঐচ্ছিক তথ্য।',
+      reviewHeading: 'আবেদনকারীর স্বীকৃতি',
+      acknowledgement: 'আমি বুঝি যে এই উত্তরগুলি আমার দেওয়া তথ্যের বিবৃতি এবং যোগ্যতা ও প্রযোজ্য ভর্তি প্রক্রিয়া সংশ্লিষ্ট কর্তৃপক্ষ নির্ধারণ করবে। *',
+      saveButton: 'খসড়া সংরক্ষণ',
+      printButton: 'প্রিন্ট / PDF সংরক্ষণ',
+      homeButton: 'হোম',
+      previousButton: '← আগের পৃষ্ঠা',
+      nextButton: 'সংরক্ষণ করে এগিয়ে যান →',
+      footerText: 'এই পৃষ্ঠা বর্তমান ব্রাউজারে খসড়া সংরক্ষণ করে। এটি WBMCC বা অন্য কোনো কর্তৃপক্ষের কাছে আবেদন জমা দেয় না।',
+      missingReference: 'পাওয়া যায়নি -- প্রথমে ধাপ ১ খুলুন',
+      unavailable: 'পাওয়া যায়নি',
+      saved: 'ধাপ ৩-এর খসড়া এই ডিভাইসে সংরক্ষিত হয়েছে। আবেদন জমা হয়নি।',
+      storageError: 'খসড়া সংরক্ষণ করা যায়নি। ব্রাউজারের স্টোরেজ অনুপলব্ধ বা পূর্ণ হতে পারে।',
+      validationTitle: 'এগোনোর আগে নিচের সমস্যাগুলি ঠিক করুন:',
+      errorReference: 'শেয়ার করা খসড়া রেফারেন্স তৈরি করতে প্রথমে ধাপ ১ খুলুন।',
+      errorRequired: 'সব আবশ্যক ঘর পূরণ করুন।',
+      errorRequest: 'আবেদনের বিবরণ কমপক্ষে ১০ অক্ষরের হতে হবে।',
+      errorYear: 'সঠিক NEET পরীক্ষার বছর লিখুন।',
+      errorAcknowledgement: 'এগোনোর আগে আবেদনকারীর স্বীকৃতি দিন।',
+      languageName: 'বাংলা'
+    },
+
+    ne: {
+      title: 'डोनर / ट्रस्ट कोटा आवेदन',
+      session: 'शैक्षिक सत्र २०२६–२७',
+      step: 'योग्यता र अनुरोध -- चरण ३ / ७',
+      referenceLabel: 'मस्यौदा सन्दर्भ नम्बर',
+      referenceNote: 'मस्यौदा पहिचानका लागि मात्र; आधिकारिक रसिद नम्बर होइन।',
+      createdLabel: 'मस्यौदा तयार भएको मिति',
+      createdNote: 'यस उपकरणमा अभिलेख गरिएको मिति।',
+      languageLabel: 'फारामको भाषा',
+      languagePreviewTitle: 'छानिएको भाषा',
+      languageNote: 'भाषा परिवर्तन गर्दा फारामका लेबल र निर्देशन परिवर्तन हुन्छन्। आधिकारिक नाम र सन्दर्भ मूल कागजातअनुसार लेख्नुहोस्।',
+      noticeTitle: 'महत्त्वपूर्ण जानकारी',
+      noticeText: 'तथ्यमा आधारित जानकारी मात्र लेख्नुहोस्। यो फारामले योग्यता वा कोटा उपलब्धता निर्धारण गर्दैन र भर्नाको ग्यारेन्टी दिँदैन। लागू नियम सम्बन्धित निकायसँग पुष्टि गर्नुहोस्।',
+      noticePrivacy: 'यो स्वतन्त्र रूपमा तयार गरिएको मस्यौदा हो, आधिकारिक WBMCC आवेदन होइन। जानकारी यस ब्राउजरमा सुरक्षित हुन्छ; यस पृष्ठबाट आवेदन पेस हुँदैन।',
+      eligibilityHeading: 'योग्यता सम्बन्धी जानकारी',
+      neetQualifiedLabel: 'NEET-UG योग्यताको अवस्था *',
+      scorecardLabel: 'NEET स्कोरकार्ड उपलब्ध छ? *',
+      class12Label: 'कक्षा १२ वा समकक्ष उत्तीर्ण? *',
+      documentsLabel: 'सम्बन्धित कागजात उपलब्ध छन्? *',
+      examYearLabel: 'NEET-UG परीक्षा वर्ष',
+      scorecardReferenceLabel: 'स्कोरकार्ड / नतिजा सन्दर्भ, उपलब्ध भएमा',
+      selectOption: 'विकल्प छान्नुहोस्',
+      qualified: 'योग्य',
+      notQualified: 'योग्य छैन',
+      awaiting: 'नतिजा पर्खँदै',
+      yes: 'छ',
+      no: 'छैन',
+      somePending: 'केही कागजात बाँकी',
+      requestHeading: 'डोनर / ट्रस्ट अनुरोध',
+      basisLabel: 'लागू भएमा डोनर / ट्रस्ट अनुरोधको आधार',
+      basisPlaceholder: 'तथ्य र सम्बन्धित सन्दर्भ लेख्नुहोस्।',
+      basisHint: 'पुष्टि गर्न सकिने तथ्य मात्र समावेश गर्नुहोस्। सिट सुनिश्चित भएको दाबी नगर्नुहोस्।',
+      requestLabel: 'सम्बन्धित निकायलाई अनुरोध *',
+      requestPlaceholder: 'आफ्नो अनुरोध र समर्थन गर्ने अभिलेखको विवरण लेख्नुहोस्।',
+      requestHint: 'यो विचारका लागि मात्र गरिएको अनुरोध हो। योग्यता र उपलब्धता लागू आधिकारिक नियममा निर्भर हुन्छ।',
+      additionalLabel: 'थप जानकारी',
+      additionalPlaceholder: 'अनुरोधसँग सम्बन्धित वैकल्पिक जानकारी।',
+      reviewHeading: 'आवेदकको स्वीकृति',
+      acknowledgement: 'म बुझ्छु कि यी उत्तरहरू मैले दिएको जानकारीका विवरण हुन् र योग्यता तथा लागू भर्ना प्रक्रिया सम्बन्धित निकायले निर्धारण गर्छ। *',
+      saveButton: 'मस्यौदा सुरक्षित गर्नुहोस्',
+      printButton: 'प्रिन्ट / PDF सुरक्षित गर्नुहोस्',
+      homeButton: 'गृहपृष्ठ',
+      previousButton: '← अघिल्लो पृष्ठ',
+      nextButton: 'सुरक्षित गरेर अघि बढ्नुहोस् →',
+      footerText: 'यो पृष्ठले हालको ब्राउजरमा मस्यौदा सुरक्षित गर्छ। यसले WBMCC वा अन्य निकायमा आवेदन पेस गर्दैन।',
+      missingReference: 'उपलब्ध छैन -- पहिले चरण १ खोल्नुहोस्',
+      unavailable: 'उपलब्ध छैन',
+      saved: 'चरण ३ को मस्यौदा यस उपकरणमा सुरक्षित भयो। आवेदन पेस भएको छैन।',
+      storageError: 'मस्यौदा सुरक्षित गर्न सकिएन। ब्राउजरको भण्डारण उपलब्ध नभएको वा भरिएको हुन सक्छ।',
+      validationTitle: 'अगाडि बढ्नुअघि यी त्रुटिहरू सच्याउनुहोस्:',
+      errorReference: 'साझा मस्यौदा सन्दर्भ बनाउन पहिले चरण १ खोल्नुहोस्।',
+      errorRequired: 'सबै आवश्यक विवरण भर्नुहोस्।',
+      errorRequest: 'अनुरोध कम्तीमा १० अक्षरको हुनुपर्छ।',
+      errorYear: 'मान्य NEET परीक्षा वर्ष लेख्नुहोस्।',
+      errorAcknowledgement: 'अगाडि बढ्न आवेदकको स्वीकृति दिनुहोस्।',
+      languageName: 'नेपाली'
+    }
+  };
+
+  function safeGet(key) {
+    try {
+      return localStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  }
+
+  function readDraft() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : {};
+
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+        return { reference: '', createdAt: '', fields: {} };
+      }
+
+      /*
+       * The current Step 1 version stores:
+       * { reference, createdAt, lastSavedAt, fields: {...} }
+       *
+       * Older versions stored a flat object. This migration preserves
+       * its fields so moving between versions does not erase the draft.
+       */
+      if (
+        parsed.fields &&
+        typeof parsed.fields === 'object' &&
+        !Array.isArray(parsed.fields)
+      ) {
+        return {
+          ...parsed,
+          fields: { ...parsed.fields }
+        };
+      }
+
+      return {
+        reference: parsed.reference || '',
+        createdAt: parsed.createdAt || '',
+        lastSavedAt: parsed.lastSavedAt || '',
+        fields: { ...parsed }
+      };
+    } catch {
+      return { reference: '', createdAt: '', fields: {} };
+    }
+  }
+
+  let draft = readDraft();
+
+  function currentLanguage() {
+    const value = languageSelect.value;
+    return translations[value] ? value : 'en';
+  }
+
+  function text(key) {
+    const language = currentLanguage();
+    return translations[language][key] || translations.en[key] || key;
+  }
+
+  function showReference() {
+    const reference =
+      draft.reference ||
+      safeGet(REFERENCE_KEY) ||
+      '';
+
+    const createdAt =
+      draft.createdAt ||
+      safeGet(CREATED_KEY) ||
+      '';
+
+    document.getElementById('referenceNumber').textContent =
+      reference || text('missingReference');
+
+    const dateElement = document.getElementById('createdDate');
+
+    if (!createdAt) {
+      dateElement.textContent = text('unavailable');
+      return;
+    }
+
+    const date = new Date(createdAt);
+
+    dateElement.textContent = Number.isNaN(date.getTime())
+      ? text('unavailable')
+      : date.toLocaleDateString(
+          currentLanguage() === 'hi' ? 'hi-IN' :
+          currentLanguage() === 'bn' ? 'bn-IN' :
+          currentLanguage() === 'ne' ? 'ne-NP' : 'en-IN',
+          { year: 'numeric', month: 'long', day: 'numeric' }
+        );
+  }
+
+  function applyLanguage() {
+    const language = currentLanguage();
+
+    document.documentElement.lang = language;
+    document.getElementById('languagePreview').lang = language;
+    document.getElementById('languagePreview').textContent =
+      translations[language].languageName;
+
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+      const key = element.getAttribute('data-i18n');
+      const value = translations[language][key];
+
+      if (typeof value === 'string') {
+        element.textContent = value;
+      }
+    });
+
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+      const key = element.getAttribute('data-i18n-placeholder');
+      const value = translations[language][key];
+
+      if (typeof value === 'string') {
+        element.placeholder = value;
+      }
+    });
+
+    /*
+     * Translate select labels while keeping their stored values stable.
+     */
+    document.querySelectorAll('option[data-i18n]').forEach(option => {
+      const key = option.getAttribute('data-i18n');
+      const value = translations[language][key];
+
+      if (typeof value === 'string') {
+        option.textContent = value;
+      }
+    });
+
+    showReference();
+
+    try {
+      localStorage.setItem(LANGUAGE_KEY, language);
+    } catch {
+      // Language preference is optional.
+    }
+  }
+
+  function collectFields() {
+    const fields = { ...draft.fields };
+
+    document.querySelectorAll('[data-field]').forEach(field => {
+      const key = field.name || field.id;
+
+      if (!key) return;
+
+      fields[key] = field.type === 'checkbox'
+        ? field.checked
+        : field.value;
+    });
+
+    return fields;
+  }
+
+  function persistDraft() {
+    try {
+      draft.fields = collectFields();
+      draft.reference =
+        draft.reference ||
+        safeGet(REFERENCE_KEY) ||
+        '';
+
+      draft.createdAt =
+        draft.createdAt ||
+        safeGet(CREATED_KEY) ||
+        '';
+
+      draft.lastSavedAt = new Date().toISOString();
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  function restoreFields() {
+    document.querySelectorAll('[data-field]').forEach(field => {
+      const key = field.name || field.id;
+
+      if (!key || !Object.prototype.hasOwnProperty.call(draft.fields, key)) {
+        return;
+      }
+
+      const value = draft.fields[key];
+
+      if (field.type === 'checkbox') {
+        field.checked = value === true;
+      } else if (value !== undefined && value !== null) {
+        field.value = String(value);
+      }
+    });
+  }
+
+  function displayErrors(messages) {
+    errorBox.replaceChildren();
+
+    if (!messages.length) {
+      errorBox.classList.remove('show');
+      return;
+    }
+
+    const heading = document.createElement('p');
+    heading.textContent = text('validationTitle');
+
+    const list = document.createElement('ul');
+
+    messages.forEach(message => {
+      const item = document.createElement('li');
+      item.textContent = message;
+      list.appendChild(item);
+    });
+
+    errorBox.append(heading, list);
+    errorBox.classList.add('show');
+    errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function validateStep() {
+    const errors = [];
+
+    if (!draft.reference && !safeGet(REFERENCE_KEY)) {
+      errors.push(text('errorReference'));
+    }
+
+    if (!form.reportValidity()) {
+      errors.push(text('errorRequired'));
+    }
+
+    const requestValue = document.getElementById('request').value.trim();
+
+    if (requestValue.length < 10) {
+      errors.push(text('errorRequest'));
+    }
+
+    const yearField = document.getElementById('neetExamYear');
+
+    if (yearField.value) {
+      const year = Number(yearField.value);
+
+      if (
+        !Number.isInteger(year) ||
+        year < 2000 ||
+        year > new Date().getFullYear() + 1
+      ) {
+        errors.push(text('errorYear'));
+      }
+    }
+
+    if (!document.getElementById('eligibilityAcknowledged').checked) {
+      errors.push(text('errorAcknowledgement'));
+    }
+
+    return [...new Set(errors)];
+  }
+
+  document.querySelectorAll('[data-field]').forEach(field => {
+    field.addEventListener('input', () => {
+      draft.fields[field.name || field.id] =
+        field.type === 'checkbox' ? field.checked : field.value;
+    });
+
+    field.addEventListener('change', () => {
+      draft.fields[field.name || field.id] =
+        field.type === 'checkbox' ? field.checked : field.value;
+    });
+  });
+
+  languageSelect.value = safeGet(LANGUAGE_KEY) || 'en';
+
+  if (!translations[languageSelect.value]) {
+    languageSelect.value = 'en';
+  }
+
+  languageSelect.addEventListener('change', applyLanguage);
+
+  document.getElementById('saveButton').addEventListener('click', () => {
+    if (persistDraft()) {
+      statusBox.textContent = text('saved');
+      displayErrors([]);
+    } else {
+      statusBox.textContent = text('storageError');
+    }
+  });
+
+  document.getElementById('printButton').addEventListener('click', () => {
+    if (!persistDraft()) {
+      statusBox.textContent = text('storageError');
+      return;
+    }
+
+    window.print();
+  });
+
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+
+    const errors = validateStep();
+
+    if (errors.length) {
+      displayErrors(errors);
+      return;
+    }
+
+         */
+    window.location.href = 'page-4-photo.html';
+  });
+
+  restoreFields();
+  applyLanguage();
+})();
 </script>
 </body>
 </html>
+
+Dont add any colour in save and continue just black change and give dont cahnge anything
