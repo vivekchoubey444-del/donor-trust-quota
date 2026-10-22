@@ -1,190 +1,171 @@
+
 "use strict";
 
 /**
+ * Donor Trust Quota -- Admin Status API
  * File: functions/api/admin/status.js
  *
- * Cloudflare Pages Function
- *
- * Required environment variables:
- *   API_BASE_URL
- *   ADMIN_API_TOKEN
- *
- * Backend contract:
+ * Endpoint:
  *   GET /api/admin/status
  *
- * The backend must return:
- * {
- *   "ok": true,
- *   "service": "healthy",
- *   "formLocked": false,
- *   "emergencyPaused": false,
- *   "updatedAt": "2026-10-22T12:00:00.000Z"
- * }
+ * Required Cloudflare Pages configuration:
+ *   ADMIN_SECRET -- server-side secret, minimum 32 characters
+ *   APP_DB       -- Cloudflare D1 binding
+ *
+ * Optional D1 table:
+ *   dtq_control_state
+ *
+ * This endpoint reports status only.
+ * It does not lock submissions or pause the application itself.
  */
 
-const JSON_HEADERS = {
+const SECURITY_HEADERS = {
   "Content-Type": "application/json; charset=utf-8",
-  "Cache-Control": "no-store, no-cache, must-revalidate",
+  "Cache-Control": "private, no-store, no-cache, max-age=0, must-revalidate",
+  "Pragma": "no-cache",
   "X-Content-Type-Options": "nosniff",
-  "X-Robots-Tag": "noindex, nofollow"
+  "X-Frame-Options": "DENY",
+  "Referrer-Policy": "no-referrer",
+  "X-Robots-Tag": "noindex, nofollow, noarchive",
+  "Vary": "Authorization"
 };
 
-function jsonResponse(status, body) {
+function respond(status, body) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: JSON_HEADERS
+    headers: SECURITY_HEADERS
   });
 }
 
-function allowedOrigins(env) {
-  return String(env.ADMIN_ALLOWED_ORIGINS || env.ACCESS_ALLOWED_ORIGINS || "")
-    .split(",")
-    .map((value) => value.trim())
-    .filter(Boolean);
-}
-
-function isOriginAllowed(request, env) {
-  const origin = request.headers.get("Origin");
-  const allowed = allowedOrigins(env);
-
-  // Require an allowlist in production.
-  if (allowed.length === 0) {
-    return false;
-  }
-
-  // Same-origin browser requests normally include Origin on POST,
-  // but some GET navigations may omit it. This endpoint deliberately
-  // requires Origin to reduce cross-origin browser access.
-  if (!origin) {
-    return false;
-  }
-
-  try {
-    const parsed = new URL(origin);
-    if (parsed.origin !== origin) return false;
-  } catch {
-    return false;
-  }
-
-  return allowed.includes(origin);
-}
-
 function constantTimeEqual(left, right) {
-  const a = new TextEncoder().encode(left);
-  const b = new TextEncoder().encode(right);
+  if (typeof left !== "string" || typeof right !== "string") {
+    return false;
+  }
 
-  let difference = a.length ^ b.length;
-  const maxLength = Math.max(a.length, b.length);
+  const encoder = new TextEncoder();
+  const a = encoder.encode(left);
+  const b = encoder.encode(right);
 
-  for (let i = 0; i < maxLength; i += 1) {
-    difference |= (a[i] || 0) ^ (b[i] || 0);
+  if (a.length !== b.length) {
+    return false;
+  }
+
+  let difference = 0;
+
+  for (let i = 0; i < a.length; i++) {
+    difference |= a[i] ^ b[i];
   }
 
   return difference === 0;
 }
 
-export async function onRequest({ request, env }) {
+function isAuthorized(request, secret) {
+  const authorization = request.headers.get("Authorization") || "";
+  const match = /^Bearer ([^\s]+)$/i.exec(authorization);
+
+  if (!match) {
+    return false;
+  }
+
+  const supplied = match[1];
+
+  if (supplied.length > 4096) {
+    return false;
+  }
+
+  return constantTimeEqual(supplied, secret);
+}
+
+export async function onRequestGet({ request, env }) {
   if (request.method !== "GET") {
-    return jsonResponse(405, {
+    return respond(405, {
       ok: false,
-      message: "Method not allowed."
+      error: "Method not allowed."
     });
   }
 
-  if (!isOriginAllowed(request, env)) {
-    return jsonResponse(403, {
+  const secret = env.ADMIN_SECRET;
+
+  if (
+    typeof secret !== "string" ||
+    secret.length < 32 ||
+    secret.length > 4096
+  ) {
+    return respond(503, {
       ok: false,
-      message: "Origin not allowed."
+      error: "Admin authentication is not configured correctly."
     });
   }
 
-  const baseUrl = String(env.API_BASE_URL || "").trim();
-  const adminToken = String(env.ADMIN_API_TOKEN || "").trim();
-
-  if (!baseUrl || !adminToken) {
-    return jsonResponse(503, {
+  if (!isAuthorized(request, secret)) {
+    return new Response(JSON.stringify({
       ok: false,
-      message: "Admin status service is not configured."
-    });
-  }
-
-  let parsedBase;
-
-  try {
-    parsedBase = new URL(baseUrl);
-  } catch {
-    return jsonResponse(503, {
-      ok: false,
-      message: "Backend URL configuration is invalid."
-    });
-  }
-
-  if (parsedBase.protocol !== "https:") {
-    return jsonResponse(503, {
-      ok: false,
-      message: "Backend must use HTTPS."
-    });
-  }
-
-  try {
-    const upstream = await fetch(
-      new URL("/api/admin/status", parsedBase.origin).toString(),
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          Authorization: "Bearer " + adminToken
-        },
-        redirect: "error",
-        signal: AbortSignal.timeout(8000)
+      error: "Unauthorized."
+    }), {
+      status: 401,
+      headers: {
+        ...SECURITY_HEADERS,
+        "WWW-Authenticate": "Bearer"
       }
-    );
+    });
+  }
 
-    if (!upstream.ok) {
-      return jsonResponse(502, {
-        ok: false,
-        message: "Backend status could not be verified."
-      });
+  if (!env.APP_DB || typeof env.APP_DB.prepare !== "function") {
+    return respond(503, {
+      ok: false,
+      error: "D1 database is unavailable."
+    });
+  }
+
+  try {
+    // Confirm database connectivity using a lightweight query.
+    await env.APP_DB.prepare("SELECT 1 AS health").first();
+
+    let formLocked = false;
+    let emergencyPaused = false;
+    let updatedAt = null;
+    let controlsConfigured = false;
+
+    // This table is optional. If it does not exist, report that
+    // controls are not configured rather than claiming enforcement.
+    try {
+      const control = await env.APP_DB.prepare(`
+        SELECT
+          form_locked,
+          emergency_paused,
+          updated_at
+        FROM dtq_control_state
+        WHERE id = 1
+        LIMIT 1
+      `).first();
+
+      if (control) {
+        formLocked = Number(control.form_locked) === 1;
+        emergencyPaused = Number(control.emergency_paused) === 1;
+        updatedAt = control.updated_at ?? null;
+        controlsConfigured = true;
+      }
+    } catch {
+      // Optional table absent or not yet migrated.
+      // The endpoint remains a database-health check only.
     }
 
-    const contentType = upstream.headers.get("content-type") || "";
-
-    if (!contentType.toLowerCase().includes("application/json")) {
-      return jsonResponse(502, {
-        ok: false,
-        message: "Backend returned an unexpected response."
-      });
-    }
-
-    const data = await upstream.json();
-
-    if (
-      typeof data.formLocked !== "boolean" ||
-      typeof data.emergencyPaused !== "boolean"
-    ) {
-      return jsonResponse(502, {
-        ok: false,
-        message: "Backend status response is incomplete."
-      });
-    }
-
-    return jsonResponse(200, {
+    return respond(200, {
       ok: true,
-      service:
-        data.service === "healthy" || data.service === "ok"
-          ? data.service
-          : "healthy",
-      formLocked: data.formLocked,
-      emergencyPaused: data.emergencyPaused,
-      updatedAt:
-        typeof data.updatedAt === "string"
-          ? data.updatedAt
-          : new Date().toISOString()
+      service: "healthy",
+      database: "connected",
+      formLocked,
+      emergencyPaused,
+      controlsConfigured,
+      updatedAt,
+      officialSubmission: false
     });
   } catch {
-    return jsonResponse(502, {
+    return respond(503, {
       ok: false,
-      message: "Unable to contact the backend status service."
+      service: "unavailable",
+      database: "unavailable",
+      error: "Unable to verify database health."
     });
   }
 }

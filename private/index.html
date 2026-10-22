@@ -2,1161 +2,705 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#ffffff">
-  <meta name="robots" content="noindex, nofollow">
-  <title>Private Admin Dashboard | Donor Trust Quota</title>
-
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#080909">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="no-referrer">
+  <title>Owner's Atelier | Donor Quota Trust</title>
   <style>
     :root {
-      color-scheme: light;
-      --background: #ffffff;
-      --surface: #ffffff;
-      --surface-alt: #f6f7f8;
-      --text: #111111;
-      --muted: #5c626b;
-      --border: #d9dde2;
-      --primary: #111111;
-      --danger: #b42318;
-      --success: #137333;
-      --warning: #8a4b00;
-      --radius: 12px;
+      color-scheme:dark;
+      --black:#080909;--panel:#111414;--gold:#d9b66b;
+      --gold-light:#f4df9d;--ink:#f4f0e6;--muted:#a6a397;
+      --line:rgba(219,187,112,.17);--green:#a8d9ad;
+      --red:#f1a39b;--amber:#f0ce7b;--radius:20px;
     }
-
-    * {
-      box-sizing: border-box;
+    *{box-sizing:border-box}
+    html{min-height:100%;background:var(--black);scroll-behavior:smooth}
+    body{
+      margin:0;min-height:100vh;color:var(--ink);
+      background:radial-gradient(ellipse at 12% 0%,rgba(142,105,43,.12),transparent 34rem),
+      radial-gradient(ellipse at 95% 24%,rgba(218,182,105,.065),transparent 31rem),
+      linear-gradient(145deg,#080909,#0d0f0e 55%,#090a0a);
+      font:14px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased
     }
-
-    html {
-      min-height: 100%;
-      background: var(--background);
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    button:disabled{opacity:.5;cursor:not-allowed}
+    button:focus-visible,input:focus-visible,select:focus-visible{
+      outline:2px solid var(--gold-light);outline-offset:3px
     }
-
-    body {
-      margin: 0;
-      color: var(--text);
-      background: var(--background);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-        Roboto, Helvetica, Arial, sans-serif;
-      font-size: 15px;
-      line-height: 1.55;
+    code,.ref{color:#ebd8a5;overflow-wrap:anywhere}
+    .topbar{border-bottom:1px solid var(--line);background:rgba(8,9,9,.85)}
+    .top-inner,main{max-width:1220px;margin:auto}
+    .top-inner{
+      min-height:82px;padding:16px 24px;display:flex;align-items:center;
+      justify-content:space-between;gap:15px
     }
-
-    button,
-    input,
-    textarea {
-      font: inherit;
+    .brand{display:flex;align-items:center;gap:13px;min-width:0}
+    .brand-mark{
+      width:45px;height:45px;display:grid;place-items:center;
+      border:1px solid #8d6a2d;border-radius:14px;color:var(--gold-light);
+      background:#12120f;font-size:22px;flex-shrink:0
     }
-
-    button {
-      min-height: 44px;
-      padding: 10px 15px;
-      border: 1px solid var(--primary);
-      border-radius: 8px;
-      background: var(--primary);
-      color: #ffffff;
-      font-weight: 650;
-      cursor: pointer;
+    .brand-name{font:500 18px Georgia,serif}
+    .brand-sub{color:var(--muted);font-size:10px;letter-spacing:1.3px;text-transform:uppercase}
+    .owner-pill,.connection,.mini-label{
+      display:inline-flex;align-items:center;gap:8px;
+      border:1px solid var(--line);border-radius:999px;padding:7px 11px;
+      color:#e7d8ad;background:rgba(211,178,105,.05);
+      font-size:10px;letter-spacing:.7px
     }
-
-    button:hover:not(:disabled) {
-      opacity: .84;
+    .owner-dot,.connection-dot{
+      width:7px;height:7px;border-radius:50%;background:var(--gold)
     }
-
-    button:focus-visible,
-    input:focus-visible,
-    textarea:focus-visible {
-      outline: 3px solid #8bb8ff;
-      outline-offset: 2px;
+    main{padding:38px 24px 55px}
+    .hero,.section-title,.card-heading{
+      display:flex;align-items:flex-end;justify-content:space-between;gap:18px
     }
-
-    button:disabled {
-      opacity: .5;
-      cursor: not-allowed;
+    .hero{margin-bottom:27px}
+    .eyebrow{margin:0 0 10px;color:var(--gold);font-size:10px;font-weight:800;letter-spacing:2.3px;text-transform:uppercase}
+    h1,h2,h3,p{margin-top:0}
+    h1{margin-bottom:12px;font:400 clamp(34px,5vw,54px)/1.1 Georgia,serif;letter-spacing:-1.3px}
+    h2{font:400 23px Georgia,serif}
+    .gold-text{color:var(--gold-light)}
+    .intro{max-width:620px;color:#aaa79c;line-height:1.8}
+    .route,.help{color:#929187;font-size:11px;line-height:1.75}
+    .route{margin:12px 0 0}
+    .connection{color:#b7b3a6;white-space:nowrap}
+    .connection.secure{color:var(--green);border-color:rgba(142,203,152,.25)}
+    .connection.secure .connection-dot{background:var(--green)}
+    .layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:18px}
+    .card{
+      min-width:0;padding:24px;border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:linear-gradient(140deg,rgba(255,255,255,.025),transparent 42%),rgba(22,23,20,.88);
+      box-shadow:0 20px 60px rgba(0,0,0,.2)
     }
-
-    button.secondary {
-      background: #ffffff;
-      color: #111111;
-      border-color: #aeb4bc;
+    .card-heading{align-items:flex-start;margin-bottom:20px}
+    .card-heading h2{margin-bottom:5px}
+    .card-heading p,.section-title p{margin:4px 0 0;color:var(--muted);font-size:12px}
+    .mini-label{font-size:9px;font-weight:800;text-transform:uppercase;white-space:nowrap}
+    label{display:block;margin-bottom:8px;color:#dedbd0;font-size:12px;font-weight:650}
+    .field{margin-bottom:15px}
+    input,select{
+      width:100%;min-width:0;min-height:45px;padding:11px 13px;
+      border:1px solid rgba(219,187,112,.2);border-radius:11px;
+      background:#0b0d0d;color:var(--ink)
     }
-
-    button.danger {
-      background: #ffffff;
-      color: var(--danger);
-      border-color: var(--danger);
+    input::placeholder{color:#676960}
+    .btn{
+      min-height:42px;display:inline-flex;align-items:center;justify-content:center;
+      gap:8px;padding:10px 14px;border:1px solid transparent;border-radius:11px;
+      font-size:12px;font-weight:750
     }
-
-    button.success {
-      background: #ffffff;
-      color: var(--success);
-      border-color: var(--success);
+    .btn-gold{color:#18140a;background:linear-gradient(120deg,#b78c3f,#f2dc9b 52%,#c49a4b)}
+    .btn-quiet{border-color:var(--line);color:#e5dfcd;background:rgba(255,255,255,.025)}
+    .btn-danger{border-color:rgba(222,119,105,.25);color:#f0a69b;background:rgba(180,65,54,.055)}
+    .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:13px}
+    .message{margin-top:14px;padding:11px 13px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.025);color:#c6c2b6;font-size:12px;overflow-wrap:anywhere}
+    .message.error{color:var(--red);border-color:rgba(241,163,155,.25)}
+    .message.success{color:var(--green);border-color:rgba(168,217,173,.25)}
+    .hidden{display:none!important}
+    .security-list{display:grid;gap:11px}
+    .security-item{display:grid;grid-template-columns:34px 1fr;gap:11px;padding:14px;border:1px solid rgba(219,187,112,.11);border-radius:13px;background:rgba(255,255,255,.018)}
+    .security-icon{width:32px;height:32px;display:grid;place-items:center;border:1px solid var(--line);border-radius:10px;color:var(--gold-light)}
+    .security-item strong{display:block;margin-bottom:4px;font-size:12px}
+    .security-item p{margin:0;color:#9b9a90;font-size:11px;line-height:1.7}
+    .dashboard{margin-top:28px}
+    .section-title{align-items:flex-end;margin-bottom:16px}
+    .section-title h2{margin:0}
+    .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-bottom:17px}
+    .stat{padding:19px}
+    .stat-label{color:#a7a598;font-size:11px;font-weight:650}
+    .stat-number{margin-top:7px;color:var(--gold-light);font:34px/1.15 Georgia,serif;overflow-wrap:anywhere}
+    .stat-foot{margin-top:5px;color:#77786f;font-size:10px}
+    .register{margin-top:17px;padding:23px}
+    .toolbar{display:grid;grid-template-columns:minmax(140px,1fr) 175px auto;gap:9px;margin:18px 0 14px}
+    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:13px}
+    table{width:100%;min-width:590px;border-collapse:collapse;text-align:left}
+    th{background:rgba(219,187,112,.045);color:#a9a38e;font-size:9px;letter-spacing:1px;text-transform:uppercase}
+    th,td{padding:13px 14px;border-bottom:1px solid rgba(219,187,112,.1);vertical-align:top}
+    tbody tr:last-child td{border-bottom:0}
+    td{color:#d7d3c8;font-size:12px}
+    .ref{font-weight:750;letter-spacing:.2px}
+    .status{display:inline-block;padding:4px 8px;border:1px solid rgba(255,255,255,.07);border-radius:999px;color:#c3c1b7;background:rgba(255,255,255,.035);font-size:10px;font-weight:750}
+    .status.active,.status.success,.status.verified,.status.approved,.status.submitted,.status.complete{color:var(--green)}
+    .status.locked,.status.denied,.status.failed,.status.blocked,.status.revoked,.status.archived{color:var(--red)}
+    .status.draft,.status.issued,.status.expired{color:var(--amber)}
+    .empty{padding:30px 15px;color:#929187;text-align:center}
+    .table-foot,.footer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:#828278;font-size:10px}
+    .table-foot{margin-top:12px}
+    .footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--line)}
+    .footer span:last-child{color:#9e8b5e}
+    .identity-preview{display:grid;grid-template-columns:1fr 160px;gap:16px;align-items:center}
+    .qr-box{min-height:140px;display:grid;place-items:center;padding:12px;border:1px dashed var(--line);border-radius:13px;color:var(--muted);text-align:center;font-size:11px}
+    .qr-box img{max-width:100%;height:auto}
+    @media (max-width:760px){
+      .top-inner{padding:14px 16px}main{padding:28px 15px 42px}
+      .hero{align-items:flex-start;flex-direction:column}
+      .layout{grid-template-columns:1fr}.toolbar{grid-template-columns:1fr 1fr}
+      .toolbar input{grid-column:1/-1}.stats{gap:9px}.stat{padding:14px}
+      .stat-number{font-size:28px}.section-title{align-items:flex-start}
     }
-
-    input,
-    textarea {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #b9c0c8;
-      border-radius: 8px;
-      background: #ffffff;
-      color: #111111;
+    @media (max-width:460px){
+      .brand-name{font-size:16px}.brand-sub{font-size:9px}
+      .brand-mark{width:39px;height:39px}.owner-pill{font-size:8px;padding:6px}
+      main{padding-right:11px;padding-left:11px}.card,.register{padding:17px}
+      .stats{grid-template-columns:1fr}.stat{display:flex;align-items:center;justify-content:space-between;gap:12px}
+      .stat-number{margin:0}.stat-foot{display:none}
+      .toolbar{grid-template-columns:1fr}.toolbar input{grid-column:auto}
+      .identity-preview{grid-template-columns:1fr}
     }
-
-    textarea {
-      min-height: 90px;
-      resize: vertical;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 650;
-    }
-
-    .container {
-      width: min(1180px, calc(100% - 32px));
-      margin: 0 auto;
-    }
-
-    .topbar {
-      border-bottom: 1px solid var(--border);
-      background: #ffffff;
-    }
-
-    .topbar-inner {
-      min-height: 76px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 12px 0;
-    }
-
-    .brand {
-      font-size: 19px;
-      font-weight: 800;
-      letter-spacing: -.3px;
-    }
-
-    .brand small {
-      display: block;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    main {
-      padding: 28px 0 48px;
-    }
-
-    h1 {
-      margin: 0 0 8px;
-      font-size: clamp(26px, 4vw, 36px);
-      line-height: 1.2;
-      letter-spacing: -.7px;
-    }
-
-    h2 {
-      margin: 0 0 14px;
-      font-size: 19px;
-      letter-spacing: -.2px;
-    }
-
-    h3 {
-      margin: 0 0 8px;
-      font-size: 16px;
-    }
-
-    p {
-      margin: 0 0 12px;
-    }
-
-    .muted {
-      color: var(--muted);
-    }
-
-    .notice {
-      padding: 13px 15px;
-      margin: 20px 0;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--surface-alt);
-    }
-
-    .notice.warning {
-      border-color: #e4b66b;
-      background: #fffaf0;
-    }
-
-    .notice.error {
-      border-color: #e5a4a0;
-      background: #fff7f6;
-    }
-
-    .notice.success {
-      border-color: #9ed0aa;
-      background: #f5fff6;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px;
-      margin-top: 20px;
-    }
-
-    .card {
-      min-width: 0;
-      padding: 20px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--surface);
-      box-shadow: 0 2px 8px rgb(0 0 0 / 3%);
-    }
-
-    .card.full {
-      grid-column: 1 / -1;
-    }
-
-    .stat-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 20px;
-    }
-
-    .stat {
-      padding: 16px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: #ffffff;
-    }
-
-    .stat-label {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .stat-value {
-      margin-top: 5px;
-      font-size: 21px;
-      font-weight: 800;
-      overflow-wrap: anywhere;
-    }
-
-    .status-line {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      flex-wrap: wrap;
-      margin: 8px 0;
-    }
-
-    .dot {
-      display: inline-block;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #777777;
-    }
-
-    .dot.good {
-      background: #16803c;
-    }
-
-    .dot.bad {
-      background: #c5221f;
-    }
-
-    .dot.warn {
-      background: #d88b00;
-    }
-
-    .button-row {
-      display: flex;
-      gap: 9px;
-      flex-wrap: wrap;
-      margin-top: 14px;
-    }
-
-    .field {
-      margin: 14px 0;
-    }
-
-    .help {
-      margin-top: 5px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .login-wrap {
-      width: min(460px, 100%);
-      margin: 32px auto;
-    }
-
-    .login-card {
-      padding: 24px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-    }
-
-    .table-wrap {
-      width: 100%;
-      overflow-x: auto;
-      border: 1px solid var(--border);
-      border-radius: 9px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #ffffff;
-      text-align: left;
-    }
-
-    th,
-    td {
-      padding: 12px;
-      border-bottom: 1px solid var(--border);
-      vertical-align: top;
-      overflow-wrap: anywhere;
-    }
-
-    th {
-      background: var(--surface-alt);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .4px;
-    }
-
-    tr:last-child td {
-      border-bottom: 0;
-    }
-
-    .pill {
-      display: inline-block;
-      padding: 3px 8px;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .pill.good {
-      color: var(--success);
-      border-color: #9ed0aa;
-    }
-
-    .pill.bad {
-      color: var(--danger);
-      border-color: #e5a4a0;
-    }
-
-    .pill.warn {
-      color: var(--warning);
-      border-color: #e4b66b;
-    }
-
-    .footer {
-      padding: 20px 0;
-      border-top: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    @media (max-width: 760px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-
-      .card.full {
-        grid-column: auto;
-      }
-
-      .stat-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .topbar-inner {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .header-actions {
-        width: 100%;
-      }
-
-      .header-actions button {
-        flex: 1;
-      }
-
-      .card {
-        padding: 16px;
-      }
-    }
+    @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
   </style>
 </head>
-
 <body>
-  <header class="topbar">
-    <div class="container topbar-inner">
-      <div class="brand">
-        Donor Trust Quota
-        <small>Private administration dashboard</small>
-      </div>
-
-      <div class="header-actions">
-        <button id="refreshButton" class="secondary" type="button">
-          Refresh status
-        </button>
-        <button id="logoutButton" class="secondary hidden" type="button">
-          Log out
-        </button>
+<header class="topbar">
+  <div class="top-inner">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">✧</div>
+      <div>
+        <div class="brand-name">Donor Quota Trust</div>
+        <div class="brand-sub">Private application workspace</div>
       </div>
     </div>
-  </header>
+    <div class="owner-pill"><span class="owner-dot"></span>Owner · Vivekjee99</div>
+  </div>
+</header>
 
-  <main class="container">
-    <section id="loginSection" class="login-wrap">
-      <div class="login-card">
-        <h1>Administrator sign in</h1>
-        <p class="muted">
-          Authenticate with your configured admin API token.
-          Do not use your GitHub password here.
-        </p>
+<main>
+  <section class="hero">
+    <div>
+      <p class="eyebrow">A quieter kind of control</p>
+      <h1>Your private <span class="gold-text">workspace.</span></h1>
+      <p class="intro">A private view of application references, form identities, page references, shared locations and workflow activity.</p>
+      <p class="route">Owner profile: <strong>Vivekjee99</strong> · Route: <code>/private/index.html</code></p>
+    </div>
+    <div id="connectionTag" class="connection">
+      <span class="connection-dot"></span><span id="connectionText">Not connected</span>
+    </div>
+  </section>
 
-        <div class="notice warning">
-          This dashboard is a management interface, not proof of official
-          WBMCC authorization. Use only credentials issued for your own
-          backend.
-        </div>
-
-        <form id="loginForm">
-          <div class="field">
-            <label for="adminToken">Admin API token</label>
-            <input
-              id="adminToken"
-              name="adminToken"
-              type="password"
-              autocomplete="current-password"
-              minlength="32"
-              maxlength="4096"
-              required
-              placeholder="Enter your admin API token"
-            >
-          </div>
-
-          <button id="loginButton" type="submit" style="width:100%">
-            Verify credentials
-          </button>
-        </form>
-
-        <p id="loginMessage" class="muted" role="status" aria-live="polite"
-           style="margin-top:14px"></p>
+  <section class="layout" aria-label="Administrator access">
+    <div class="card">
+      <div class="card-heading">
+        <div><h2>Welcome back.</h2><p>Authenticate to open the private register.</p></div>
+        <span class="mini-label">Owner access</span>
       </div>
-    </section>
-
-    <section id="dashboardSection" class="hidden">
-      <h1>Administration overview</h1>
-      <p class="muted">
-        Monitor service availability and manage form availability through
-        your authenticated backend.
-      </p>
-
-      <div id="globalMessage" class="notice hidden" role="status"
-           aria-live="polite"></div>
-
-      <div class="stat-grid">
-        <div class="stat">
-          <div class="stat-label">Backend service</div>
-          <div id="serviceStat" class="stat-value">Unknown</div>
+      <form id="authForm">
+        <div class="field">
+          <label for="adminSecret">Administrator secret</label>
+          <input id="adminSecret" type="password" autocomplete="current-password"
+            placeholder="Enter your private access secret" required
+            minlength="16" maxlength="512" spellcheck="false"
+            autocapitalize="off">
         </div>
-        <div class="stat">
-          <div class="stat-label">Application form</div>
-          <div id="formStat" class="stat-value">Unknown</div>
-        </div>
-        <div class="stat">
-          <div class="stat-label">Last status check</div>
-          <div id="checkedStat" class="stat-value">Not checked</div>
-        </div>
+        <button class="btn btn-gold" id="loginBtn" type="submit" style="width:100%">
+          Unlock workspace ↗
+        </button>
+        <p class="help">The secret is kept in memory only while this page is open. Store the real secret as a Cloudflare Pages secret, never in this HTML.</p>
+      </form>
+      <div id="authMessage" class="message" role="status" aria-live="polite">Your workspace is waiting for authentication.</div>
+      <div class="btn-row">
+        <button class="btn btn-quiet hidden" id="refreshBtn" type="button">Refresh register</button>
+        <button class="btn btn-danger" id="clearBtn" type="button">Sign out</button>
       </div>
+    </div>
 
-      <div class="grid">
-        <section class="card">
-          <h2>Live service status</h2>
-
-          <div class="status-line">
-            <span id="serviceDot" class="dot"></span>
-            <strong id="serviceStatus">Waiting for status</strong>
-          </div>
-
-          <p id="serviceDetail" class="muted">
-            Status has not been retrieved.
-          </p>
-
-          <div class="button-row">
-            <button id="checkStatusButton" type="button">
-              Check now
-            </button>
-          </div>
-        </section>
-
-        <section class="card">
-          <h2>Application form controls</h2>
-
-          <div class="status-line">
-            <span id="formDot" class="dot"></span>
-            <strong id="formStatus">Unknown</strong>
-          </div>
-
-          <p class="muted">
-            Locking prevents new submissions only if the public submission
-            endpoint checks the same server-side setting.
-          </p>
-
-          <div class="field">
-            <label for="controlReason">Reason for change</label>
-            <textarea
-              id="controlReason"
-              maxlength="500"
-              placeholder="Enter the reason for this administrative action"
-            ></textarea>
-          </div>
-
-          <div class="button-row">
-            <button id="lockFormButton" class="danger" type="button">
-              Lock form
-            </button>
-            <button id="unlockFormButton" class="success" type="button">
-              Unlock form
-            </button>
-          </div>
-        </section>
-
-        <section class="card">
-          <h2>Emergency pause</h2>
-
-          <p>
-            Use this control to request an application-submission pause
-            during an incident or maintenance window.
-          </p>
-
-          <div class="notice warning">
-            The backend must enforce this pause on every submission request.
-            Hiding or disabling a button on the website is not sufficient.
-          </div>
-
-          <div class="field">
-            <label for="pauseReason">Pause or resume reason</label>
-            <textarea
-              id="pauseReason"
-              maxlength="500"
-              placeholder="Explain the incident or maintenance reason"
-            ></textarea>
-          </div>
-
-          <div class="button-row">
-            <button id="pauseButton" class="danger" type="button">
-              Emergency pause
-            </button>
-            <button id="resumeButton" class="secondary" type="button">
-              Resume submissions
-            </button>
-          </div>
-
-          <p id="pauseStatus" class="muted" style="margin-top:12px">
-            Pause status not yet verified.
-          </p>
-        </section>
-
-        <section class="card">
-          <h2>Administrative safety</h2>
-          <ul>
-            <li>Keep the admin token out of source code and public files.</li>
-            <li>Use HTTPS for the admin API.</li>
-            <li>Require server-side authorization for every admin route.</li>
-            <li>Record who changed the form state and why.</li>
-            <li>Never expose applicant documents in public responses.</li>
-          </ul>
-        </section>
-
-        <section class="card full">
-          <h2>Applications</h2>
-          <p class="muted">
-            Displays only the records returned by the authenticated backend.
-            Sensitive applicant data should be minimized and access-controlled.
-          </p>
-
-          <div class="button-row">
-            <button id="loadApplicationsButton" type="button">
-              Load applications
-            </button>
-          </div>
-
-          <p id="applicationsMessage" class="muted" role="status"
-             aria-live="polite" style="margin-top:12px"></p>
-
-          <div class="table-wrap" style="margin-top:14px">
-            <table>
-              <thead>
-                <tr>
-                  <th>Reference</th>
-                  <th>Status</th>
-                  <th>Submitted</th>
-                </tr>
-              </thead>
-              <tbody id="applicationsBody">
-                <tr>
-                  <td colspan="3">Applications have not been loaded.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section class="card full">
-          <h2>Audit log</h2>
-          <p class="muted">
-            Shows administrative events returned by the backend.
-          </p>
-
-          <div class="button-row">
-            <button id="loadAuditButton" class="secondary" type="button">
-              Load audit log
-            </button>
-          </div>
-
-          <p id="auditMessage" class="muted" role="status"
-             aria-live="polite" style="margin-top:12px"></p>
-
-          <div class="table-wrap" style="margin-top:14px">
-            <table>
-              <thead>
-                <tr>
-                  <th>Time</th>
-                  <th>Action</th>
-                  <th>Details</th>
-                </tr>
-              </thead>
-              <tbody id="auditBody">
-                <tr>
-                  <td colspan="3">Audit events have not been loaded.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
+    <aside class="card">
+      <div class="card-heading">
+        <div><h2>Quiet confidence.</h2><p>Security comes first.</p></div>
+        <span class="mini-label">Protection</span>
       </div>
-    </section>
-  </main>
+      <div class="security-list">
+        <div class="security-item"><div class="security-icon">◇</div><div><strong>Server-verified access</strong><p>Every protected API request must authenticate independently. The HTML page is not an access-control system.</p></div></div>
+        <div class="security-item"><div class="security-icon">⌑</div><div><strong>Private by design</strong><p>Protect <code>/private/*</code> with Cloudflare Access and secure the admin API independently.</p></div></div>
+        <div class="security-item"><div class="security-icon">✧</div><div><strong>Minimal information</strong><p>Display references and statuses rather than applicant documents or unnecessary personal data.</p></div></div>
+        <div class="security-item"><div class="security-icon">▦</div><div><strong>Traceable page identities</strong><p>QR/barcode references identify pages; server validation, not the image itself, enforces authorization.</p></div></div>
+      </div>
+    </aside>
+  </section>
+
+  <section id="dashboard" class="dashboard hidden">
+    <div class="section-title">
+      <div><p class="eyebrow">Your overview</p><h2>Application register</h2><p>Clear records. A little less clutter.</p></div>
+      <span class="mini-label">Authenticated view</span>
+    </div>
+    <div class="stats">
+      <div class="card stat"><div><div class="stat-label">Loaded records</div><div class="stat-foot">Returned by the API</div></div><div class="stat-number" id="totalCount">0</div></div>
+      <div class="card stat"><div><div class="stat-label">Draft / pending</div><div class="stat-foot">Preparation or review required</div></div><div class="stat-number" id="pendingCount">0</div></div>
+      <div class="card stat"><div><div class="stat-label">Submitted / complete</div><div class="stat-foot">Status reported by the API</div></div><div class="stat-number" id="completeCount">0</div></div>
+    </div>
+
+    <div class="card register">
+      <div class="section-title">
+        <div><h2>Application records</h2><p id="updatedAt">Waiting for records</p></div>
+        <button class="btn btn-quiet" id="refreshBtnTop" type="button">↻ Refresh</button>
+      </div>
+      <div class="toolbar">
+        <input id="searchInput" type="search" placeholder="Search application reference…" aria-label="Search application references">
+        <select id="statusFilter" aria-label="Filter status">
+          <option value="all">All statuses</option><option value="draft">Draft</option>
+          <option value="pending">Pending</option><option value="received">Received</option>
+          <option value="under_review">Under review</option><option value="needs_information">Needs information</option>
+          <option value="submitted">Submitted</option><option value="complete">Complete</option>
+          <option value="completed">Completed</option><option value="approved">Approved</option>
+          <option value="rejected">Rejected</option><option value="withdrawn">Withdrawn</option>
+        </select>
+        <button class="btn btn-quiet" id="resetFilterBtn" type="button">Reset filters</button>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Application reference</th><th>Current status</th></tr></thead>
+        <tbody id="recordsBody"><tr><td colspan="2" class="empty">Authenticate to load records.</td></tr></tbody>
+      </table></div>
+      <div class="table-foot"><span id="shownCount">0 records shown</span><span>Personal information intentionally excluded</span></div>
+      <div id="dataMessage" class="message hidden" role="status" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section id="identityDashboard" class="dashboard hidden">
+    <div class="section-title">
+      <div><p class="eyebrow">Identity & traceability</p><h2>Form & Page Registry</h2><p>Unique identities, references, locations and activity.</p></div>
+      <span class="mini-label">Registry</span>
+    </div>
+    <div class="stats">
+      <div class="card stat"><div class="stat-label">Registered forms</div><div class="stat-number" id="formCount">--</div><div class="stat-foot">Server-reported total</div></div>
+      <div class="card stat"><div class="stat-label">Registered pages</div><div class="stat-number" id="pageCount">--</div><div class="stat-foot">Unique page identities</div></div>
+      <div class="card stat"><div class="stat-label">Activity events</div><div class="stat-number" id="activityCount">--</div><div class="stat-foot">Recorded by the backend</div></div>
+    </div>
+
+    <div class="card register">
+      <div class="section-title"><div><h2>Identity explorer</h2><p>Inspect registered forms, pages, locations and events.</p></div></div>
+      <div class="toolbar">
+        <input id="registrySearch" type="search" placeholder="Search IDs, names or references…" aria-label="Search registry">
+        <select id="registryType" aria-label="Registry type">
+          <option value="forms">Forms</option><option value="pages">Pages</option>
+          <option value="locations">Shared locations</option><option value="activity">Activity ledger</option>
+        </select>
+        <button class="btn btn-quiet" id="registryRefresh" type="button">↻ Refresh registry</button>
+      </div>
+      <div class="table-wrap"><table><thead id="registryHead"></thead><tbody id="registryBody"><tr><td class="empty">Authenticate to load registry data.</td></tr></tbody></table></div>
+      <div class="table-foot"><span id="registryShown">No registry records loaded</span><span>References must be verified by the server</span></div>
+      <div id="registryMessage" class="message hidden" role="status" aria-live="polite"></div>
+    </div>
+
+    <div class="card register">
+      <div class="card-heading"><div><h2>Page identity verifier</h2><p>Check a reference against the server registry.</p></div><span class="mini-label">Verification</span></div>
+      <form id="verifyPageForm">
+        <div class="field"><label for="pageReference">Page reference code</label><input id="pageReference" required maxlength="200" placeholder="Enter an issued page reference" autocomplete="off" spellcheck="false"></div>
+        <button class="btn btn-gold" id="verifyPageBtn" type="submit">Verify page reference</button>
+      </form>
+      <div id="verifyResult" class="message" role="status" aria-live="polite">No reference verified yet.</div>
+      <p class="help">This checks the server registry. A barcode, QR code, page ID or copied URL alone is not authorization.</p>
+    </div>
+
+    <div class="card register">
+      <div class="card-heading"><div><h2>QR / barcode identity</h2><p>View the QR image returned by your registry API.</p></div><span class="mini-label">Page identity</span></div>
+      <div class="identity-preview">
+        <div><p id="qrDescription" class="help">Select a registered page with a QR image URL supplied by your backend.</p><button id="clearQrBtn" class="btn btn-quiet" type="button">Clear preview</button></div>
+        <div id="qrBox" class="qr-box">No QR image loaded</div>
+      </div>
+      <p class="help">Only load QR images generated by your trusted backend or a local QR library. Do not encode secrets or personal documents.</p>
+    </div>
+  </section>
 
   <footer class="footer">
-    <div class="container">
-      Private admin interface. Do not share access tokens or applicant
-      information. This page does not itself confer official authority.
-    </div>
+    <span>Donor Quota Trust · Private application preparation workspace</span>
+    <span>Independent service · Not an official WBMCC portal</span>
   </footer>
+</main>
 
-  <script>
-    "use strict";
+<script>
+(() => {
+  "use strict";
 
-    /*
-     * Backend routes expected by this dashboard.
-     *
-     * POST /api/access
-     * GET  /api/admin/status
-     * POST /api/admin/form-control
-     * GET  /api/v1/admin/applications
-     * GET  /api/admin/audit-log
-     *
-     * The backend must implement and authorize every route. The last three
-     * admin-control/status/audit contracts are not provided by this HTML.
-     */
+  const $ = id => document.getElementById(id);
+  const state = {secret:"",records:[],authenticated:false,loading:false,registryRows:[]};
 
-    const API = {
-      access: "/api/access",
-      status: "/api/admin/status",
-      formControl: "/api/admin/form-control",
-      applications: "/api/v1/admin/applications",
-      audit: "/api/admin/audit-log"
-    };
+  const authMessage = $("authMessage");
+  const dataMessage = $("dataMessage");
+  const dashboard = $("dashboard");
+  const identityDashboard = $("identityDashboard");
+  const connectionTag = $("connectionTag");
+  const connectionText = $("connectionText");
+  const loginBtn = $("loginBtn");
+  const refreshBtn = $("refreshBtn");
+  const refreshBtnTop = $("refreshBtnTop");
+  const registryMessage = $("registryMessage");
 
-    const $ = (id) => document.getElementById(id);
+  const registryColumns = {
+    forms:[
+      ["form_id","Form ID"],["form_code","Form code"],["form_name","Form name"],
+      ["form_version","Version"],["form_status","Status"],["route_path","Route"]
+    ],
+    pages:[
+      ["page_id","Page ID"],["page_code","Page code"],["page_name","Page name"],
+      ["form_id","Parent form"],["page_number","Page no."],["page_version","Version"],
+      ["page_status","Status"],["page_ref","Page reference"],["barcode_value","Barcode value"]
+    ],
+    locations:[
+      ["location_id","Location ID"],["location_name","Location"],
+      ["location_type","Type"],["form_id","Form ID"],["page_id","Page ID"],
+      ["route_path","Route"],["location_status","Status"]
+    ],
+    activity:[
+      ["event_id","Event ID"],["event_code","Event code"],["actor_role","Actor role"],
+      ["action","Action"],["form_id","Form ID"],["page_id","Page ID"],
+      ["application_ref","Application"],["page_ref","Page reference"],
+      ["outcome","Outcome"],["created_at","Timestamp"]
+    ]
+  };
 
-    let adminToken = "";
-    let lastStatus = null;
-    let statusTimer = null;
-    let requestInProgress = false;
+  function setMessage(element,message,type=""){
+    element.textContent=message;
+    element.className="message"+(type?" "+type:"");
+    element.classList.remove("hidden");
+  }
 
-    function setMessage(id, message, type) {
-      const element = $(id);
-      element.textContent = message;
-      element.classList.remove("hidden", "warning", "error", "success");
+  function setConnection(label,secure=false){
+    connectionText.textContent=label;
+    connectionTag.className="connection"+(secure?" secure":"");
+  }
 
-      if (type) {
-        element.classList.add(type);
-      }
+  function getStatus(record){
+    return String(record?.status??record?.state??"unknown").trim().toLowerCase()||"unknown";
+  }
 
-      if (!message) {
-        element.classList.add("hidden");
-      }
+  function getReference(record){
+    return String(record?.application_ref??record?.reference??
+      record?.application_reference??record?.applicationReference??record?.ref??"")
+      .trim().slice(0,120);
+  }
+
+  function statusLabel(status){
+    return status.replace(/[_-]+/g," ").replace(/\b\w/g,c=>c.toUpperCase());
+  }
+
+  function isPending(status){
+    return ["draft","pending","incomplete","needs_information"].includes(status);
+  }
+
+  function isComplete(status){
+    return ["submitted","complete","completed","approved"].includes(status);
+  }
+
+  function getRecordsFromPayload(payload){
+    if(Array.isArray(payload))return payload;
+    for(const key of ["applications","records","results"]){
+      if(Array.isArray(payload?.[key]))return payload[key];
+    }
+    throw new Error("Unexpected application API response format.");
+  }
+
+  function renderRecords(){
+    const query=$("searchInput").value.trim().toLowerCase();
+    const filter=$("statusFilter").value;
+    const filtered=state.records.filter(record=>
+      getReference(record).toLowerCase().includes(query)&&
+      (filter==="all"||getStatus(record)===filter)
+    );
+
+    $("totalCount").textContent=String(state.records.length);
+    $("pendingCount").textContent=String(state.records.filter(r=>isPending(getStatus(r))).length);
+    $("completeCount").textContent=String(state.records.filter(r=>isComplete(getStatus(r))).length);
+    $("shownCount").textContent=`${filtered.length} of ${state.records.length} loaded records shown`;
+
+    const body=$("recordsBody");
+    body.replaceChildren();
+
+    if(!filtered.length){
+      const row=document.createElement("tr");
+      const cell=document.createElement("td");
+      cell.colSpan=2;cell.className="empty";
+      cell.textContent=state.records.length?"No matching records.":"No application records returned by the API.";
+      row.append(cell);body.append(row);return;
     }
 
-    function setButtonBusy(button, busy, busyText) {
-      if (!button.dataset.originalText) {
-        button.dataset.originalText = button.textContent;
-      }
-
-      button.disabled = busy;
-      button.textContent = busy
-        ? (busyText || "Please wait…")
-        : button.dataset.originalText;
+    for(const record of filtered){
+      const row=document.createElement("tr");
+      const refCell=document.createElement("td");
+      const ref=document.createElement("span");
+      ref.className="ref";ref.textContent=getReference(record)||"Unavailable";
+      refCell.append(ref);
+      const statusCell=document.createElement("td");
+      const badge=document.createElement("span");
+      const status=getStatus(record);
+      badge.className="status "+status.replace(/[^a-z0-9_-]/g,"");
+      badge.textContent=statusLabel(status);
+      statusCell.append(badge);row.append(refCell,statusCell);body.append(row);
     }
+  }
 
-    function escapeDisplay(value) {
-      if (value === null || value === undefined || value === "") {
-        return "--";
-      }
+  async function loadRecords(){
+    if(!state.secret||state.loading)return;
+    state.loading=true;
+    loginBtn.disabled=true;refreshBtn.disabled=true;refreshBtnTop.disabled=true;
+    setConnection("Connecting");
+    setMessage(authMessage,"Verifying administrator access…");
+    dataMessage.classList.add("hidden");
 
-      return String(value).slice(0, 1000);
-    }
-
-    function makeCell(value) {
-      const cell = document.createElement("td");
-      cell.textContent = escapeDisplay(value);
-      return cell;
-    }
-
-    function makeRow(values) {
-      const row = document.createElement("tr");
-
-      values.forEach((value) => {
-        row.appendChild(makeCell(value));
+    try{
+      const response=await fetch("/api/admin/applications",{
+        method:"GET",
+        headers:{"Authorization":"Bearer "+state.secret,"Accept":"application/json"},
+        cache:"no-store",credentials:"same-origin",redirect:"error"
       });
 
-      return row;
-    }
-
-    async function apiRequest(path, options = {}) {
-      const headers = new Headers(options.headers || {});
-      headers.set("Accept", "application/json");
-
-      if (options.body !== undefined) {
-        headers.set("Content-Type", "application/json");
-      }
-
-      if (adminToken) {
-        headers.set("Authorization", "Bearer " + adminToken);
-      }
-
-      const response = await fetch(path, {
-        ...options,
-        headers,
-        credentials: "same-origin",
-        cache: "no-store",
-        redirect: "error"
-      });
-
-      const contentType = response.headers.get("content-type") || "";
-      let data = null;
-
-      if (contentType.includes("application/json")) {
-        data = await response.json();
-      } else {
-        const text = await response.text();
-        data = { message: text.slice(0, 500) };
-      }
-
-      if (!response.ok) {
-        const message =
-          data && typeof data.message === "string"
-            ? data.message
-            : "Request failed with HTTP " + response.status;
-
-        throw new Error(message);
-      }
-
-      return data || {};
-    }
-
-    async function verifyToken(token) {
-      const data = await apiRequest(API.access, {
-        method: "POST",
-        body: JSON.stringify({ purpose: "admin" }),
-        headers: {
-          Authorization: "Bearer " + token
-        }
-      });
-
-      if (data.authenticated !== true && data.ok !== true) {
-        throw new Error("The backend did not confirm authentication.");
-      }
-
-      return data;
-    }
-
-    function showDashboard() {
-      $("loginSection").classList.add("hidden");
-      $("dashboardSection").classList.remove("hidden");
-      $("logoutButton").classList.remove("hidden");
-    }
-
-    function showLogin() {
-      $("dashboardSection").classList.add("hidden");
-      $("loginSection").classList.remove("hidden");
-      $("logoutButton").classList.add("hidden");
-      $("adminToken").value = "";
-      $("loginMessage").textContent = "";
-    }
-
-    function setDot(id, state) {
-      const dot = $(id);
-      dot.className = "dot";
-
-      if (state === "good") {
-        dot.classList.add("good");
-      } else if (state === "bad") {
-        dot.classList.add("bad");
-      } else if (state === "warn") {
-        dot.classList.add("warn");
-      }
-    }
-
-    function renderStatus(data) {
-      lastStatus = data;
-
-      const healthy =
-        data.service === "ok" ||
-        data.service === "healthy" ||
-        data.ok === true;
-
-      const locked = data.formLocked === true;
-      const paused = data.emergencyPaused === true;
-
-      $("serviceStat").textContent = healthy ? "Healthy" : "Check";
-      $("formStat").textContent = paused
-        ? "Paused"
-        : locked
-          ? "Locked"
-          : "Open";
-
-      $("serviceStatus").textContent =
-        healthy ? "Backend responding" : "Backend status requires attention";
-
-      $("serviceDetail").textContent =
-        data.message ||
-        (healthy
-          ? "The status endpoint reports a healthy service."
-          : "Review the backend response and server logs.");
-
-      setDot("serviceDot", healthy ? "good" : "bad");
-
-      $("formStatus").textContent = paused
-        ? "Emergency pause enabled"
-        : locked
-          ? "Form locked"
-          : "Form reported open";
-
-      setDot("formDot", paused || locked ? "bad" : "good");
-
-      $("pauseStatus").textContent = paused
-        ? "The backend reports that submissions are paused."
-        : "The backend does not report an emergency pause.";
-
-      $("checkedStat").textContent =
-        new Date().toLocaleTimeString();
-
-      $("lockFormButton").disabled = locked;
-      $("unlockFormButton").disabled = !locked;
-      $("pauseButton").disabled = paused;
-      $("resumeButton").disabled = !paused;
-    }
-
-    async function refreshStatus() {
-      if (!adminToken || requestInProgress) {
+      if(response.status===401||response.status===403){
+        state.authenticated=false;state.records=[];
+        dashboard.classList.add("hidden");identityDashboard.classList.add("hidden");
+        refreshBtn.classList.add("hidden");
+        renderRecords();setConnection("Access denied");
+        setMessage(authMessage,"Access denied. Check your Cloudflare Pages secret and administrator API configuration.","error");
         return;
       }
 
-      requestInProgress = true;
-      setButtonBusy($("checkStatusButton"), true, "Checking…");
+      if(!response.ok)throw new Error("Admin API returned HTTP "+response.status+".");
+      if(!(response.headers.get("content-type")||"").toLowerCase().includes("application/json")){
+        throw new Error("The admin API did not return JSON.");
+      }
 
-      try {
-        const data = await apiRequest(API.status, { method: "GET" });
+      const payload=await response.json();
+      state.records=getRecordsFromPayload(payload).map(record=>({
+        application_ref:getReference(record),status:getStatus(record)
+      }));
+      state.authenticated=true;
+      dashboard.classList.remove("hidden");
+      identityDashboard.classList.remove("hidden");
+      refreshBtn.classList.remove("hidden");
+      setConnection("Connected",true);
+      setMessage(authMessage,"Authentication succeeded. Your register is ready.","success");
+      $("updatedAt").textContent="Last refreshed · "+new Date().toLocaleString();
+      renderRecords();
 
-        if (typeof data.formLocked !== "boolean" ||
-            typeof data.emergencyPaused !== "boolean") {
-          throw new Error(
-            "Status response must include boolean formLocked and emergencyPaused fields."
-          );
+      await loadRegistry();
+    }catch(error){
+      setConnection("Connection issue");
+      setMessage(authMessage,error instanceof Error?error.message:"Unable to load the register.","error");
+    }finally{
+      state.loading=false;
+      loginBtn.disabled=false;
+      refreshBtn.disabled=!state.authenticated;
+      refreshBtnTop.disabled=!state.authenticated;
+    }
+  }
+
+  async function registryRequest(path,options={}){
+    if(!state.secret||!state.authenticated)throw new Error("Authenticate before accessing the registry.");
+    const headers={"Authorization":"Bearer "+state.secret,"Accept":"application/json"};
+    if(options.body)headers["Content-Type"]="application/json";
+    Object.assign(headers,options.headers||{});
+
+    const response=await fetch(path,{
+      ...options,headers,cache:"no-store",credentials:"same-origin",redirect:"error"
+    });
+
+    if(response.status===401||response.status===403){
+      signOut();
+      throw new Error("Access expired or was denied. Sign in again.");
+    }
+    if(!response.ok)throw new Error("Registry API returned HTTP "+response.status+".");
+    if(!(response.headers.get("content-type")||"").toLowerCase().includes("application/json")){
+      throw new Error("The registry API did not return JSON.");
+    }
+    return response.json();
+  }
+
+  function getRegistryRows(payload,type){
+    if(Array.isArray(payload))return payload;
+    for(const key of ["records","results","items"]){
+      if(Array.isArray(payload?.[key]))return payload[key];
+    }
+    const key={forms:"forms",pages:"pages",locations:"locations",activity:"events"}[type];
+    if(key&&Array.isArray(payload?.[key]))return payload[key];
+    throw new Error("The "+type+" endpoint returned an unexpected response.");
+  }
+
+  function renderRegistryRows(rows,type){
+    const columns=registryColumns[type];
+    const query=$("registrySearch").value.trim().toLowerCase();
+    const filtered=rows.filter(row=>columns.some(([key])=>
+      String(row?.[key]??"").toLowerCase().includes(query)
+    ));
+
+    $("registryHead").replaceChildren();
+    $("registryBody").replaceChildren();
+
+    const header=document.createElement("tr");
+    for(const [,title] of columns){
+      const th=document.createElement("th");th.scope="col";th.textContent=title;header.append(th);
+    }
+    $("registryHead").append(header);
+
+    if(!filtered.length){
+      const tr=document.createElement("tr");
+      const td=document.createElement("td");td.colSpan=columns.length;td.className="empty";
+      td.textContent=rows.length?"No records match your search.":"No records returned by the server.";
+      tr.append(td);$("registryBody").append(tr);
+    }else{
+      for(const record of filtered){
+        const tr=document.createElement("tr");
+        for(const [key] of columns){
+          const td=document.createElement("td");
+          const value=String(record?.[key]??"--").slice(0,500);
+
+          if(key.endsWith("_id")||key.endsWith("_code")||key==="page_ref"||key==="barcode_value"){
+            const span=document.createElement("span");span.className="ref";span.textContent=value;td.append(span);
+          }else if(["form_status","page_status","location_status","outcome","verification_status"].includes(key)){
+            const badge=document.createElement("span");badge.className="status "+value.toLowerCase().replace(/[^a-z0-9_-]/g,"");badge.textContent=value;td.append(badge);
+          }else{
+            td.textContent=value;
+          }
+
+          tr.append(td);
         }
 
-        renderStatus(data);
-        setMessage("globalMessage", "Status updated successfully.", "success");
-      } catch (error) {
-        setDot("serviceDot", "bad");
-        $("serviceStat").textContent = "Unavailable";
-        $("serviceStatus").textContent = "Status check failed";
-        $("serviceDetail").textContent = error.message;
-        $("checkedStat").textContent = new Date().toLocaleTimeString();
+        if(type==="pages"&&record.qr_image_url){
+          const td=document.createElement("td");
+          const button=document.createElement("button");
+          button.type="button";button.className="btn btn-quiet";button.textContent="Show QR";
+          button.addEventListener("click",()=>showQr(record));
+          td.append(button);tr.append(td);
+        }
 
-        setMessage(
-          "globalMessage",
-          "Could not verify live status: " + error.message,
-          "error"
-        );
-      } finally {
-        requestInProgress = false;
-        setButtonBusy($("checkStatusButton"), false);
-        setButtonBusy($("refreshButton"), false);
+        $("registryBody").append(tr);
       }
     }
 
-    async function changeFormControl(action, reason) {
-      if (!adminToken) {
-        throw new Error("Please sign in first.");
-      }
+    $("registryShown").textContent=`${filtered.length} of ${rows.length} records shown`;
+  }
 
-      if (!reason.trim()) {
-        throw new Error("Enter a reason before changing form controls.");
-      }
+  function showQr(record){
+    const box=$("qrBox");box.replaceChildren();
+    const url=record?.qr_image_url;
+    const reference=String(record?.page_ref??"");
+    $("qrDescription").textContent=
+      `${String(record?.page_name??"Registered page")} · ${reference||"No page reference returned"}`;
 
-      const confirmed = window.confirm(
-        "Confirm administrative action: " + action +
-        "\n\nReason: " + reason.trim()
-      );
+    if(typeof url!=="string"||!url.startsWith("/")||url.startsWith("//")){
+      box.textContent="No trusted same-origin QR image supplied by the API.";
+      return;
+    }
 
-      if (!confirmed) {
-        return;
-      }
+    const image=document.createElement("img");
+    image.alt="QR identity for "+String(record?.page_name??"registered page");
+    image.referrerPolicy="no-referrer";
+    image.src=url;
+    image.addEventListener("error",()=>{box.textContent="QR image could not be loaded.";},{once:true});
+    box.append(image);
+  }
 
-      const requestId = crypto.randomUUID
-        ? crypto.randomUUID()
-        : String(Date.now()) + "-" + Math.random().toString(16).slice(2);
+  async function loadRegistry(){
+    if(!state.authenticated)return;
+    const type=$("registryType").value;
+    const button=$("registryRefresh");
+    button.disabled=true;
+    setMessage(registryMessage,"Loading "+type+"…");
 
-      const data = await apiRequest(API.formControl, {
-        method: "POST",
-        body: JSON.stringify({
-          action,
-          reason: reason.trim(),
-          requestId
-        })
+    try{
+      const payload=await registryRequest("/api/admin/registry?type="+encodeURIComponent(type));
+      const rows=getRegistryRows(payload,type);
+      state.registryRows=rows;
+      renderRegistryRows(rows,type);
+
+      if(type==="forms")$("formCount").textContent=String(payload.total??rows.length);
+      if(type==="pages")$("pageCount").textContent=String(payload.total??rows.length);
+      if(type==="activity")$("activityCount").textContent=String(payload.total??rows.length);
+
+      setMessage(registryMessage,"Registry data loaded from the server.","success");
+    }catch(error){
+      setMessage(registryMessage,error instanceof Error?error.message:"Unable to load registry.","error");
+      $("registryHead").replaceChildren();$("registryBody").replaceChildren();
+      const tr=document.createElement("tr");const td=document.createElement("td");
+      td.colSpan=registryColumns[type].length;td.className="empty";
+      td.textContent="Registry unavailable. Confirm that the backend endpoint is deployed.";
+      tr.append(td);$("registryBody").append(tr);
+    }finally{
+      button.disabled=false;
+    }
+  }
+
+  function signOut(){
+    state.secret="";state.records=[];state.authenticated=false;state.registryRows=[];
+    $("adminSecret").value="";$("searchInput").value="";$("statusFilter").value="all";
+    dashboard.classList.add("hidden");identityDashboard.classList.add("hidden");
+    refreshBtn.classList.add("hidden");
+    $("qrBox").textContent="No QR image loaded";
+    $("qrDescription").textContent="Select a registered page with a QR image URL supplied by your backend.";
+    setConnection("Not connected");
+    setMessage(authMessage,"You have been signed out.");
+    dataMessage.classList.add("hidden");
+    renderRecords();
+  }
+
+  $("authForm").addEventListener("submit",async event=>{
+    event.preventDefault();
+    if(state.loading)return;
+    const secret=$("adminSecret").value;
+    if(secret.length<16){
+      setMessage(authMessage,"Enter your administrator secret.","error");return;
+    }
+    state.secret=secret;
+    $("adminSecret").value="";
+    await loadRecords();
+  });
+
+  $("clearBtn").addEventListener("click",signOut);
+  refreshBtn.addEventListener("click",loadRecords);
+  refreshBtnTop.addEventListener("click",loadRecords);
+  $("searchInput").addEventListener("input",renderRecords);
+  $("statusFilter").addEventListener("change",renderRecords);
+  $("resetFilterBtn").addEventListener("click",()=>{
+    $("searchInput").value="";$("statusFilter").value="all";renderRecords();
+  });
+
+  $("registryType").addEventListener("change",loadRegistry);
+  $("registrySearch").addEventListener("input",()=>{
+    renderRegistryRows(state.registryRows,$("registryType").value);
+  });
+  $("registryRefresh").addEventListener("click",loadRegistry);
+  $("clearQrBtn").addEventListener("click",()=>{
+    $("qrBox").textContent="No QR image loaded";
+    $("qrDescription").textContent="Select a registered page with a QR image URL supplied by your backend.";
+  });
+
+  $("verifyPageForm").addEventListener("submit",async event=>{
+    event.preventDefault();
+    const reference=$("pageReference").value.trim();
+    const button=$("verifyPageBtn");
+    const result=$("verifyResult");
+
+    if(!reference||reference.length>200){
+      setMessage(result,"Enter a valid page reference.","error");return;
+    }
+
+    button.disabled=true;
+    setMessage(result,"Verifying reference with the server…");
+
+    try{
+      const payload=await registryRequest("/api/admin/registry/verify",{
+        method:"POST",body:JSON.stringify({page_ref:reference})
       });
-
-      if (data.ok !== true) {
-        throw new Error(
-          data.message || "The backend did not confirm the action."
-        );
+      if(payload.verified===true){
+        setMessage(result,"Verified. "+String(payload.message||"Reference is valid."),"success");
+      }else{
+        setMessage(result,"Not verified. "+String(payload.message||"Invalid, expired or revoked reference."),"error");
       }
-
-      setMessage(
-        "globalMessage",
-        data.message || "The backend accepted the control change.",
-        "success"
-      );
-
-      await refreshStatus();
+    }catch(error){
+      setMessage(result,error instanceof Error?error.message:"Verification failed.","error");
+    }finally{
+      button.disabled=false;
     }
+  });
 
-    async function loadApplications() {
-      setMessage("applicationsMessage", "Loading applications…");
+  window.addEventListener("pagehide",()=>{
+    state.secret="";state.records=[];state.registryRows=[];state.authenticated=false;
+  });
 
-      try {
-        const data = await apiRequest(API.applications, {
-          method: "GET"
-        });
-
-        const applications = Array.isArray(data.applications)
-          ? data.applications
-          : [];
-
-        const body = $("applicationsBody");
-        body.replaceChildren();
-
-        if (applications.length === 0) {
-          body.appendChild(makeRow(["No records", "--", "--"]));
-        } else {
-          applications.forEach((application) => {
-            body.appendChild(makeRow([
-              application.reference || application.id,
-              application.status,
-              application.createdAt || application.created_at
-            ]));
-          });
-        }
-
-        setMessage(
-          "applicationsMessage",
-          applications.length + " record(s) returned by the backend.",
-          "success"
-        );
-      } catch (error) {
-        setMessage(
-          "applicationsMessage",
-          "Unable to load applications: " + error.message,
-          "error"
-        );
-      }
-    }
-
-    async function loadAuditLog() {
-      setMessage("auditMessage", "Loading audit log…");
-
-      try {
-        const data = await apiRequest(API.audit, { method: "GET" });
-        const entries = Array.isArray(data.entries) ? data.entries : [];
-        const body = $("auditBody");
-
-        body.replaceChildren();
-
-        if (entries.length === 0) {
-          body.appendChild(makeRow(["No events", "--", "--"]));
-        } else {
-          entries.forEach((entry) => {
-            body.appendChild(makeRow([
-              entry.createdAt || entry.created_at || entry.timestamp,
-              entry.action || entry.event,
-              entry.details || entry.reason || entry.message
-            ]));
-          });
-        }
-
-        setMessage(
-          "auditMessage",
-          entries.length + " audit event(s) returned.",
-          "success"
-        );
-      } catch (error) {
-        setMessage(
-          "auditMessage",
-          "Unable to load audit log: " + error.message,
-          "error"
-        );
-      }
-    }
-
-    $("loginForm").addEventListener("submit", async (event) => {
-      event.preventDefault();
-
-      const token = $("adminToken").value.trim();
-
-      if (token.length < 32) {
-        setMessage(
-          "loginMessage",
-          "Enter the admin API token configured on your backend.",
-          "error"
-        );
-        return;
-      }
-
-      setButtonBusy($("loginButton"), true, "Verifying…");
-      setMessage("loginMessage", "Verifying credentials…");
-
-      try {
-        // Do not retain the token unless the backend confirms it.
-        await verifyToken(token);
-        adminToken = token;
-
-        showDashboard();
-        setMessage("globalMessage", "Authentication accepted.", "success");
-        await refreshStatus();
-
-        if (statusTimer) {
-          clearInterval(statusTimer);
-        }
-
-        statusTimer = setInterval(refreshStatus, 30000);
-      } catch (error) {
-        adminToken = "";
-        setMessage(
-          "loginMessage",
-          "Sign-in failed: " + error.message,
-          "error"
-        );
-      } finally {
-        setButtonBusy($("loginButton"), false);
-      }
-    });
-
-    $("logoutButton").addEventListener("click", () => {
-      adminToken = "";
-      lastStatus = null;
-
-      if (statusTimer) {
-        clearInterval(statusTimer);
-        statusTimer = null;
-      }
-
-      showLogin();
-      setMessage("globalMessage", "");
-    });
-
-    $("refreshButton").addEventListener("click", refreshStatus);
-    $("checkStatusButton").addEventListener("click", refreshStatus);
-    $("loadApplicationsButton").addEventListener("click", loadApplications);
-    $("loadAuditButton").addEventListener("click", loadAuditLog);
-
-    $("lockFormButton").addEventListener("click", async () => {
-      try {
-        await changeFormControl("lock", $("controlReason").value);
-      } catch (error) {
-        setMessage("globalMessage", error.message, "error");
-      }
-    });
-
-    $("unlockFormButton").addEventListener("click", async () => {
-      try {
-        await changeFormControl("unlock", $("controlReason").value);
-      } catch (error) {
-        setMessage("globalMessage", error.message, "error");
-      }
-    });
-
-    $("pauseButton").addEventListener("click", async () => {
-      try {
-        await changeFormControl("emergency_pause", $("pauseReason").value);
-      } catch (error) {
-        setMessage("globalMessage", error.message, "error");
-      }
-    });
-
-    $("resumeButton").addEventListener("click", async () => {
-      try {
-        await changeFormControl("resume", $("pauseReason").value);
-      } catch (error) {
-        setMessage("globalMessage", error.message, "error");
-      }
-    });
-
-    window.addEventListener("pagehide", () => {
-      if (statusTimer) {
-        clearInterval(statusTimer);
-      }
-    });
-  </script>
+  renderRecords();
+})();
+</script>
 </body>
 </html>

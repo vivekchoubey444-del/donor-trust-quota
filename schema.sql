@@ -1,480 +1,523 @@
+
 -- ============================================================
 -- Donor Trust Quota Application
--- Consolidated PostgreSQL schema
+-- Consolidated Cloudflare D1 / SQLite schema
 -- Version: 3.0
 --
--- Independent application proposal.
--- This does not provide official WBMCC integration.
+-- Independent application preparation system.
+-- Not an official WBMCC application portal.
 --
--- PostgreSQL 14+
--- Apply using a migration/owner connection.
--- Back up existing data before schema upgrades.
+-- BACK UP EXISTING DATA BEFORE APPLYING MIGRATIONS.
 -- ============================================================
-BEGIN;
-SELECT pg_advisory_xact_lock(
-    hashtext('donor-trust-quota:schema:v3')
-);
+
+PRAGMA foreign_keys = ON;
+
 -- ============================================================
 -- 1. APPLICATIONS
 -- ============================================================
+
 CREATE TABLE IF NOT EXISTS applications (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    reference VARCHAR(80) NOT NULL UNIQUE,
-    status VARCHAR(30) NOT NULL DEFAULT 'received',
-    applicant_name VARCHAR(150) NOT NULL,
-    applicant_email VARCHAR(254) NOT NULL,
-    payload JSONB NOT NULL DEFAULT '{}'::jsonb,
-    idempotency_key VARCHAR(128),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    submitted_at TIMESTAMPTZ,
-    reviewed_at TIMESTAMPTZ,
-    reviewed_by BIGINT,
-    deleted_at TIMESTAMPTZ,
-    retention_until TIMESTAMPTZ,
-    deletion_reason_code VARCHAR(60),
-    deletion_requested_at TIMESTAMPTZ,
-    deletion_completed_at TIMESTAMPTZ,
-    CONSTRAINT applications_reference_nonempty
-        CHECK (length(trim(reference)) > 0),
-    CONSTRAINT applications_name_nonempty
-        CHECK (length(trim(applicant_name)) > 0),
-    CONSTRAINT applications_email_nonempty
-        CHECK (
-            length(trim(applicant_email)) BETWEEN 3 AND 254
-        ),
-    CONSTRAINT applications_payload_object
-        CHECK (jsonb_typeof(payload) = 'object'),
-    CONSTRAINT applications_idempotency_key_valid
-        CHECK (
-            idempotency_key IS NULL
-            OR (
-                length(trim(idempotency_key)) BETWEEN 1 AND 128
-                AND idempotency_key !~ '[[:cntrl:]]'
-            )
-        ),
-    CONSTRAINT applications_status_valid
-        CHECK (
-            status IN (
-                'draft',
-                'received',
-                'under_review',
-                'needs_information',
-                'approved',
-                'rejected',
-                'withdrawn'
-            )
-        ),
-    CONSTRAINT applications_deletion_dates_valid
-        CHECK (
-            deletion_completed_at IS NULL
-            OR deleted_at IS NOT NULL
+    application_ref TEXT PRIMARY KEY,
+    token_hash TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'draft',
+    final_consent INTEGER NOT NULL DEFAULT 0,
+    submission_ref TEXT UNIQUE,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+
+    CHECK (
+        length(application_ref) BETWEEN 1 AND 80
+    ),
+
+    CHECK (
+        length(token_hash) = 64
+    ),
+
+    CHECK (
+        status IN (
+            'draft',
+            'submitted',
+            'received',
+            'under_review',
+            'needs_information',
+            'approved',
+            'rejected',
+            'withdrawn'
         )
+    ),
+
+    CHECK (final_consent IN (0, 1))
 );
-CREATE UNIQUE INDEX IF NOT EXISTS
-    uq_applications_idempotency_key
-    ON applications (idempotency_key)
-    WHERE idempotency_key IS NOT NULL;
+
 CREATE INDEX IF NOT EXISTS idx_applications_created
-    ON applications (created_at DESC, id DESC);
-CREATE INDEX IF NOT EXISTS idx_applications_status
-    ON applications (status);
-CREATE INDEX IF NOT EXISTS idx_applications_email
-    ON applications (lower(applicant_email));
+    ON applications (created_at DESC);
+
 CREATE INDEX IF NOT EXISTS idx_applications_updated
     ON applications (updated_at DESC);
-CREATE INDEX IF NOT EXISTS idx_applications_active_created
-    ON applications (created_at DESC, id DESC)
-    WHERE deleted_at IS NULL;
-CREATE INDEX IF NOT EXISTS idx_applications_retention
-    ON applications (retention_until)
-    WHERE retention_until IS NOT NULL;
-CREATE INDEX IF NOT EXISTS idx_applications_review_queue
-    ON applications (created_at ASC, id ASC)
-    WHERE deleted_at IS NULL
-      AND status IN (
-          'received', 'under_review', 'needs_information'
-      );
+
+CREATE INDEX IF NOT EXISTS idx_applications_status
+    ON applications (status);
+
 -- ============================================================
--- 2. ADMINISTRATORS
--- Identity metadata only. No plaintext passwords or API tokens.
+-- 2. APPLICATION PAGES
 -- ============================================================
-CREATE TABLE IF NOT EXISTS administrators (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    external_subject VARCHAR(255) UNIQUE,
-    email VARCHAR(254) NOT NULL UNIQUE,
-    display_name VARCHAR(150) NOT NULL,
-    role VARCHAR(30) NOT NULL DEFAULT 'reviewer',
-    active BOOLEAN NOT NULL DEFAULT TRUE,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    last_login_at TIMESTAMPTZ,
-    CONSTRAINT administrators_role_valid
-        CHECK (role IN ('reviewer', 'admin', 'superadmin')),
-    CONSTRAINT administrators_email_nonempty
-        CHECK (length(trim(email)) > 0),
-    CONSTRAINT administrators_name_nonempty
-        CHECK (length(trim(display_name)) > 0)
+
+CREATE TABLE IF NOT EXISTS application_pages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    application_ref TEXT NOT NULL,
+    page_key TEXT NOT NULL,
+    page_ref TEXT NOT NULL UNIQUE,
+    data_json TEXT NOT NULL DEFAULT '{}',
+    consent_checked INTEGER NOT NULL DEFAULT 0,
+    saved_at TEXT NOT NULL,
+
+    FOREIGN KEY (application_ref)
+        REFERENCES applications(application_ref)
+        ON DELETE RESTRICT,
+
+    CHECK (
+        page_key IN (
+            'applicant',
+            'contact',
+            'eligibility',
+            'photo',
+            'documents',
+            'consent',
+            'review'
+        )
+    ),
+
+    CHECK (json_valid(data_json)),
+    CHECK (json_type(data_json) = 'object'),
+    CHECK (consent_checked IN (0, 1)),
+
+    UNIQUE (application_ref, page_key)
 );
-CREATE INDEX IF NOT EXISTS idx_administrators_active
-    ON administrators (active, role);
-CREATE INDEX IF NOT EXISTS idx_administrators_subject
-    ON administrators (external_subject)
-    WHERE external_subject IS NOT NULL;
-ALTER TABLE applications
-    ADD CONSTRAINT applications_reviewed_by_fkey
-    FOREIGN KEY (reviewed_by)
-    REFERENCES administrators(id)
-    ON DELETE SET NULL;
+
+CREATE INDEX IF NOT EXISTS idx_application_pages_application
+    ON application_pages (application_ref);
+
 -- ============================================================
 -- 3. CONSENT RECORDS
 -- ============================================================
+
 CREATE TABLE IF NOT EXISTS application_consents (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    application_id BIGINT NOT NULL
-        REFERENCES applications(id) ON DELETE RESTRICT,
-    consent_type VARCHAR(60) NOT NULL,
-    notice_version VARCHAR(50) NOT NULL,
-    accepted BOOLEAN NOT NULL,
-    accepted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    source VARCHAR(40) NOT NULL DEFAULT 'web',
-    metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
-    CONSTRAINT consent_type_nonempty
-        CHECK (length(trim(consent_type)) BETWEEN 1 AND 60),
-    CONSTRAINT consent_version_nonempty
-        CHECK (length(trim(notice_version)) BETWEEN 1 AND 50),
-    CONSTRAINT consent_source_nonempty
-        CHECK (length(trim(source)) BETWEEN 1 AND 40),
-    CONSTRAINT consent_metadata_object
-        CHECK (jsonb_typeof(metadata) = 'object')
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    application_ref TEXT NOT NULL,
+    consent_type TEXT NOT NULL,
+    notice_version TEXT NOT NULL,
+    accepted INTEGER NOT NULL,
+    accepted_at TEXT NOT NULL,
+    source TEXT NOT NULL DEFAULT 'web',
+    metadata_json TEXT NOT NULL DEFAULT '{}',
+
+    FOREIGN KEY (application_ref)
+        REFERENCES applications(application_ref)
+        ON DELETE RESTRICT,
+
+    CHECK (accepted IN (0, 1)),
+    CHECK (json_valid(metadata_json)),
+    CHECK (json_type(metadata_json) = 'object')
 );
+
 CREATE INDEX IF NOT EXISTS idx_consents_application
-    ON application_consents (application_id, accepted_at DESC);
-CREATE INDEX IF NOT EXISTS idx_consents_type_time
-    ON application_consents (consent_type, accepted_at DESC);
+    ON application_consents (
+        application_ref,
+        accepted_at DESC
+    );
+
 -- ============================================================
 -- 4. DOCUMENT METADATA
--- Store file bytes in private storage, not PostgreSQL JSONB.
+-- Actual file bytes must be stored in private object storage.
+-- Do not store sensitive document contents in this table.
 -- ============================================================
+
 CREATE TABLE IF NOT EXISTS application_documents (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    application_id BIGINT NOT NULL
-        REFERENCES applications(id) ON DELETE RESTRICT,
-    document_type VARCHAR(60) NOT NULL,
-    original_filename VARCHAR(255) NOT NULL,
-    storage_key VARCHAR(512) NOT NULL UNIQUE,
-    mime_type VARCHAR(100) NOT NULL,
-    file_size_bytes BIGINT NOT NULL,
-    sha256_hex VARCHAR(64),
-    scan_status VARCHAR(20) NOT NULL DEFAULT 'pending',
-    status VARCHAR(20) NOT NULL DEFAULT 'uploaded',
-    uploaded_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    verified_at TIMESTAMPTZ,
-    verified_by BIGINT
-        REFERENCES administrators(id) ON DELETE SET NULL,
-    deleted_at TIMESTAMPTZ,
-    deletion_completed_at TIMESTAMPTZ,
-    retention_until TIMESTAMPTZ,
-    metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
-    CONSTRAINT documents_positive_size
-        CHECK (file_size_bytes > 0),
-    CONSTRAINT documents_filename_nonempty
-        CHECK (length(trim(original_filename)) BETWEEN 1 AND 255),
-    CONSTRAINT documents_storage_key_nonempty
-        CHECK (length(trim(storage_key)) BETWEEN 1 AND 512),
-    CONSTRAINT documents_mime_nonempty
-        CHECK (length(trim(mime_type)) BETWEEN 1 AND 100),
-    CONSTRAINT documents_scan_status_valid
-        CHECK (
-            scan_status IN (
-                'pending', 'clean', 'infected',
-                'failed', 'not_required'
-            )
-        ),
-    CONSTRAINT documents_status_valid
-        CHECK (
-            status IN ('uploaded', 'verified', 'rejected', 'deleted')
-        ),
-    CONSTRAINT documents_metadata_object
-        CHECK (jsonb_typeof(metadata) = 'object'),
-    CONSTRAINT documents_sha256_valid
-        CHECK (
-            sha256_hex IS NULL
-            OR sha256_hex ~ '^[a-fA-F0-9]{64}$'
-        ),
-    CONSTRAINT documents_deletion_dates_valid
-        CHECK (
-            deletion_completed_at IS NULL
-            OR deleted_at IS NOT NULL
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    application_ref TEXT NOT NULL,
+    document_type TEXT NOT NULL,
+    original_filename TEXT NOT NULL,
+    storage_key TEXT NOT NULL UNIQUE,
+    mime_type TEXT NOT NULL,
+    file_size_bytes INTEGER NOT NULL,
+    sha256_hex TEXT,
+    scan_status TEXT NOT NULL DEFAULT 'pending',
+    status TEXT NOT NULL DEFAULT 'uploaded',
+    uploaded_at TEXT NOT NULL,
+    verified_at TEXT,
+    deleted_at TEXT,
+    retention_until TEXT,
+    metadata_json TEXT NOT NULL DEFAULT '{}',
+
+    FOREIGN KEY (application_ref)
+        REFERENCES applications(application_ref)
+        ON DELETE RESTRICT,
+
+    CHECK (file_size_bytes > 0),
+
+    CHECK (
+        scan_status IN (
+            'pending',
+            'clean',
+            'infected',
+            'failed',
+            'not_required'
         )
+    ),
+
+    CHECK (
+        status IN (
+            'uploaded',
+            'verified',
+            'rejected',
+            'deleted'
+        )
+    ),
+
+    CHECK (
+        sha256_hex IS NULL
+        OR (
+            length(sha256_hex) = 64
+            AND sha256_hex NOT GLOB '*[^a-fA-F0-9]*'
+        )
+    ),
+
+    CHECK (json_valid(metadata_json)),
+    CHECK (json_type(metadata_json) = 'object')
 );
+
 CREATE INDEX IF NOT EXISTS idx_documents_application
-    ON application_documents (application_id, uploaded_at DESC);
+    ON application_documents (
+        application_ref,
+        uploaded_at DESC
+    );
+
 CREATE INDEX IF NOT EXISTS idx_documents_scan_queue
-    ON application_documents (uploaded_at, id)
+    ON application_documents (uploaded_at)
     WHERE scan_status = 'pending'
       AND deleted_at IS NULL
       AND status = 'uploaded';
-CREATE INDEX IF NOT EXISTS idx_documents_retention
-    ON application_documents (retention_until)
-    WHERE retention_until IS NOT NULL;
-CREATE INDEX IF NOT EXISTS idx_documents_pending_deletion
-    ON application_documents (deleted_at, id)
-    WHERE deleted_at IS NOT NULL
-      AND deletion_completed_at IS NULL;
+
 -- ============================================================
 -- 5. APPLICATION STATUS HISTORY
 -- ============================================================
+
 CREATE TABLE IF NOT EXISTS application_status_history (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    application_id BIGINT NOT NULL
-        REFERENCES applications(id) ON DELETE RESTRICT,
-    previous_status VARCHAR(30),
-    new_status VARCHAR(30) NOT NULL,
-    changed_by BIGINT
-        REFERENCES administrators(id) ON DELETE SET NULL,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    application_ref TEXT NOT NULL,
+    previous_status TEXT,
+    new_status TEXT NOT NULL,
+    changed_by TEXT,
     reason TEXT,
-    source VARCHAR(40) NOT NULL DEFAULT 'system',
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
-    CONSTRAINT status_history_metadata_object
-        CHECK (jsonb_typeof(metadata) = 'object'),
-    CONSTRAINT status_history_new_status_valid
-        CHECK (
-            new_status IN (
-                'draft', 'received', 'under_review',
-                'needs_information', 'approved',
-                'rejected', 'withdrawn'
-            )
-        ),
-    CONSTRAINT status_history_previous_status_valid
-        CHECK (
-            previous_status IS NULL
-            OR previous_status IN (
-                'draft', 'received', 'under_review',
-                'needs_information', 'approved',
-                'rejected', 'withdrawn'
-            )
+    source TEXT NOT NULL DEFAULT 'system',
+    created_at TEXT NOT NULL,
+    metadata_json TEXT NOT NULL DEFAULT '{}',
+
+    FOREIGN KEY (application_ref)
+        REFERENCES applications(application_ref)
+        ON DELETE RESTRICT,
+
+    CHECK (
+        new_status IN (
+            'draft',
+            'submitted',
+            'received',
+            'under_review',
+            'needs_information',
+            'approved',
+            'rejected',
+            'withdrawn'
         )
+    ),
+
+    CHECK (
+        previous_status IS NULL
+        OR previous_status IN (
+            'draft',
+            'submitted',
+            'received',
+            'under_review',
+            'needs_information',
+            'approved',
+            'rejected',
+            'withdrawn'
+        )
+    ),
+
+    CHECK (json_valid(metadata_json)),
+    CHECK (json_type(metadata_json) = 'object')
 );
+
 CREATE INDEX IF NOT EXISTS idx_status_history_application
     ON application_status_history (
-        application_id, created_at DESC, id DESC
+        application_ref,
+        created_at DESC
     );
-CREATE INDEX IF NOT EXISTS idx_status_history_created
-    ON application_status_history (created_at DESC, id DESC);
+
 -- ============================================================
--- 6. AUDIT EVENTS
+-- 6. ADMINISTRATORS
+-- Authentication secrets must remain in server-side secrets.
 -- ============================================================
+
+CREATE TABLE IF NOT EXISTS administrators (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    external_subject TEXT UNIQUE,
+    email TEXT NOT NULL UNIQUE,
+    display_name TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT 'reviewer',
+    active INTEGER NOT NULL DEFAULT 1,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    last_login_at TEXT,
+
+    CHECK (
+        role IN ('reviewer', 'admin', 'superadmin')
+    ),
+
+    CHECK (active IN (0, 1))
+);
+
+CREATE INDEX IF NOT EXISTS idx_administrators_active
+    ON administrators (active, role);
+
+-- ============================================================
+-- 7. AUDIT EVENTS
+-- Never place raw access tokens or passwords in audit details.
+-- ============================================================
+
 CREATE TABLE IF NOT EXISTS audit_events (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    actor_admin_id BIGINT
-        REFERENCES administrators(id) ON DELETE SET NULL,
-    application_id BIGINT
-        REFERENCES applications(id) ON DELETE SET NULL,
-    event_type VARCHAR(100) NOT NULL,
-    request_id VARCHAR(100),
-    correlation_id UUID,
-    outcome VARCHAR(20) NOT NULL DEFAULT 'success',
-    source VARCHAR(40) NOT NULL DEFAULT 'api',
-    details JSONB NOT NULL DEFAULT '{}'::jsonb,
-    schema_version SMALLINT NOT NULL DEFAULT 1,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT audit_outcome_valid
-        CHECK (outcome IN ('success', 'failure', 'denied')),
-    CONSTRAINT audit_details_object
-        CHECK (jsonb_typeof(details) = 'object'),
-    CONSTRAINT audit_schema_version_positive
-        CHECK (schema_version >= 1)
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    actor_admin_id INTEGER,
+    application_ref TEXT,
+    event_type TEXT NOT NULL,
+    request_id TEXT,
+    correlation_id TEXT,
+    outcome TEXT NOT NULL DEFAULT 'success',
+    source TEXT NOT NULL DEFAULT 'api',
+    details_json TEXT NOT NULL DEFAULT '{}',
+    schema_version INTEGER NOT NULL DEFAULT 1,
+    created_at TEXT NOT NULL,
+
+    FOREIGN KEY (actor_admin_id)
+        REFERENCES administrators(id)
+        ON DELETE SET NULL,
+
+    FOREIGN KEY (application_ref)
+        REFERENCES applications(application_ref)
+        ON DELETE SET NULL,
+
+    CHECK (
+        outcome IN ('success', 'failure', 'denied')
+    ),
+
+    CHECK (json_valid(details_json)),
+    CHECK (json_type(details_json) = 'object'),
+    CHECK (schema_version >= 1)
 );
+
 CREATE INDEX IF NOT EXISTS idx_audit_created
-    ON audit_events (created_at DESC, id DESC);
+    ON audit_events (created_at DESC);
+
 CREATE INDEX IF NOT EXISTS idx_audit_application
-    ON audit_events (application_id, created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_audit_event_type
-    ON audit_events (event_type, created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_audit_correlation
-    ON audit_events (correlation_id)
-    WHERE correlation_id IS NOT NULL;
+    ON audit_events (application_ref, created_at DESC);
+
 -- ============================================================
--- 7. GENERATED DOCUMENTS
+-- 8. GENERATED DOCUMENTS
+-- Store generated PDFs in private object storage.
 -- ============================================================
+
 CREATE TABLE IF NOT EXISTS generated_documents (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    application_id BIGINT NOT NULL
-        REFERENCES applications(id) ON DELETE RESTRICT,
-    document_type VARCHAR(40) NOT NULL DEFAULT 'application_pdf',
-    storage_key VARCHAR(512) NOT NULL UNIQUE,
-    sha256_hex VARCHAR(64),
-    file_size_bytes BIGINT,
-    generation_status VARCHAR(20) NOT NULL DEFAULT 'pending',
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    completed_at TIMESTAMPTZ,
-    expires_at TIMESTAMPTZ,
-    deleted_at TIMESTAMPTZ,
-    deletion_completed_at TIMESTAMPTZ,
-    CONSTRAINT generated_status_valid
-        CHECK (
-            generation_status IN (
-                'pending', 'processing', 'completed', 'failed'
-            )
-        ),
-    CONSTRAINT generated_size_valid
-        CHECK (file_size_bytes IS NULL OR file_size_bytes > 0),
-    CONSTRAINT generated_sha256_valid
-        CHECK (
-            sha256_hex IS NULL
-            OR sha256_hex ~ '^[a-fA-F0-9]{64}$'
-        ),
-    CONSTRAINT generated_deletion_dates_valid
-        CHECK (
-            deletion_completed_at IS NULL
-            OR deleted_at IS NOT NULL
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    application_ref TEXT NOT NULL,
+    document_type TEXT NOT NULL DEFAULT 'application_pdf',
+    storage_key TEXT NOT NULL UNIQUE,
+    sha256_hex TEXT,
+    file_size_bytes INTEGER,
+    generation_status TEXT NOT NULL DEFAULT 'pending',
+    created_at TEXT NOT NULL,
+    completed_at TEXT,
+    expires_at TEXT,
+    deleted_at TEXT,
+
+    FOREIGN KEY (application_ref)
+        REFERENCES applications(application_ref)
+        ON DELETE RESTRICT,
+
+    CHECK (
+        generation_status IN (
+            'pending',
+            'processing',
+            'completed',
+            'failed'
         )
+    ),
+
+    CHECK (
+        file_size_bytes IS NULL
+        OR file_size_bytes > 0
+    )
 );
+
 CREATE INDEX IF NOT EXISTS idx_generated_application
-    ON generated_documents (application_id, created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_generated_expiry
-    ON generated_documents (expires_at, id)
-    WHERE expires_at IS NOT NULL
-      AND deleted_at IS NULL;
+    ON generated_documents (
+        application_ref,
+        created_at DESC
+    );
+
 -- ============================================================
--- 8. NOTIFICATION JOBS
+-- 9. NOTIFICATION JOBS
 -- ============================================================
+
 CREATE TABLE IF NOT EXISTS notification_jobs (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    application_id BIGINT
-        REFERENCES applications(id) ON DELETE SET NULL,
-    channel VARCHAR(20) NOT NULL,
-    event_type VARCHAR(80) NOT NULL,
-    recipient_reference VARCHAR(255) NOT NULL,
-    status VARCHAR(20) NOT NULL DEFAULT 'pending',
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    application_ref TEXT,
+    channel TEXT NOT NULL,
+    event_type TEXT NOT NULL,
+    recipient_reference TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',
     attempts INTEGER NOT NULL DEFAULT 0,
     max_attempts INTEGER NOT NULL DEFAULT 5,
-    scheduled_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    locked_at TIMESTAMPTZ,
-    locked_by VARCHAR(150),
-    lease_expires_at TIMESTAMPTZ,
-    completed_at TIMESTAMPTZ,
-    next_attempt_at TIMESTAMPTZ,
-    provider_message_id VARCHAR(255),
-    idempotency_key VARCHAR(255) UNIQUE,
-    last_error_code VARCHAR(100),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT notification_channel_valid
-        CHECK (channel IN ('email', 'sms', 'webhook')),
-    CONSTRAINT notification_status_valid
-        CHECK (
-            status IN (
-                'pending', 'processing', 'sent',
-                'failed', 'cancelled'
-            )
-        ),
-    CONSTRAINT notification_attempts_valid
-        CHECK (
-            attempts >= 0
-            AND max_attempts >= 1
-            AND attempts <= max_attempts
+    scheduled_at TEXT NOT NULL,
+    locked_at TEXT,
+    locked_by TEXT,
+    lease_expires_at TEXT,
+    completed_at TEXT,
+    next_attempt_at TEXT,
+    provider_message_id TEXT,
+    idempotency_key TEXT UNIQUE,
+    last_error_code TEXT,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+
+    FOREIGN KEY (application_ref)
+        REFERENCES applications(application_ref)
+        ON DELETE SET NULL,
+
+    CHECK (
+        channel IN ('email', 'sms', 'webhook')
+    ),
+
+    CHECK (
+        status IN (
+            'pending',
+            'processing',
+            'sent',
+            'failed',
+            'cancelled'
         )
+    ),
+
+    CHECK (
+        attempts >= 0
+        AND max_attempts >= 1
+        AND attempts <= max_attempts
+    )
 );
+
 CREATE INDEX IF NOT EXISTS idx_notification_ready
-    ON notification_jobs (scheduled_at, id)
+    ON notification_jobs (scheduled_at)
     WHERE status = 'pending';
-CREATE INDEX IF NOT EXISTS idx_notification_leases
-    ON notification_jobs (lease_expires_at, id)
-    WHERE status = 'processing';
+
 -- ============================================================
--- 9. BACKGROUND JOBS
+-- 10. BACKGROUND JOBS
 -- ============================================================
+
 CREATE TABLE IF NOT EXISTS background_jobs (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    job_type VARCHAR(80) NOT NULL,
-    status VARCHAR(20) NOT NULL DEFAULT 'pending',
-    application_id BIGINT
-        REFERENCES applications(id) ON DELETE SET NULL,
-    payload JSONB NOT NULL DEFAULT '{}'::jsonb,
-    result JSONB,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    job_type TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',
+    application_ref TEXT,
+    payload_json TEXT NOT NULL DEFAULT '{}',
+    result_json TEXT,
     attempts INTEGER NOT NULL DEFAULT 0,
     max_attempts INTEGER NOT NULL DEFAULT 5,
-    scheduled_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    locked_at TIMESTAMPTZ,
-    locked_by VARCHAR(150),
-    lease_expires_at TIMESTAMPTZ,
-    heartbeat_at TIMESTAMPTZ,
-    started_at TIMESTAMPTZ,
-    completed_at TIMESTAMPTZ,
-    last_error_code VARCHAR(100),
-    idempotency_key VARCHAR(255) UNIQUE,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT background_status_valid
-        CHECK (
-            status IN (
-                'pending', 'processing', 'completed',
-                'failed', 'cancelled'
-            )
-        ),
-    CONSTRAINT background_attempts_valid
-        CHECK (
-            attempts >= 0
-            AND max_attempts >= 1
-            AND attempts <= max_attempts
-        ),
-    CONSTRAINT background_payload_object
-        CHECK (jsonb_typeof(payload) = 'object'),
-    CONSTRAINT background_result_object
-        CHECK (
-            result IS NULL
-            OR jsonb_typeof(result) = 'object'
+    scheduled_at TEXT NOT NULL,
+    locked_at TEXT,
+    locked_by TEXT,
+    lease_expires_at TEXT,
+    heartbeat_at TEXT,
+    started_at TEXT,
+    completed_at TEXT,
+    last_error_code TEXT,
+    idempotency_key TEXT UNIQUE,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+
+    FOREIGN KEY (application_ref)
+        REFERENCES applications(application_ref)
+        ON DELETE SET NULL,
+
+    CHECK (
+        status IN (
+            'pending',
+            'processing',
+            'completed',
+            'failed',
+            'cancelled'
         )
+    ),
+
+    CHECK (
+        attempts >= 0
+        AND max_attempts >= 1
+        AND attempts <= max_attempts
+    ),
+
+    CHECK (json_valid(payload_json)),
+    CHECK (json_type(payload_json) = 'object'),
+
+    CHECK (
+        result_json IS NULL
+        OR (
+            json_valid(result_json)
+            AND json_type(result_json) = 'object'
+        )
+    )
 );
+
 CREATE INDEX IF NOT EXISTS idx_background_ready
-    ON background_jobs (scheduled_at, id)
+    ON background_jobs (scheduled_at)
     WHERE status = 'pending';
-CREATE INDEX IF NOT EXISTS idx_background_leases
-    ON background_jobs (lease_expires_at, id)
-    WHERE status = 'processing';
+
 -- ============================================================
--- 10. UPDATED_AT TRIGGERS
+-- 11. AUTOMATIC UPDATED_AT TRIGGERS
 -- ============================================================
-CREATE OR REPLACE FUNCTION set_updated_at()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-AS $$
+
+CREATE TRIGGER IF NOT EXISTS trg_applications_updated_at
+AFTER UPDATE OF status, final_consent, submission_ref
+ON applications
+FOR EACH ROW
+WHEN NEW.updated_at = OLD.updated_at
 BEGIN
-    NEW.updated_at = NOW();
-    RETURN NEW;
+    UPDATE applications
+    SET updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
+    WHERE application_ref = NEW.application_ref;
 END;
-$$;
-DROP TRIGGER IF EXISTS trg_applications_updated_at ON applications;
-CREATE TRIGGER trg_applications_updated_at
-BEFORE UPDATE ON applications
-FOR EACH ROW EXECUTE FUNCTION set_updated_at();
-DROP TRIGGER IF EXISTS trg_administrators_updated_at ON administrators;
-CREATE TRIGGER trg_administrators_updated_at
-BEFORE UPDATE ON administrators
-FOR EACH ROW EXECUTE FUNCTION set_updated_at();
-DROP TRIGGER IF EXISTS trg_notification_jobs_updated_at ON notification_jobs;
-CREATE TRIGGER trg_notification_jobs_updated_at
-BEFORE UPDATE ON notification_jobs
-FOR EACH ROW EXECUTE FUNCTION set_updated_at();
-DROP TRIGGER IF EXISTS trg_background_jobs_updated_at ON background_jobs;
-CREATE TRIGGER trg_background_jobs_updated_at
-BEFORE UPDATE ON background_jobs
-FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+CREATE TRIGGER IF NOT EXISTS trg_administrators_updated_at
+AFTER UPDATE OF email, display_name, role, active
+ON administrators
+FOR EACH ROW
+WHEN NEW.updated_at = OLD.updated_at
+BEGIN
+    UPDATE administrators
+    SET updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
+    WHERE id = NEW.id;
+END;
+
 -- ============================================================
--- 11. DEPLOYMENT REQUIREMENTS
--- ============================================================
--- Use a dedicated runtime database role.
--- Do not expose database credentials to the browser.
--- Keep uploaded files and generated PDFs in private storage.
--- Validate file signatures and scan uploads before use.
--- Authenticate administrators and enforce roles in server.js.
--- Use transactions for submissions and status transitions.
--- Implement worker retries, leases, cleanup and retention jobs.
--- Test backup restoration before production use.
+-- DEPLOYMENT NOTES
 --
--- This schema creates data structures; it does not implement
--- authentication, file storage, PDF generation or notifications.
-COMMIT;
+-- 1. Create/bind the Cloudflare D1 database as APP_DB.
+-- 2. Apply this schema to the intended D1 database.
+-- 3. Back up existing data before schema changes.
+-- 4. Verify all API SQL queries match these table/column names.
+-- 5. Keep access tokens and admin secrets out of browser code.
+-- 6. Store actual uploads and PDFs in private object storage.
+-- 7. Validate file signatures and scan files before accepting them.
+-- 8. Implement server-side authorization and rate limiting.
+-- 9. Test draft creation, page saving, submission, and admin access.
+--
+-- This schema alone does not implement those application features.
+-- It does not connect to or submit applications to WBMCC.
+-- ============================================================

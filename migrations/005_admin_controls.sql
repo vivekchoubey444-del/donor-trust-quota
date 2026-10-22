@@ -2,17 +2,30 @@
 -- ============================================================
 -- Donor Trust Quota Application
 -- Migration 005: Administrative form controls and audit trail
---
--- Requires migrations 001 through 004.
 -- PostgreSQL 14+
 --
--- Adds:
---   1. Singleton application form control state
---   2. Idempotent admin control request records
---   3. Dedicated administrative control audit history
+-- Prerequisites:
+--   applications
+--   administrators (with administrators.id)
+--   audit_events
 --
--- Does not replace existing application or audit tables.
--- Test against a restored staging database before production.
+-- Adds:
+--   1. Singleton application form state
+--   2. Action-bound idempotency request records
+--   3. Dedicated administrative control audit history
+--   4. Request/audit action consistency enforcement
+--   5. Protection against modification of completed requests
+--   6. Protection against deleting the singleton state row
+--
+-- API REQUIREMENTS:
+--   * Authenticate and authorize before changing state.
+--   * Calculate request_hash from a canonical request.
+--   * Compare the hash when a request_id is reused.
+--   * Perform request, state, audit and response writes in
+--     ONE database transaction.
+--   * Replay a stored response only when the hash matches.
+--   * Never treat a shared bearer token as an individual
+--     administrator identity.
 -- ============================================================
 
 BEGIN;
@@ -22,7 +35,7 @@ SELECT pg_advisory_xact_lock(
 );
 
 -- ============================================================
--- 1. VERIFY PREREQUISITE TABLES
+-- 1. VERIFY PREREQUISITE TABLES AND ADMINISTRATOR COLUMN
 -- ============================================================
 
 DO $$
@@ -46,15 +59,22 @@ BEGIN
             'Migration 005 aborted. Missing required tables: %',
             missing_tables;
     END IF;
+
+    IF NOT EXISTS (
+        SELECT 1
+          FROM information_schema.columns
+         WHERE table_schema = current_schema()
+           AND table_name = 'administrators'
+           AND column_name = 'id'
+    ) THEN
+        RAISE EXCEPTION
+            'Migration 005 aborted. administrators.id is missing.';
+    END IF;
 END
 $$;
 
 -- ============================================================
 -- 2. SINGLETON APPLICATION FORM STATE
---
--- Exactly one row is allowed: id = 1.
--- Defaults keep the form unlocked and not emergency-paused.
--- A deployment must explicitly lock the form when required.
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS application_form_state (
@@ -74,34 +94,31 @@ CREATE TABLE IF NOT EXISTS application_form_state (
     CONSTRAINT application_form_state_message_nonempty
         CHECK (
             status_message IS NULL
-            OR length(trim(status_message)) > 0
+            OR (
+                length(trim(status_message)) BETWEEN 1 AND 500
+                AND status_message !~ '[[:cntrl:]]'
+            )
         )
 );
 
--- Ensure the initial state exists without overwriting
--- an existing administrative decision.
+-- Preserve any existing administrative decision.
 INSERT INTO application_form_state (
     id,
     form_locked,
     emergency_paused,
     status_message
 )
-VALUES (
-    1,
-    FALSE,
-    FALSE,
-    NULL
-)
+VALUES (1, FALSE, FALSE, NULL)
 ON CONFLICT (id) DO NOTHING;
 
--- Keep updated_at accurate on updates.
+-- Keep the timestamp database-controlled.
 CREATE OR REPLACE FUNCTION
     set_application_form_state_updated_at()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    NEW.updated_at = NOW();
+    NEW.updated_at := NOW();
     RETURN NEW;
 END;
 $$;
@@ -115,23 +132,42 @@ BEFORE UPDATE ON application_form_state
 FOR EACH ROW
 EXECUTE FUNCTION set_application_form_state_updated_at();
 
+-- Do not allow the singleton row to be deleted accidentally.
+CREATE OR REPLACE FUNCTION
+    prevent_application_form_state_delete()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RAISE EXCEPTION
+        'The singleton application form state row cannot be deleted.';
+END;
+$$;
+
+DROP TRIGGER IF EXISTS
+    trg_application_form_state_prevent_delete
+    ON application_form_state;
+
+CREATE TRIGGER trg_application_form_state_prevent_delete
+BEFORE DELETE ON application_form_state
+FOR EACH ROW
+EXECUTE FUNCTION prevent_application_form_state_delete();
+
 -- ============================================================
 -- 3. IDEMPOTENT ADMIN CONTROL REQUESTS
---
--- A request ID must not be reused for a different action.
--- The API must calculate request_hash from a canonical request
--- representation and compare it when an ID is repeated.
---
--- response_body stores the completed response for safe replay.
--- A transaction should persist the request, state change,
--- audit entry and response atomically.
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS admin_control_requests (
     request_id VARCHAR(128) PRIMARY KEY,
 
+    -- SHA-256 hex digest of a canonical request representation.
     request_hash VARCHAR(64) NOT NULL,
 
+    -- Action is persisted so the database can cross-check the
+    -- corresponding audit record.
+    action VARCHAR(40) NOT NULL,
+
+    -- NULL until the transaction has completed successfully.
     response_body JSONB,
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -147,6 +183,16 @@ CREATE TABLE IF NOT EXISTS admin_control_requests (
     CONSTRAINT admin_control_request_hash_valid
         CHECK (request_hash ~ '^[a-fA-F0-9]{64}$'),
 
+    CONSTRAINT admin_control_request_action_valid
+        CHECK (
+            action IN (
+                'lock',
+                'unlock',
+                'emergency_pause',
+                'resume'
+            )
+        ),
+
     CONSTRAINT admin_control_response_object
         CHECK (
             response_body IS NULL
@@ -155,6 +201,13 @@ CREATE TABLE IF NOT EXISTS admin_control_requests (
 
     CONSTRAINT admin_control_request_completion_valid
         CHECK (
+            (response_body IS NULL AND completed_at IS NULL)
+            OR
+            (response_body IS NOT NULL AND completed_at IS NOT NULL)
+        ),
+
+    CONSTRAINT admin_control_request_completion_time_valid
+        CHECK (
             completed_at IS NULL
             OR completed_at >= created_at
         )
@@ -162,25 +215,65 @@ CREATE TABLE IF NOT EXISTS admin_control_requests (
 
 CREATE INDEX IF NOT EXISTS
     idx_admin_control_requests_created
-ON admin_control_requests (
-    created_at DESC,
-    request_id
-);
+ON admin_control_requests (created_at DESC, request_id);
 
 CREATE INDEX IF NOT EXISTS
     idx_admin_control_requests_incomplete
 ON admin_control_requests (created_at)
 WHERE completed_at IS NULL;
 
+-- Protect the request identity and the stored response once
+-- a request is completed. An incomplete request may only be
+-- completed once; its identity fields may never be rewritten.
+CREATE OR REPLACE FUNCTION
+    protect_admin_control_request()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    IF TG_OP = 'DELETE' THEN
+        RAISE EXCEPTION
+            'Administrative control request records cannot be deleted.';
+    END IF;
+
+    IF NEW.request_id IS DISTINCT FROM OLD.request_id
+       OR NEW.request_hash IS DISTINCT FROM OLD.request_hash
+       OR NEW.action IS DISTINCT FROM OLD.action
+       OR NEW.created_at IS DISTINCT FROM OLD.created_at THEN
+        RAISE EXCEPTION
+            'Administrative request identity fields are immutable.';
+    END IF;
+
+    IF OLD.completed_at IS NOT NULL THEN
+        RAISE EXCEPTION
+            'A completed administrative request is immutable.';
+    END IF;
+
+    IF NEW.response_body IS NULL AND NEW.completed_at IS NOT NULL THEN
+        RAISE EXCEPTION
+            'A request cannot have a completion time without a response.';
+    END IF;
+
+    IF NEW.response_body IS NOT NULL AND NEW.completed_at IS NULL THEN
+        RAISE EXCEPTION
+            'A completed response requires a completion time.';
+    END IF;
+
+    RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS
+    trg_admin_control_request_protect
+    ON admin_control_requests;
+
+CREATE TRIGGER trg_admin_control_request_protect
+BEFORE UPDATE OR DELETE ON admin_control_requests
+FOR EACH ROW
+EXECUTE FUNCTION protect_admin_control_request();
+
 -- ============================================================
 -- 4. DEDICATED ADMINISTRATIVE CONTROL AUDIT
---
--- Keep the general audit_events table from migration 002.
--- This table records form-control actions and state transitions.
---
--- actor_admin_id remains NULL when the API has not resolved
--- an authenticated administrator identity. A shared bearer
--- token alone does not identify an individual administrator.
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS admin_audit_log (
@@ -217,7 +310,10 @@ CREATE TABLE IF NOT EXISTS admin_audit_log (
         ),
 
     CONSTRAINT admin_audit_reason_valid
-        CHECK (length(trim(reason)) BETWEEN 3 AND 500),
+        CHECK (
+            length(trim(reason)) BETWEEN 3 AND 500
+            AND reason !~ '[[:cntrl:]]'
+        ),
 
     CONSTRAINT admin_audit_actor_type_valid
         CHECK (
@@ -226,6 +322,12 @@ CREATE TABLE IF NOT EXISTS admin_audit_log (
                 'administrator',
                 'system'
             )
+        ),
+
+    CONSTRAINT admin_audit_actor_identity_valid
+        CHECK (
+            actor_type <> 'administrator'
+            OR actor_admin_id IS NOT NULL
         ),
 
     CONSTRAINT admin_audit_previous_state_object
@@ -238,23 +340,7 @@ CREATE TABLE IF NOT EXISTS admin_audit_log (
         CHECK (jsonb_typeof(metadata) = 'object')
 );
 
-CREATE INDEX IF NOT EXISTS
-    idx_admin_audit_log_created
-ON admin_audit_log (created_at DESC, id DESC);
-
-CREATE INDEX IF NOT EXISTS
-    idx_admin_audit_log_action
-ON admin_audit_log (action, created_at DESC);
-
-CREATE INDEX IF NOT EXISTS
-    idx_admin_audit_log_actor
-ON admin_audit_log (actor_admin_id, created_at DESC)
-WHERE actor_admin_id IS NOT NULL;
-
--- ============================================================
--- 5. CONSISTENCY CHECKS
--- ============================================================
-
+-- Keep request_id linked to its idempotency record.
 DO $$
 BEGIN
     IF NOT EXISTS (
@@ -276,30 +362,89 @@ $$;
 ALTER TABLE admin_audit_log
     VALIDATE CONSTRAINT admin_audit_request_fkey;
 
+CREATE INDEX IF NOT EXISTS
+    idx_admin_audit_log_created
+ON admin_audit_log (created_at DESC, id DESC);
+
+CREATE INDEX IF NOT EXISTS
+    idx_admin_audit_log_action
+ON admin_audit_log (action, created_at DESC);
+
+CREATE INDEX IF NOT EXISTS
+    idx_admin_audit_log_actor
+ON admin_audit_log (actor_admin_id, created_at DESC)
+WHERE actor_admin_id IS NOT NULL;
+
+-- Ensure the audit action matches the action recorded for
+-- the same idempotency request.
+CREATE OR REPLACE FUNCTION
+    validate_admin_audit_request_action()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    recorded_action VARCHAR(40);
+BEGIN
+    SELECT action
+      INTO recorded_action
+      FROM admin_control_requests
+     WHERE request_id = NEW.request_id
+     FOR KEY SHARE;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION
+            'Audit entry requires an existing administrative request.';
+    END IF;
+
+    IF recorded_action IS DISTINCT FROM NEW.action THEN
+        RAISE EXCEPTION
+            'Audit action does not match the administrative request action.';
+    END IF;
+
+    RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS
+    trg_admin_audit_request_action
+    ON admin_audit_log;
+
+CREATE TRIGGER trg_admin_audit_request_action
+BEFORE INSERT OR UPDATE OF request_id, action
+ON admin_audit_log
+FOR EACH ROW
+EXECUTE FUNCTION validate_admin_audit_request_action();
+
 -- ============================================================
--- 6. DATABASE COMMENTS
+-- 5. DATABASE COMMENTS
 -- ============================================================
 
 COMMENT ON TABLE application_form_state IS
     'Singleton state controlling whether application submissions are accepted.';
 
 COMMENT ON TABLE admin_control_requests IS
-    'Idempotency records for administrative form-control commands.';
+    'Action-bound idempotency records for administrative form-control commands.';
 
 COMMENT ON TABLE admin_audit_log IS
-    'Dedicated audit trail for administrative form-control actions.';
+    'Dedicated audit trail for administrative form-control actions and state transitions.';
 
 COMMENT ON COLUMN admin_control_requests.request_hash IS
-    'SHA-256 hex digest of the canonical administrative request.';
+    'SHA-256 hexadecimal digest of the canonical administrative request.';
+
+COMMENT ON COLUMN admin_control_requests.action IS
+    'Requested control action, cross-checked against the audit record.';
 
 COMMENT ON COLUMN admin_control_requests.response_body IS
     'Completed JSON response retained for idempotent request replay.';
 
 COMMENT ON COLUMN admin_audit_log.actor_admin_id IS
-    'Authenticated administrator ID when resolved; NULL otherwise.';
+    'Authenticated administrator ID when resolved; NULL for non-individual identities.';
+
+COMMENT ON COLUMN admin_audit_log.actor_type IS
+    'Identity class used by the API; admin_token alone does not identify a person.';
 
 -- ============================================================
--- 7. VERIFY INITIAL CONTROL STATE
+-- 6. VERIFY INITIAL CONTROL STATE
 -- ============================================================
 
 DO $$
@@ -311,6 +456,14 @@ BEGIN
     ) THEN
         RAISE EXCEPTION
             'Migration 005 failed to initialize form state.';
+    END IF;
+
+    IF (
+        SELECT COUNT(*)
+          FROM application_form_state
+    ) <> 1 THEN
+        RAISE EXCEPTION
+            'Migration 005 verification failed: expected exactly one state row.';
     END IF;
 END
 $$;

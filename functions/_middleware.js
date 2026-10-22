@@ -1,28 +1,32 @@
 "use strict";
 /**
- * Donor Trust Quota -- Production Security Middleware
- * File: functions/_middleware.js
+ * Donor Trust Quota -- Cloudflare Pages Security Middleware
  *
- * Universal core:
- *   applySecurity(request, response, config)
- *   runSecurityMiddleware(request, nextHandler, config)
+ * File:
+ *   functions/_middleware.js
  *
- * Cloudflare Pages adapter:
- *   onRequest(context)
+ * Responsibilities:
+ *   - Apply baseline HTTP security headers.
+ *   - Prevent caching of API and private-route responses.
+ *   - Optionally redirect HTTP to HTTPS for allowlisted hosts.
+ *   - Optionally enable HSTS.
+ *   - Optionally configure Content-Security-Policy.
+ *   - Return generic errors without exposing stack traces.
  *
- * Optional configuration:
+ * Important:
+ *   - This middleware does NOT authenticate users.
+ *   - This middleware does NOT authorize admin operations.
+ *   - This middleware does NOT implement rate limiting.
+ *   - This middleware does NOT enforce application form locks.
+ *   - Protected endpoints must independently verify authorization.
+ *   - Form submission handlers must check the D1 control state.
+ *
+ * Optional Cloudflare environment variables:
  *   SECURITY_CSP
  *   FORCE_HTTPS=true
  *   ALLOWED_HOSTS=example.com,www.example.com
  *   ENABLE_HSTS=true
  *   HSTS_MAX_AGE=31536000
- *   REFERRER_POLICY=strict-origin-when-cross-origin
- *
- * IMPORTANT:
- * - Authentication and authorization belong in protected handlers.
- * - Rate limiting must be implemented at the platform, gateway, or backend.
- * - Enable HSTS only after HTTPS is working correctly on the production domain.
- * - Do not trust arbitrary forwarded headers from untrusted proxies.
  */
 const DEFAULT_HSTS_MAX_AGE = 31536000;
 const MAX_HSTS_MAX_AGE = 63072000;
@@ -70,6 +74,8 @@ function isAdminPath(pathname) {
   return (
     pathname === "/admin" ||
     pathname.startsWith("/admin/") ||
+    pathname === "/private" ||
+    pathname.startsWith("/private/") ||
     pathname === "/private-admin" ||
     pathname.startsWith("/private-admin/")
   );
@@ -77,23 +83,38 @@ function isAdminPath(pathname) {
 function isSensitivePath(pathname) {
   return isApiPath(pathname) || isAdminPath(pathname);
 }
+/**
+ * Preserve an existing header unless a route requires
+ * a stricter middleware-defined value.
+ */
 function setIfMissing(headers, name, value) {
   if (!headers.has(name)) {
     headers.set(name, value);
   }
 }
-function normalizeHostname(value) {
+/**
+ * Accept hostname entries only.
+ *
+ * Examples:
+ *   example.com
+ *   www.example.com
+ *   localhost:8788
+ *
+ * Schemes, paths, credentials, query strings, and fragments
+ * are rejected.
+ */
+function normalizeHost(value) {
   if (typeof value !== "string" || !value.trim()) {
     return null;
   }
   const input = value.trim().toLowerCase();
-  // Host entries must not contain schemes, paths, credentials, or queries.
   if (
     input.includes("://") ||
     input.includes("/") ||
     input.includes("@") ||
     input.includes("?") ||
-    input.includes("#")
+    input.includes("#") ||
+    /\s/.test(input)
   ) {
     return null;
   }
@@ -118,16 +139,20 @@ function getAllowedHosts(value) {
     ? value
     : String(value || "").split(",");
   return entries
-    .map(normalizeHostname)
+    .map(normalizeHost)
     .filter(Boolean);
 }
 function getHstsValue(config) {
   if (config.ENABLE_HSTS !== true) {
     return null;
   }
-  const maxAge = Number(
-    config.HSTS_MAX_AGE || DEFAULT_HSTS_MAX_AGE
-  );
+  const rawMaxAge = config.HSTS_MAX_AGE;
+  const maxAge =
+    rawMaxAge === undefined ||
+    rawMaxAge === null ||
+    rawMaxAge === ""
+      ? DEFAULT_HSTS_MAX_AGE
+      : Number(rawMaxAge);
   if (
     !Number.isSafeInteger(maxAge) ||
     maxAge < 0 ||
@@ -135,15 +160,11 @@ function getHstsValue(config) {
   ) {
     return null;
   }
-  // Do not add includeSubDomains or preload automatically.
-  // Those options can affect other domains and require deliberate planning.
+  // Deliberately omit includeSubDomains and preload.
   return "max-age=" + maxAge;
 }
 /**
- * Applies security headers without buffering the response body.
- *
- * Existing headers are preserved unless a stricter policy is deliberately
- * required for a sensitive route.
+ * Add baseline headers and sensitive-route cache controls.
  *
  * @param {Request} request
  * @param {Response} response
@@ -168,12 +189,17 @@ export function applySecurity(request, response, config = {}) {
     setIfMissing(headers, name, value);
   }
   if (isSensitivePath(url.pathname)) {
-    for (
-      const [name, value] of Object.entries(PRIVATE_RESPONSE_HEADERS)
-    ) {
+    for (const [name, value] of Object.entries(
+      PRIVATE_RESPONSE_HEADERS
+    )) {
       headers.set(name, value);
     }
   }
+  /*
+   * CSP is supplied by deployment configuration.
+   * It is not generated automatically because a restrictive
+   * policy can break scripts, styles, fonts, or API requests.
+   */
   if (
     typeof config.SECURITY_CSP === "string" &&
     config.SECURITY_CSP.trim()
@@ -184,17 +210,13 @@ export function applySecurity(request, response, config = {}) {
       config.SECURITY_CSP.trim()
     );
   }
-  /*
-   * HSTS is emitted only for HTTPS requests and only when explicitly enabled.
-   * The hosting platform must enforce HTTPS correctly before enabling this.
-   */
   const hstsValue = getHstsValue(config);
   if (url.protocol === "https:" && hstsValue) {
     setIfMissing(headers, "Strict-Transport-Security", hstsValue);
   }
   /*
-   * Constructing a new Response with the original stream avoids reading
-   * or buffering large response bodies in middleware.
+   * Keep the original response stream.
+   * Do not read or buffer the response body.
    */
   return new Response(response.body, {
     status: response.status,
@@ -206,7 +228,6 @@ export function applySecurity(request, response, config = {}) {
  * Platform-independent middleware runner.
  *
  * nextHandler must return a Response.
- * HTTPS redirects are handled before calling nextHandler.
  */
 export async function runSecurityMiddleware(
   request,
@@ -227,15 +248,21 @@ export async function runSecurityMiddleware(
     return textResponse("Invalid request.", 400);
   }
   /*
-   * HTTPS redirect is opt-in.
+   * Optional HTTP-to-HTTPS redirect.
    *
-   * Only explicitly allowlisted hosts may be redirected. This prevents
-   * this middleware from becoming an open redirect using a forged Host.
+   * Only redirect hosts explicitly listed in ALLOWED_HOSTS.
+   * An empty or invalid allowlist fails closed.
+   *
+   * Cloudflare's own HTTPS redirect setting is also an option.
    */
   if (config.FORCE_HTTPS === true && url.protocol === "http:") {
     const allowedHosts = getAllowedHosts(config.ALLOWED_HOSTS);
-    const requestHost = url.host.toLowerCase();
-    if (!allowedHosts.length || !allowedHosts.includes(requestHost)) {
+    const requestHost = normalizeHost(url.host);
+    if (
+      !requestHost ||
+      !allowedHosts.length ||
+      !allowedHosts.includes(requestHost)
+    ) {
       return textResponse("Invalid host.", 400);
     }
     const destination = new URL(url.href);
@@ -246,6 +273,7 @@ export async function runSecurityMiddleware(
         Location: destination.href,
         "Cache-Control": "no-store",
         "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
         "Referrer-Policy": "no-referrer"
       }
     });
@@ -257,30 +285,39 @@ export async function runSecurityMiddleware(
     }
     return applySecurity(request, response, config);
   } catch {
-    // Keep internal exceptions and stack traces out of public responses.
-    return textResponse("An internal server error occurred.", 500);
+    /*
+     * Do not return exception messages or stack traces
+     * to the browser.
+     */
+    return textResponse(
+      "An internal server error occurred.",
+      500
+    );
   }
 }
 /**
- * Cloudflare Pages adapter.
+ * Cloudflare Pages middleware adapter.
  *
- * For other runtimes, reuse runSecurityMiddleware() in the platform's
- * documented middleware or request-handler entry point.
+ * File location:
+ *   functions/_middleware.js
  */
 export async function onRequest(context) {
-  const { request, env, next } = context;
+  const { request, env } = context;
   return runSecurityMiddleware(
     request,
-    () => next(),
+    () => context.next(),
     {
       SECURITY_CSP: env?.SECURITY_CSP || "",
-      FORCE_HTTPS: env?.FORCE_HTTPS === "true",
+      FORCE_HTTPS:
+        env?.FORCE_HTTPS === "true",
       ALLOWED_HOSTS: String(env?.ALLOWED_HOSTS || "")
         .split(",")
         .map((host) => host.trim())
         .filter(Boolean),
-      ENABLE_HSTS: env?.ENABLE_HSTS === "true",
-      HSTS_MAX_AGE: env?.HSTS_MAX_AGE
+      ENABLE_HSTS:
+        env?.ENABLE_HSTS === "true",
+      HSTS_MAX_AGE:
+        env?.HSTS_MAX_AGE
     }
   );
 }

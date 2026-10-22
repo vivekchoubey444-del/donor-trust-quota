@@ -1,0 +1,276 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="robots" content="noindex,nofollow">
+<meta name="description" content="Independent MBBS donor/trust quota application preparation workspace.">
+<title>MBBS Donor / Trust Quota -- Application Preparation</title>
+<style>
+:root{color-scheme:light;--ink:#111;--muted:#555;--line:#888;--soft:#f3f3f3;--paper:#fff;--accent:#111}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;padding:12px 0;background:#fff;color:var(--ink);font:15px/1.55 Arial,Helvetica,sans-serif}
+button,input,select,textarea{font:inherit}
+button{min-height:44px;padding:9px 14px;border:1px solid var(--ink);background:#fff;color:var(--ink);font-weight:700;cursor:pointer}
+button.primary{background:#111;color:#fff}
+button:disabled{opacity:.4;cursor:not-allowed}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #555;outline-offset:2px}
+.shell{width:min(100% - 16px,900px);margin:auto;border:3px solid #111}
+.brand{background:#111;color:#fff;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand h1{font-size:clamp(18px,4vw,25px);line-height:1.2;margin:0;text-transform:uppercase;letter-spacing:.035em}
+.tag{border:1px solid currentColor;padding:3px 8px;font-size:10px;letter-spacing:.08em;font-weight:bold}
+.intro{padding:12px 18px;border-bottom:3px solid #111}
+.notice{border:1px solid #777;border-left:5px solid #111;padding:10px 12px;background:#f3f3f3;font-size:13px;margin:8px 0}
+.refs{display:flex;gap:6px 18px;flex-wrap:wrap;font-size:12px;margin:8px 0}
+.refs span{overflow-wrap:anywhere}.muted,.hint{color:#555;font-size:12px}
+.progress{height:8px;border:1px solid #111;margin:8px 0}.progress>i{display:block;height:100%;width:0;background:#111;transition:width .15s}
+nav{display:flex;gap:0;overflow-x:auto;position:sticky;top:0;z-index:4;background:#fff;border-bottom:3px solid #111}
+nav button{border:0;border-right:1px solid #aaa;flex:0 0 auto;min-height:43px;padding:8px 11px;font-size:11px;text-transform:uppercase;white-space:nowrap}
+nav button.active{background:#111;color:#fff}
+main{padding:14px 18px 6px}
+h2{font-size:18px;line-height:1.3;text-transform:uppercase;letter-spacing:.07em;border-bottom:3px solid #111;padding-bottom:8px;margin:4px 0 14px}
+h3{font-size:15px;margin:16px 0 5px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid #111;border-left:1px solid #111}
+.field{min-width:0;padding:8px 10px 5px;border-right:1px solid #111;border-bottom:1px solid #111}
+.field.full{grid-column:1/-1}
+label{display:block;font-size:11px;font-weight:bold;text-transform:uppercase;letter-spacing:.07em;margin:0 0 4px}
+.required:after{content:" *";font-weight:900}
+input:not([type=checkbox]),select,textarea{width:100%;min-height:38px;padding:7px 5px;border:0;border-bottom:1px solid #888;background:#fff;color:#111;border-radius:0}
+textarea{min-height:78px;resize:vertical}
+input[type=checkbox]{width:21px;height:21px;accent-color:#111;flex:none;margin:2px 0 0}
+input[type=file]{font-size:12px}
+.checkline{display:flex;gap:9px;align-items:flex-start;margin:10px 0;font-size:14px}
+.checkline label{font-size:14px;text-transform:none;letter-spacing:0;font-weight:400;margin:0}
+.error{min-height:15px;font-size:11px;font-weight:bold;color:#111}
+.invalid{outline:2px dashed #111!important;outline-offset:-2px;background:#f1f1f1!important}
+.panel{border:1px solid #111;padding:12px;margin:12px 0;overflow-wrap:anywhere}
+.doc{border:1px solid #777;padding:10px 14px;max-height:320px;overflow:auto;margin:10px 0}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.actions button{flex:1 1 130px}
+.status{min-height:25px;font-weight:bold;margin:8px 0;overflow-wrap:anywhere}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+td,th{border:1px solid #777;padding:7px;text-align:left;vertical-align:top;overflow-wrap:anywhere}
+th{width:34%}
+.preview{max-width:140px;max-height:150px;display:block;margin-top:6px;border:1px solid #777}
+.page{display:none}.page.active{display:block}
+footer{padding:14px 18px 18px;border-top:3px solid #111;font-size:12px;color:#444;overflow-wrap:anywhere}
+footer button{font-size:12px;min-height:36px}
+#toast{position:sticky;top:45px;z-index:6;background:#111;color:#fff;padding:10px;display:none}
+#toast.show{display:block}
+@media (max-width:600px){.grid{grid-template-columns:1fr}.field.full{grid-column:auto}.brand{align-items:flex-start}.actions button{flex-basis:100%}main{padding:12px}.intro{padding:10px 12px}}
+@media print{body{padding:0;font-size:11pt}.shell{width:100%;border:0}.brand{background:#fff;color:#111;border-bottom:3px solid #111}.tag{border-color:#111}nav,.actions,footer,#toast,.progress,.no-print{display:none!important}main{padding:0}.page{display:block!important;break-before:page}.page:first-child{break-before:auto}.doc{max-height:none;overflow:visible}.field{break-inside:avoid}input:not([type=checkbox]),select,textarea{border:0;border-bottom:1px solid #aaa}.notice{background:#fff}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header>
+<div class="brand"><h1>MBBS Donor / Trust Quota · Application Preparation</h1><span class="tag">INDEPENDENT PREPARATION SERVICE</span></div>
+<div class="intro">
+<div class="notice"><strong>Important:</strong> This is an independent preparation tool, not an official WBMCC portal and not an admission authority. It does not confirm that a donor/trust quota route is available or lawful, establish eligibility, guarantee a seat, or submit anything to WBMCC. Verify the current process and all fees through official sources. Do not pay unverified recipients.</div>
+<div class="refs"><span>LOCAL SET REF: <b id="setRef">Creating…</b></span><span>PAGE: <b id="pageRef">--</b></span><span>MODE: <b id="mode">LOCAL ONLY</b></span><span>COMPLETION: <b id="pct">0%</b></span></div>
+<div class="progress"><i id="bar"></i></div>
+<div class="hint">* Required field · ○ incomplete · ◐ valid draft · ● marked complete locally. These are local preparation states, not official submission receipts.</div>
+</div>
+</header>
+<nav id="nav" aria-label="Application sections"></nav>
+<div id="toast" role="status" aria-live="polite"></div>
+<main id="main"></main>
+<div id="msg" class="status" role="status" aria-live="polite" style="padding:0 18px 12px"></div>
+<footer>
+<strong>Owner contact:</strong> <span id="ownerContact">Vivekchoubey228855@ (incomplete address)</span>
+<p class="hint">This owner label is not a login or proof of authorization. Add a complete, verified email address before enabling an email link.</p>
+<div class="actions no-print">
+<button id="exportBtn">Export draft JSON</button><button id="importBtn">Import draft JSON</button><button id="printBtn">Print / Save PDF</button><button id="htmlBtn">Download HTML copy</button><button id="shareBtn">Share page</button><button id="resetBtn">Erase local data</button>
+</div>
+<input type="file" id="importFile" accept=".json,application/json" hidden>
+<p>Draft data is stored in this browser when available. It is not encrypted server storage. Selected document files may be included in the local export; keep backups private. No file or form data is uploaded by this standalone version.</p>
+<p>Independent preparation service. No official affiliation or endorsement is claimed.</p>
+</footer>
+</div>
+<script>
+"use strict";
+(() => {
+const KEY="donorTrustPrep.v5";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>{try{if(crypto&&crypto.randomUUID)return crypto.randomUUID()}catch{}return "xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx".replace(/[xy]/g,c=>{let r=Math.random()*16|0;return(c==="x"?r:(r&3|8)).toString(16)})};
+const newRef=prefix=>prefix+"-"+new Date().getUTCFullYear()+"-"+uid().replace(/-/g,"").slice(0,10).toUpperCase();
+let state={setRef:newRef("LOCAL"),current:0,data:{},pageState:{},updatedAt:null};
+
+const pages=[
+{id:"instructions",title:"Instructions",fields:[],html:`<h3>Before you start</h3><ol><li>Check the current official counselling/admission bulletin, eligibility rules, routes, dates and document requirements.</li><li>Fill the pages in any order. Required fields are checked when you mark a page complete.</li><li>This standalone version saves only in the current browser where local storage is available.</li><li>Export a JSON backup regularly. Protect the backup because it may contain personal data and selected files.</li><li>File selections are saved locally in this browser only. They are not uploaded to any server or authority.</li><li>Use Print / Save PDF to create a local copy. It is not an official acknowledgement or submission receipt.</li></ol><div class="notice"><b>Do not enter</b> passwords, OTPs, card PINs, CVVs or banking login credentials. Do not pay a recipient until their identity and payment details have been independently verified.</div>`},
+{id:"privacy",title:"Privacy",fields:[],html:`<h3>Data and purpose</h3><p>This workspace can store applicant identity, contact, academic, declaration and document information that you enter. The purpose is local application preparation.</p><h3>Storage</h3><p>Data is stored in this browser profile where supported. Local browser storage is not encrypted application storage. Anyone with access to this device/profile may be able to see it.</p><h3>Sharing</h3><p>This file does not transmit data to a server. Exported JSON files can contain sensitive personal information and selected document contents. Keep them private.</p><h3>Rights and deletion</h3><p>Use Export before deleting data if you need a backup. "Erase local data" removes this tool’s saved draft from this browser; it does not erase files already downloaded or copies on other devices.</p><h3>Service limits</h3><p>No eligibility decision, seat allocation, payment verification or official submission is performed by this tool.</p>`},
+{id:"payment",title:"Payment record",html:`<div class="notice"><b>Payment safety:</b> This page only records information for your own records. It does not collect money, verify a transaction, or prove that a recipient is authorised. Do not pay based on placeholder payment details.</div>`,fields:[
+{n:"serviceName",l:"Service / recipient name (verify independently)",t:"text"},
+{n:"transactionRef",l:"Transaction reference / UTR",t:"text"},
+{n:"paymentDate",l:"Payment date",t:"date"},
+{n:"amount",l:"Amount paid (₹)",t:"number",min:0,step:"0.01"},
+{n:"paymentNotes",l:"Notes (do not include PINs, passwords or OTPs)",t:"textarea",full:true},
+{n:"paymentProof",l:"Optional proof image or PDF (max 1 MB)",t:"file",accept:"image/jpeg,image/png,application/pdf",maxBytes:1048576}
+]},
+{id:"applicant",title:"Applicant",fields:[
+{n:"session",l:"Admission session",t:"select",opts:["2026–27","2027–28","Other / verify official notice"],req:true},
+{n:"course",l:"Course",t:"select",opts:["MBBS","BDS","Other"],req:true},
+{n:"requestedRoute",l:"Requested route",t:"select",opts:["Donor route -- verify official availability","Trust route -- verify official availability","Unsure -- request guidance"],req:true},
+{n:"institution",l:"Requested college / institution",t:"text",full:true},
+{n:"fullName",l:"Full legal name",t:"text",req:true,max:150},
+{n:"dob",l:"Date of birth",t:"date",req:true},
+{n:"nationality",l:"Nationality",t:"text",req:true,def:"Indian"},
+{n:"category",l:"Category, if applicable",t:"select",opts:["Not specified","General","EWS","SC","ST","OBC-A","OBC-B","Other / verify official criteria"]},
+{n:"guardianName",l:"Parent / guardian name",t:"text"},
+{n:"address",l:"Residential address",t:"textarea",req:true,full:true},
+{n:"city",l:"City / town",t:"text"},
+{n:"district",l:"District",t:"text"},
+{n:"state",l:"State / UT",t:"text"},
+{n:"pin",l:"PIN code",t:"text",max:6,pattern:"^[1-9][0-9]{5}$",patternMsg:"Enter a valid 6-digit PIN code.",inputmode:"numeric"}
+]},
+{id:"contact",title:"Contact",fields:[
+{n:"mobile",l:"Applicant mobile",t:"tel",req:true,pattern:"^(\\+91[- ]?)?[6-9][0-9]{9}$",patternMsg:"Enter a valid Indian mobile number."},
+{n:"email",l:"Applicant email",t:"email",req:true},
+{n:"guardianMobile",l:"Parent / guardian mobile",t:"tel",pattern:"^(\\+91[- ]?)?[6-9][0-9]{9}$",patternMsg:"Enter a valid Indian mobile number."},
+{n:"guardianEmail",l:"Parent / guardian email",t:"email"},
+{n:"contactAddress",l:"Correspondence address (if different)",t:"textarea",full:true},
+{n:"preferredContact",l:"Preferred contact method",t:"select",opts:["Phone","Email","WhatsApp"]},
+{n:"alternateContact",l:"Alternate contact name and number",t:"text",full:true}
+]},
+{id:"eligibility",title:"Eligibility",html:`<p class="hint">This section records information only. It does not determine eligibility. Verify official criteria and deadlines.</p>`,fields:[
+{n:"neetYear",l:"NEET-UG year",t:"number",min:2000,max:2035,req:true},
+{n:"neetRoll",l:"NEET-UG roll number",t:"text",max:40},
+{n:"neetApplication",l:"NEET application number",t:"text",max:60},
+{n:"neetScore",l:"NEET score",t:"number",min:0,max:720},
+{n:"neetRank",l:"NEET All India Rank",t:"number",min:1},
+{n:"neetStatus",l:"NEET qualification status",t:"select",opts:["Qualified","Not qualified","Awaiting result","Not applicable / verify route"],req:true},
+{n:"classXII",l:"Class XII board, passing year and PCB marks",t:"textarea",req:true,full:true},
+{n:"eligibilityBasis",l:"Basis of request / relevant official notice",t:"textarea",full:true},
+{n:"preferredColleges",l:"Preferred colleges",t:"textarea",full:true},
+{n:"requestDetails",l:"Assistance requested",t:"textarea",full:true},
+{n:"eligibilityAck",l:"I understand the competent authority determines eligibility under its official rules.",t:"check",req:true,full:true}
+]},
+{id:"documents",title:"Documents",html:`<p class="hint">Only select documents you are authorised to provide. Selected files remain in this browser; this file does not upload them.</p>`,fields:[
+{n:"photo",l:"Applicant photograph (JPG/PNG, max 2 MB)",t:"image",req:true,maxBytes:2097152,full:true},
+{n:"signature",l:"Applicant signature (JPG/PNG, max 2 MB)",t:"image",req:true,maxBytes:2097152,full:true},
+{n:"neetDocs",l:"NEET scorecard / admit card (PDF/JPG/PNG, max 2 MB)",t:"file",accept:"application/pdf,image/jpeg,image/png",maxBytes:2097152},
+{n:"class10Docs",l:"Class X marksheet / certificate (PDF/JPG/PNG, max 2 MB)",t:"file",accept:"application/pdf,image/jpeg,image/png",maxBytes:2097152},
+{n:"class12Docs",l:"Class XII marksheet / certificate (PDF/JPG/PNG, max 2 MB)",t:"file",accept:"application/pdf,image/jpeg,image/png",maxBytes:2097152},
+{n:"identityDocs",l:"Identity proof, if required (PDF/JPG/PNG, max 2 MB)",t:"file",accept:"application/pdf,image/jpeg,image/png",maxBytes:2097152},
+{n:"categoryDocs",l:"Category certificate, if applicable (PDF/JPG/PNG, max 2 MB)",t:"file",accept:"application/pdf,image/jpeg,image/png",maxBytes:2097152},
+{n:"otherDocs",l:"Other document notes",t:"textarea",full:true}
+]},
+{id:"declarations",title:"Declarations",fields:[
+{n:"truthful",l:"I confirm that the information entered is accurate to the best of my knowledge.",t:"check",req:true,full:true},
+{n:"permission",l:"I have permission to provide any third-party information in this draft.",t:"check",req:true,full:true},
+{n:"officialCheck",l:"I will verify current eligibility, deadlines, fees and submission instructions through official sources.",t:"check",req:true,full:true},
+{n:"independentTool",l:"I understand this is an independent preparation tool and not an official admission submission.",t:"check",req:true,full:true},
+{n:"privacyConsent",l:"I have read the privacy notes and understand local storage and export limitations.",t:"check",req:true,full:true},
+{n:"typedName",l:"Applicant / authorised representative typed name",t:"text",req:true,max:150},
+{n:"signingAs",l:"Signing as",t:"select",opts:["Applicant","Parent","Guardian","Authorised representative"],req:true},
+{n:"declarationPlace",l:"Place",t:"text"},
+{n:"declarationDate",l:"Date",t:"date",req:true}
+]},
+{id:"review",title:"Review",review:true,fields:[]}
+];
+
+function dataFor(p){return state.data[p.id]||(state.data[p.id]={})}
+function getVal(p,f){const d=dataFor(p);return d[f.n]??f.def??(f.t==="check"?false:"")}
+function validateField(f,v){
+if(f.t==="check")return f.req&&!v?"Please confirm this declaration.":"";
+const empty=v===undefined||v===null||v==="";
+if(empty)return f.req?"This field is required.":"";
+if(f.t==="email"&&!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(v)))return"Enter a valid email address.";
+if(f.pattern&&!new RegExp(f.pattern).test(String(v).trim()))return f.patternMsg||"Invalid format.";
+if(f.t==="number"&&((f.min!==undefined&&Number(v)<f.min)||(f.max!==undefined&&Number(v)>f.max)))return`Enter a value from ${f.min??"--"} to ${f.max??"--"}.`;
+if(f.n==="dob"){const age=(Date.now()-new Date(v+"T00:00:00").getTime())/31557600000;if(!Number.isFinite(age)||age<0||age>120)return"Enter a valid date of birth."}
+return"";
+}
+function errors(p){const out={};for(const f of p.fields){const e=validateField(f,getVal(p,f));if(e)out[f.n]=e}return out}
+function status(p){if(state.pageState[p.id]?.complete)return"●";return Object.keys(errors(p)).length?"○":"◐"}
+function persist(){state.updatedAt=new Date().toISOString();try{localStorage.setItem(KEY,JSON.stringify(state));return true}catch(e){toast("Storage is full or unavailable. Export a backup; selected files may be too large.");return false}}
+function toast(t){const el=$("toast");el.textContent=t;el.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove("show"),4200)}
+function say(t){$("msg").textContent=t||""}
+function fileAccept(f){return f.accept||"image/jpeg,image/png"}
+function renderField(p,f){
+const v=getVal(p,f),id=f.n,cls=f.full?"field full":"field",label=`<label for="${esc(id)}" class="${f.req?"required":""}">${esc(f.l)}</label>`;
+let control="";
+if(f.t==="check")return`<div class="${cls}"><div class="checkline"><input type="checkbox" id="${esc(id)}" name="${esc(id)}" ${v?"checked":""}><label for="${esc(id)}" class="${f.req?"required":""}">${esc(f.l)}</label></div><div class="error" id="err-${esc(id)}"></div></div>`;
+if(f.t==="select")control=`<select id="${esc(id)}" name="${esc(id)}"><option value="">Select</option>${(f.opts||[]).map(o=>`<option value="${esc(o)}" ${o===v?"selected":""}>${esc(o)}</option>`).join("")}</select>`;
+else if(f.t==="textarea")control=`<textarea id="${esc(id)}" name="${esc(id)}" maxlength="${f.max||3000}">${esc(v)}</textarea>`;
+else if(f.t==="image"||f.t==="file"){
+const saved=v&&v.name?`<div class="hint">Saved locally: ${esc(v.name)} (${Math.ceil((v.size||0)/1024)} KB)</div>`:"";
+const preview=f.t==="image"&&v&&v.data?`<img class="preview" src="${esc(v.data)}" alt="${esc(f.l)} preview">`:"";
+control=`<input type="file" id="${esc(id)}" name="${esc(id)}" accept="${fileAccept(f)}">${saved}${preview}`;
+}else control=`<input id="${esc(id)}" name="${esc(id)}" type="${f.t||"text"}" value="${esc(v)}" ${f.max?`maxlength="${f.max}"`:""} ${f.min!==undefined?`min="${f.min}"`:""} ${f.max!==undefined&&f.t==="number"?`max="${f.max}"`:""} ${f.step?`step="${f.step}"`:""} ${f.inputmode?`inputmode="${f.inputmode}"`:""} autocomplete="off">`;
+return`<div class="${cls}">${label}${control}<div class="error" id="err-${esc(id)}"></div></div>`;
+}
+function renderNav(){$("nav").innerHTML=pages.map((p,i)=>`<button type="button" data-page="${i}" class="${i===state.current?"active":""}">${i+1}. ${esc(p.title)} ${p.review?"":status(p)}</button>`).join("")}
+function updateProgress(){const normal=pages.filter(p=>!p.review),complete=normal.filter(p=>state.pageState[p.id]?.complete).length,pct=Math.round(complete/normal.length*100);$("pct").textContent=pct+"%";$("bar").style.width=pct+"%";$("setRef").textContent=state.setRef;$("mode").textContent="LOCAL ONLY -- NO SERVER UPLOAD";$("pageRef").textContent=state.pageState[pages[state.current].id]?.ref||"-- (local reference assigned on completion)"}
+function render(){
+const p=pages[state.current];renderNav();updateProgress();say("");
+if(p.review){renderReview();return}
+$("main").innerHTML=`<section class="page active"><h2>${state.current+1}. ${esc(p.title)}</h2>${p.html||""}<form id="pageForm" class="grid" novalidate>${p.fields.map(f=>renderField(p,f)).join("")}</form><div class="actions no-print"><button id="prevBtn" ${state.current===0?"disabled":""}>← Previous</button><button id="saveBtn">Save local draft</button><button class="primary" id="completeBtn">Mark page complete</button><button id="nextBtn">Next →</button></div><div class="hint">Marking a page complete only records your local preparation progress. It does not submit the page to an authority.</div></section>`;
+$("pageForm").addEventListener("input",()=>{collectCurrent(p);state.pageState[p.id]&&(state.pageState[p.id].complete=false);persist();renderNav();updateProgress()});
+$("pageForm").addEventListener("change",e=>{if(e.target.type==="file")handleFile(p,e.target);else{collectCurrent(p);state.pageState[p.id]&&(state.pageState[p.id].complete=false);persist();renderNav();updateProgress()}});
+$("prevBtn").onclick=()=>go(Math.max(0,state.current-1));
+$("nextBtn").onclick=()=>go(Math.min(pages.length-1,state.current+1));
+$("saveBtn").onclick=()=>{collectCurrent(p);persist();say("Draft saved locally on this device where browser storage is available.");toast("Local draft saved.")};
+$("completeBtn").onclick=()=>completePage(p);
+}
+function collectCurrent(p){
+const form=$("pageForm");if(!form)return;const d=dataFor(p);
+for(const f of p.fields){if(["file","image"].includes(f.t))continue;const el=form.elements[f.n];if(!el)continue;d[f.n]=f.t==="check"?el.checked:el.value}
+}
+function handleFile(p,input){
+const f=p.fields.find(x=>x.n===input.name);if(!f||!input.files||!input.files[0])return;
+const file=input.files[0],err=$("err-"+f.n),allowed=(f.accept||"").split(",").filter(Boolean);
+if(f.maxBytes&&file.size>f.maxBytes){err.textContent=`File too large. Maximum ${Math.floor(f.maxBytes/1024)} KB.`;input.value="";return}
+if(allowed.length&&!allowed.includes(file.type)){err.textContent="File type not allowed. Select an accepted format.";input.value="";return}
+const reader=new FileReader();
+reader.onerror=()=>{err.textContent="Could not read this file."};
+reader.onload=()=>{dataFor(p)[f.n]={name:file.name,type:file.type,size:file.size,data:reader.result};persist();render();say("File saved in this browser only. It has not been uploaded.");};
+reader.readAsDataURL(file);
+}
+function completePage(p){
+collectCurrent(p);const e=errors(p);
+for(const f of p.fields){const el=$("err-"+f.n);if(el)el.textContent=e[f.n]||"";const input=$("pageForm")?.elements[f.n];if(input&&input.classList)input.classList.toggle("invalid",!!e[f.n])}
+if(Object.keys(e).length){persist();say("This page is not complete. Correct the highlighted fields.");const f=p.fields.find(x=>e[x.n]);document.getElementById(f.n)?.scrollIntoView({behavior:"smooth",block:"center"});return}
+state.pageState[p.id]={complete:true,ref:state.setRef+"-"+p.id.toUpperCase()+"-"+uid().replace(/-/g,"").slice(0,6).toUpperCase(),completedAt:new Date().toISOString()};
+persist();renderNav();updateProgress();$("pageRef").textContent=state.pageState[p.id].ref;say("Page marked complete locally. This is not a server receipt or official reference.");toast("Page marked complete locally.");
+}
+function go(i){const p=pages[state.current];if(p&&!p.review){collectCurrent(p);persist()}state.current=i;render();window.scrollTo({top:0,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"})}
+$("nav").addEventListener("click",e=>{const b=e.target.closest("button[data-page]");if(b)go(Number(b.dataset.page))});
+function renderReview(){
+const normal=pages.filter(p=>!p.review);
+const rows=normal.map((p,i)=>{const errsNow=errors(p),ps=state.pageState[p.id];return`<tr><th>${esc(p.title)}</th><td>${status(p)} ${ps?.complete?"Marked complete locally":Object.keys(errsNow).length+" field(s) need attention"}<br><span class="hint">${esc(ps?.ref||"No local page reference")}</span><br><button type="button" data-open="${i}" style="min-height:32px;font-size:12px">Open page</button></td></tr>`}).join("");
+const d=id=>state.data[id]||{},all=normal.every(p=>state.pageState[p.id]?.complete);
+$("main").innerHTML=`<section class="page active"><h2>Review &amp; export</h2><div class="notice"><b>Local preparation only.</b> There is no online submission in this standalone file. Completing this checklist does not send data to WBMCC or any other authority.</div><div class="panel"><b>Local Set Ref:</b> ${esc(state.setRef)}<br><b>Last saved:</b> ${esc(state.updatedAt||"Not saved yet")}<br><b>Progress:</b> ${all?"All pages marked complete locally":"Some pages are incomplete"}</div><table>${rows}</table><h3>Summary</h3><table><tr><th>Applicant</th><td>${esc(d("applicant").fullName||"--")}</td></tr><tr><th>Course / route</th><td>${esc(d("applicant").course||"--")} / ${esc(d("applicant").requestedRoute||"--")}</td></tr><tr><th>NEET roll / rank</th><td>${esc(d("eligibility").neetRoll||"--")} / ${esc(d("eligibility").neetRank||"--")}</td></tr><tr><th>Mobile / email</th><td>${esc(d("contact").mobile||"--")} / ${esc(d("contact").email||"--")}</td></tr><tr><th>Photo / signature</th><td>${d("documents").photo?.data?`Photo saved locally: ${esc(d("documents").photo.name)}`:"Photo not selected"}<br>${d("documents").signature?.data?`Signature saved locally: ${esc(d("documents").signature.name)}`:"Signature not selected"}</td></tr></table><div class="actions no-print"><button id="reviewPrev">← Previous</button><button id="reviewExport" class="primary">Export draft JSON</button><button id="reviewPrint">Print / Save PDF</button></div></section>`;
+$("main").onclick=e=>{const b=e.target.closest("[data-open]");if(b)go(Number(b.dataset.open))};
+$("reviewPrev").onclick=()=>go(Math.max(0,state.current-1));$("reviewExport").onclick=exportDraft;$("reviewPrint").onclick=()=>window.print();
+}
+function exportDraft(){
+collectIfVisible();persist();
+const blob=new Blob([JSON.stringify({format:"donor-trust-quota-preparation",version:5,exportedAt:new Date().toISOString(),notice:"Local preparation only. Not an official submission.",state},null,2)],{type:"application/json;charset=utf-8"});
+downloadBlob(blob,(state.setRef||"donor-trust-draft")+".json");say("Draft exported. Keep the file private; it may contain sensitive personal data.");
+}
+function collectIfVisible(){const p=pages[state.current];if(p&&!p.review)collectCurrent(p)}
+function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)}
+$("exportBtn").onclick=exportDraft;
+$("importBtn").onclick=()=>$("importFile").click();
+$("importFile").onchange=e=>{
+const f=e.target.files?.[0];if(!f)return;
+const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result),incoming=o.state||o;if(!incoming||!incoming.data||typeof incoming.data!=="object")throw Error("Invalid backup format");if(!confirm("Import this backup and replace the draft currently saved in this browser? Export the current draft first if needed."))return;state={setRef:incoming.setRef||newRef("LOCAL"),current:Math.min(Number(incoming.current)||0,pages.length-1),data:incoming.data||{},pageState:incoming.pageState||{},updatedAt:new Date().toISOString()};persist();render();toast("Backup imported into this browser.");}catch(err){say("Could not import backup: "+err.message)}};
+r.readAsText(f);e.target.value="";
+};
+$("printBtn").onclick=()=>window.print();
+$("htmlBtn").onclick=()=>downloadBlob(new Blob(["<!doctype html>\n"+document.documentElement.outerHTML],{type:"text/html;charset=utf-8"}),"Donor-Trust-Quota-Preparation.html");
+$("shareBtn").onclick=async()=>{const payload={title:document.title,text:"Independent application preparation workspace.",url:location.href};try{if(navigator.share)await navigator.share(payload);else if(navigator.clipboard&&location.protocol.startsWith("http")){await navigator.clipboard.writeText(location.href);toast("Website link copied.")}else toast("Use your browser's Share menu to share this HTML file or its website link.");}catch(e){if(e.name!=="AbortError")toast("Sharing is unavailable here. Use Download HTML copy.")}};
+$("resetBtn").onclick=()=>{if(confirm("Erase this tool's saved data from this browser? This cannot be undone. Download a backup first if needed.")){try{localStorage.removeItem(KEY)}catch{}location.reload()}};
+try{const saved=localStorage.getItem(KEY);if(saved){const parsed=JSON.parse(saved);if(parsed&&parsed.data&&typeof parsed.data==="object")state={...state,...parsed}}}catch{}
+if(!state.setRef)state.setRef=newRef("LOCAL");
+state.current=Math.max(0,Math.min(Number(state.current)||0,pages.length-1));
+render();
+})();
+</script>
+</body>
+</html>
