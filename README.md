@@ -1,39 +1,392 @@
-# Donor / Trust Quota Application Preparation — Cloudflare Pages project
+Donor & Trust Quota Application Preparation System
 
-## Contents
-- `index.html`: black-and-white homepage, application wizard, instructions and privacy policy in one responsive page.
-- `functions/api/application/draft.js`: creates a server-side draft and access token.
-- `functions/api/application/page.js`: stores individual validated/consented page data.
-- `functions/api/application/submit.js`: finalizes the preparation set only when required pages have been saved.
-- `schema.sql`: D1 database schema.
+Project Documentation | Technical Overview, Security Standards & Deployment Guide
 
-## Important limits and accuracy
-This is an independent preparation tool, not an official WBMCC portal. The generated application/page/submission references are tracking IDs for this service only. The final submit endpoint records completion in this app; it does not submit to WBMCC. This starter does not upload file bytes: file inputs track file names only. Do not collect real applicant data until access, retention, deletion, security, legal and privacy requirements have been reviewed.
+Project detail	Description
+Project name	Donor & Trust Quota Application Preparation System
+Application type	Independent application-preparation and record-management platform
+Frontend	HTML, CSS and JavaScript
+Backend	Cloudflare Pages Functions
+Database	Cloudflare D1
+Database binding	APP_DB
+Source control	GitHub
+Deployment platform	Cloudflare Pages
+Primary purpose	Application preparation, draft management, consent recording and completion tracking
 
-## Deploy to Cloudflare Pages
-1. Upload the contents of this folder to the root of a GitHub repository connected to Cloudflare Pages. `index.html` must be at repository root.
-2. In Cloudflare dashboard, create a D1 database (e.g. `quota-preparation-db`).
-3. Run `schema.sql` against that D1 database using the D1 console or Wrangler.
-4. In Pages project → Settings → Functions → D1 database bindings, add binding name `APP_DB` and select your database.
-5. Redeploy. Cloudflare Pages Functions will expose:
-   - `POST /api/application/draft`
-   - `POST /api/application/page`
-   - `POST /api/application/submit`
-6. Test using fictional data first. If the API is not deployed, the browser will still save locally but server save/final submit will report an API error.
+⸻
 
-## Storage and security
-- Draft form data is saved locally in browser localStorage for convenience.
-- Server-side data is stored in D1 once the binding is configured.
-- The draft API issues a random access token; the client stores it locally and sends it in `X-Application-Token`. The server stores only its SHA-256 hash.
-- Treat the D1 database as sensitive. Configure access permissions, backups, retention/deletion policies, and monitor abuse before production use.
-- This version does not include an admin dashboard, email/SMS notifications, malware scanning, or file upload storage.
-- File names can be personal data. Do not upload sensitive documents to unverified recipients.
-- No official affiliation or authorization is claimed. Remove any claims of authorization unless independently substantiated.
+1. Executive Summary
 
+The Donor & Trust Quota Application Preparation System is an independent web application designed to help users prepare, organize, and maintain records associated with medical admission-related application processes.
 
-## Private admin page
-- Admin page path: `/private/index.html`.
-- Add a Cloudflare Pages secret named `ADMIN_SECRET` using a strong, newly generated password. Do not put the password in HTML or Git.
-- The admin endpoint is `GET /api/admin/applications`; it requires `Authorization: Bearer <ADMIN_SECRET>` and returns references/status only.
-- Additionally protect `/private/*` using Cloudflare Access. The HTML page is not itself a security boundary.
-- Do not use the token strings posted in chat as production credentials. Treat them as exposed and replace them. Never put reusable access tokens in public HTML or commit them to a public repository.
+The system combines a responsive browser-based interface with server-side application functions and a structured database. Its intended workflow supports draft creation, individual page saving, consent recording, validation of required information, and recording the completion of a preparation record.
+
+The project is structured to support future enhancements, including authorized administrative review, secure document storage, notification services, and more comprehensive application management.
+
+Independence and authorization disclaimer
+
+This application is an independent preparation service. It is not an official West Bengal Medical Counselling Committee (WBMCC) portal, government website, admission authority, or counselling platform.
+
+The application does not independently establish eligibility for donor or trust quota seats, guarantee admission, allocate seats, or submit applications to WBMCC.
+
+All references and completion records generated by this service are internal identifiers. They must not be represented as official government registration numbers, counselling references, or proof of admission.
+
+⸻
+
+2. Project Objectives
+
+The system is intended to provide a structured and accessible environment for preparing application information.
+
+Its primary objectives are:
+
+1. Structured data entry: Organize information into clearly defined application pages.
+2. Draft management: Allow users to begin an application and save progress.
+3. Server-side validation: Validate submitted data and enforce required workflow conditions.
+4. Consent recording: Record required acknowledgements and consent information.
+5. Completion tracking: Maintain an internal record of preparation completion.
+6. Data organization: Store application records in a structured D1 database.
+7. Access control: Protect application records and administrative functionality.
+8. Privacy-conscious operation: Minimize unnecessary collection and exposure of personal information.
+9. Maintainability: Separate frontend presentation, API functions, and database structure.
+10. Extensibility: Provide a foundation for future features that can be implemented and independently tested.
+
+These objectives describe the intended system design. Actual availability depends on the features implemented in the deployed code.
+
+⸻
+
+3. Technical Architecture
+
+The application follows a serverless architecture based on Cloudflare Pages, Pages Functions, and D1.
+
+```text
+USER / APPLICANT
+|
+v
++––––––––––+
+| Cloudflare Pages   |
+| Responsive Website |
+|      index.html    |
++––––––––––+
+|
+v
++––––––––––+
+| Pages Functions    |
+| /api/application/* |
++––––––––––+
+|
++———––+———––+
+|             |             |
+v             v             v
+Draft API     Page API      Submit API
+|             |             |
++———––+———––+
+|
+v
++––––––––––+
+| Cloudflare D1      |
+| Binding: APP_DB    |
++––––––––––+
+
+             Protected Administration
+                       |
+                       v
+             /api/admin/applications
+                       |
+                       v
+             Authentication and
+             Authorization Checks
+                       |
+                       v
+             Restricted Record Access
+### 3.1 Frontend layer
+The frontend provides the user-facing interface and application workflow.
+Its responsibilities include:
+- Displaying application instructions and the service disclaimer.
+- Presenting the multi-page application wizard.
+- Collecting information through structured form fields.
+- Providing client-side validation and navigation.
+- Recording user interactions needed for the application workflow.
+- Saving convenience drafts in browser storage where implemented.
+- Communicating with the server-side API.
+Client-side validation improves usability but must not replace server-side validation.
+### 3.2 Backend layer
+Cloudflare Pages Functions process API requests and perform server-side operations.
+Their responsibilities include:
+- Creating application drafts.
+- Issuing and validating application access tokens.
+- Validating page data and required fields.
+- Saving page data to the correct application record.
+- Verifying required consent records.
+- Enforcing completion requirements.
+- Returning controlled success and error responses.
+- Protecting administrative endpoints.
+The backend must independently enforce authorization and workflow rules. A user must not be able to access another person’s record merely by changing an application reference.
+### 3.3 Database layer
+Cloudflare D1 stores structured application information.
+The database is accessed through the configured `APP_DB` binding. The schema defines the relationships, constraints, and indexes required by the implemented application.
+Database access must use parameterized queries and server-side validation. Schema changes should be managed through a controlled migration process.
+—
+## 4. Repository Structure
+The expected project layout is:
+<escape>```text
+/
+├── index.html
+├── schema.sql
+├── functions/
+│   └── api/
+│       ├── application/
+│       │   ├── draft.js
+│       │   ├── page.js
+│       │   └── submit.js
+│       └── admin/
+│           └── applications.js
+└── private/
+    └── index.html
+```</escape>
+### File and directory descriptions
+**`index.html`**
+The main public interface. It contains the responsive homepage, application wizard, instructions, and privacy information.
+**`schema.sql`**
+Defines the database schema used to create the initial database structure. Where migrations have already been applied, subsequent schema improvements should be introduced through new migrations rather than repeatedly applying an incompatible initial schema.
+**`functions/api/application/draft.js`**
+Handles draft creation. The function should generate a cryptographically secure access token, store only an appropriate token hash, create the database record, and return the information required by the client.
+**`functions/api/application/page.js`**
+Handles saving individual application pages. The function should authenticate the request, validate the supplied data, verify application ownership or token authorization, and save the page through a controlled database operation.
+**`functions/api/application/submit.js`**
+Handles finalization of the preparation record. The function should verify required pages and consent records, prevent unauthorized or duplicate finalization, and record the completed state transactionally.
+**`functions/api/admin/applications.js`**
+Provides the administrative API for retrieving permitted application metadata. Access must be authenticated and authorized independently of the frontend interface.
+**`private/index.html`**
+The administrative interface. Its location or filename does not provide security by itself. Access must be restricted through Cloudflare Access or an equivalent authenticated access-control mechanism.
+### Routing convention
+Cloudflare Pages Functions use file-based routing. Verify that the filenames and directory structure produce the intended endpoints. The existence of a documented route does not prove that the route has been deployed successfully.
+—
+## 5. Application Lifecycle
+The preparation workflow is divided into six stages.
+### Stage 1 — Draft creation
+The client sends a request to:
+`POST /api/application/draft`
+The server creates a draft record, generates an internal application reference, and issues an access token.
+The raw token should be returned only when necessary for the client to continue the session. The server should retain only a cryptographic hash of the token.
+### Stage 2 — Information entry
+The user completes the application wizard, entering the information required by the configured workflow.
+The interface should explain mandatory fields, accepted formats, and any limitations on document handling.
+### Stage 3 — Page saving
+The client sends individual page data to:
+`POST /api/application/page`
+The server validates the request and verifies that the caller is authorized to modify the relevant draft before storing the information.
+Only explicitly supported page identifiers and validated data structures should be accepted.
+### Stage 4 — Consent and completeness validation
+Before finalization, the server checks that the required pages have been saved and that the required consent has been recorded.
+Consent records should identify the relevant notice or consent version and the acceptance event. Consent must not be inferred solely from a browser checkbox or an untrusted request field.
+### Stage 5 — Preparation completion
+The client sends a request to:
+`POST /api/application/submit`
+The server performs the final checks and records completion in the database.
+The operation should be designed to prevent partial completion, duplicate processing, and unauthorized changes to an already finalized record.
+### Stage 6 — Reference retention
+The user receives or retains the internal reference generated by the service.
+The reference helps identify the preparation record within this application. It is not evidence that an application has been submitted to an official authority.
+—
+## 6. API Specification
+| HTTP method | Endpoint | Responsibility |
+|—|—|—|
+| `POST` | `/api/application/draft` | Create a preparation draft |
+| `POST` | `/api/application/page` | Validate and save an application page |
+| `POST` | `/api/application/submit` | Validate and finalize preparation |
+| `GET` | `/api/admin/applications` | Retrieve authorized administrative metadata |
+### API design requirements
+Every endpoint should:
+- Accept only the intended HTTP method.
+- Validate content type, payload size, and field structure.
+- Reject invalid or missing authorization.
+- Return appropriate HTTP status codes.
+- Avoid exposing internal database errors to clients.
+- Avoid returning unnecessary personal information.
+- Use parameterized database statements.
+- Apply appropriate request limits and abuse prevention.
+- Record only the minimum necessary operational information.
+The administrative endpoint must verify the configured administrative credential on the server. If `ADMIN_SECRET` is used, it must be configured as a Cloudflare Pages secret and must never appear in public HTML, browser JavaScript, or committed repository files.
+—
+## 7. Database Configuration and Schema Management
+### 7.1 Database provisioning
+Create a Cloudflare D1 database, for example:
+`quota-preparation-db`
+Then configure the Pages Functions database binding:
+| Setting | Value |
+|—|—|
+| Binding name | `APP_DB` |
+| Database | The intended D1 database |
+| Environment | The corresponding deployment environment |
+The binding name must match the identifier used in the Functions code.
+### 7.2 Schema responsibilities
+The database schema should support the entities required by the implemented workflow, such as:
+- Application records.
+- Individual application-page records.
+- Consent records.
+- Document metadata.
+- Application status history.
+- Administrative accounts or authorization metadata.
+- Security audit events.
+- Generated-document metadata.
+- Notification jobs, if implemented.
+- Background jobs, if implemented.
+Only create or retain tables that are needed by the current design or an explicitly planned feature.
+### 7.3 Migration policy
+Database migrations must be treated as versioned changes to the existing database.
+If migrations have already been applied:
+1. Preserve the migration history.
+2. Confirm the actual deployed schema.
+3. Identify the specific improvement required.
+4. Create a new, forward-only migration.
+5. Test it against a development database with a representative schema.
+6. Verify data preservation and rollback or recovery procedures before production deployment.
+Do not rerun a consolidated initial schema against an existing database without first confirming that doing so is safe.
+### 7.4 Data integrity
+The database and server-side logic should jointly enforce:
+- Valid application states.
+- Consistent foreign-key relationships.
+- Unique identifiers where required.
+- Appropriate constraints on stored values.
+- Correct relationships between application records and page records.
+- Required consent before finalization.
+- Controlled application-state transitions.
+Client-side checks alone cannot guarantee data integrity.
+—
+## 8. Storage and Document Handling
+### 8.1 Browser-local storage
+The application may save draft data in `localStorage` to improve convenience.
+Browser storage is not a secure backup and is not automatically synchronized across devices. It may remain on a shared device or be removed when browser data is cleared.
+Sensitive applicant information should not be stored locally without a documented necessity, appropriate safeguards, and an assessment of the risk.
+### 8.2 Current document limitation
+The described starter records file names only. It does not upload the actual file contents to server-side storage.
+Accordingly, the application must not claim that applicant documents have been uploaded, verified, securely stored, or submitted when only their filenames have been recorded.
+### 8.3 Requirements for future upload support
+Before implementing real uploads, establish:
+- Private object storage or another suitable protected storage system.
+- Server-side file size and content validation.
+- Access control for every upload and download.
+- Randomized storage object keys.
+- Malware scanning or quarantine where appropriate.
+- Retention and deletion rules.
+- Protection against public or unauthorized file access.
+- A recovery process for accidental deletion or storage failure.
+Identity documents and signatures should be treated as sensitive information.
+—
+## 9. Security Architecture
+Security must be enforced at the server, database, storage, and deployment levels.
+### 9.1 Application authentication
+Application access tokens should be generated using a cryptographically secure random generator. Tokens should be sufficiently unpredictable and stored as hashes in the database.
+Tokens must not be embedded in public source files, logged, or placed in URLs.
+### 9.2 Record-level authorization
+Every operation involving a draft, page, document, or submission must verify that the request is authorized for that specific application record.
+An application reference is an identifier, not proof of authorization.
+### 9.3 Administrative protection
+The administrative API should use a strong secret or a suitable identity-based authentication mechanism.
+The administrative interface should additionally be protected using Cloudflare Access or equivalent access controls. The server must still authorize every administrative API request.
+### 9.4 Input and request security
+Implement:
+- Strict field and data-type validation.
+- Request-body size limits.
+- Appropriate rate limiting.
+- Safe error handling.
+- Parameterized SQL statements.
+- Protection against cross-origin abuse.
+- Appropriate CSRF protections where cookie-based authentication is used.
+- Security headers where supported.
+- Controlled logging and redaction.
+### 9.5 Secret management
+Configure production credentials through Cloudflare’s secret-management facilities.
+Never commit secrets, raw access tokens, database credentials, or private keys to GitHub. Rotate credentials that have been exposed.
+### 9.6 Audit and monitoring
+Administrative and security-sensitive operations should be recorded using appropriately restricted audit records.
+Logs should avoid unnecessary personal information and must not expose credentials or document contents.
+—
+## 10. Privacy, Retention, and Data Governance
+Before collecting genuine applicant information, establish a documented privacy and data-handling policy.
+The policy should explain:
+- Who operates the service.
+- What information is collected and why.
+- Which information is stored locally and which is stored on the server.
+- How the information is used.
+- Which service providers process the information.
+- How long records are retained.
+- How users can request access, correction, or deletion where applicable.
+- How information is protected.
+- How incidents and unauthorized access are handled.
+- What the service does and does not submit to official authorities.
+Retention periods must be justified by the actual purpose and applicable obligations. Deletion mechanisms must account for database records, object storage, backups, and relevant audit requirements.
+Do not collect genuine applicant information until the applicable legal, privacy, security, and operational requirements have been reviewed.
+—
+## 11. Deployment Guide
+### Step 1 — Prepare the repository
+Place the project files in the root of the GitHub repository connected to Cloudflare Pages.
+Verify that `index.html` is located at the repository root and that all Functions use the expected paths.
+### Step 2 — Create the D1 database
+Create the database through the Cloudflare dashboard or the supported Wrangler workflow.
+Confirm that the intended environment and database have been selected.
+### Step 3 — Apply database migrations
+Apply the initial schema only when provisioning a new database that does not already contain the schema.
+For an existing database, preserve the applied migration history and apply only the required new migration.
+### Step 4 — Configure the database binding
+In the Pages project settings, configure:
+`APP_DB` → the intended D1 database.
+Check that the binding is available to the deployment environment used by the Functions.
+### Step 5 — Configure administrative secrets
+Create a strong, unique `ADMIN_SECRET` through Cloudflare’s secret configuration.
+Never place it in the administrative HTML page, public JavaScript, `schema.sql`, or a committed configuration file.
+Configure Cloudflare Access to restrict access to the private administrative interface.
+### Step 6 — Deploy
+Deploy the connected repository through Cloudflare Pages.
+Verify that the static files and Functions are deployed together and that the API routes resolve correctly.
+### Step 7 — Run acceptance tests
+Use fictional information to test draft creation, page saving, authorization, consent validation, completion, and administrative access.
+Confirm that missing bindings, invalid requests, and database failures produce safe, understandable errors.
+—
+## 12. Testing and Acceptance Criteria
+Before production use, verify the following:
+### Frontend
+- [ ] The homepage renders correctly on mobile and desktop.
+- [ ] The application wizard provides clear navigation.
+- [ ] Required fields and input formats are validated.
+- [ ] The independent-service disclaimer is visible.
+- [ ] File inputs accurately explain whether files are uploaded or only recorded by name.
+### Backend
+- [ ] Draft creation works with the correct D1 binding.
+- [ ] Access tokens are generated securely.
+- [ ] Invalid or missing tokens are rejected.
+- [ ] Page data is validated on the server.
+- [ ] Users cannot modify unrelated application records.
+- [ ] Required pages and consent are checked before finalization.
+- [ ] Finalization handles duplicate requests safely.
+- [ ] Database failures do not expose internal details.
+### Administration
+- [ ] The administrative interface is access-restricted.
+- [ ] The administrative API rejects unauthorized requests.
+- [ ] Returned metadata is limited to the intended fields.
+- [ ] Administrative actions are appropriately logged.
+### Privacy and operations
+- [ ] No secrets are exposed in client-side files.
+- [ ] Sensitive information is not unnecessarily logged.
+- [ ] Retention and deletion policies are documented.
+- [ ] Backup and recovery procedures have been reviewed.
+- [ ] The deployed configuration matches the intended environment.
+—
+## 13. Current Scope and Exclusions
+The current starter is intended for preparation and record management. The following capabilities are not provided merely by deploying the documented project structure:
+- Official WBMCC submission.
+- Official admission or seat allocation.
+- Verified authority to offer donor or trust quota seats.
+- Actual document-byte uploads.
+- Private document storage and download authorization.
+- Malware scanning or document verification.
+- Email or SMS notifications.
+- A complete administrative case-management system.
+- A guarantee of admission, eligibility, or approval.
+These capabilities must be separately implemented, tested, and accurately described before being offered to users.
+—
+## 14. Production Readiness
+The project should be considered **not yet production-verified** until the deployed database binding, API endpoints, authorization controls, consent validation, data integrity, privacy protections, and operational recovery procedures have been tested.
+Production readiness requires more than a successful deployment. It requires evidence that the system behaves securely under normal requests, invalid requests, unauthorized access attempts, duplicate submissions, and infrastructure failures.
+The application should be presented transparently as an independent preparation service. All user-facing descriptions and consent statements must accurately explain the operator, the purpose of data collection, the storage arrangements, the service’s limitations, and the meaning of application completion.
+**Final principle:** The system should record only what it can verify, protect only what it has secured, and claim only what it actually does.

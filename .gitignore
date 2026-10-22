@@ -1,10 +1,23 @@
 
-# =========================================================
+# ==========================================================
 # Donor Trust Quota Application
-# Secure, production-oriented Git ignore rules
-# =========================================================
+# Security-focused Git ignore rules
+# File: .gitignore
+# ==========================================================
+#
+# Protect secrets, applicant information, local databases,
+# uploaded documents, generated PDFs and runtime artifacts.
+#
+# IMPORTANT:
+# .gitignore does not remove files already tracked by Git.
+# Never commit production secrets or real applicant documents.
+# ==========================================================
 
+
+# ----------------------------------------------------------
 # 1. Dependencies
+# ----------------------------------------------------------
+
 node_modules/
 jspm_packages/
 bower_components/
@@ -16,7 +29,11 @@ vendor/
 .yarn/unplugged/
 .yarn/build-state.yml
 
+
+# ----------------------------------------------------------
 # 2. Environment files and secrets
+# ----------------------------------------------------------
+
 .env
 .env.*
 !.env.example
@@ -25,14 +42,16 @@ vendor/
 .dev.vars
 .dev.vars.*
 
+# Local secret and credential directories
 secrets/
 .secret/
 .credentials/
+
 credentials.json
 service-account*.json
 *-service-account*.json
 
-# Private keys and certificates
+# Private keys, certificates and keystores
 *.pem
 *.key
 *.p12
@@ -40,13 +59,19 @@ service-account*.json
 *.keystore
 *.jks
 
-# Local credentials and tokens
+# Local authentication and package-manager credentials
 .netrc
 .npmrc
 !.npmrc.example
+
+# Local AI/editor configuration may contain credentials
 .claude/settings.local.json
 
-# 3. Private applicant files
+
+# ----------------------------------------------------------
+# 3. Private applicant files and document storage
+# ----------------------------------------------------------
+
 uploads/
 private-uploads/
 private-generated/
@@ -62,31 +87,46 @@ document-exports/
 private-documents/
 generated-pdfs/
 
-# Generated applicant data
+# Applicant data exports
 *.applicant-data.json
 
-# Temporary or incomplete uploads
+# Temporary and incomplete uploads
 *.part
 *.partial
 *.upload
 
+
+# ----------------------------------------------------------
 # 4. Local databases and backups
+# ----------------------------------------------------------
+
 *.sqlite
 *.sqlite3
 *.db
 *.db-journal
 *.sqlite-journal
 *.sqlite3-journal
+
+# Database exports and backups
 *.dump
 *.bak
 *.backup
+*.sql.gz
+*.dump.gz
 
-# Keep schema.sql and reviewed database migrations tracked.
+# Do not blanket-ignore *.sql:
+# reviewed schema files and migrations should remain tracked.
+# Never commit database dumps containing real applicant data.
 
+
+# ----------------------------------------------------------
 # 5. Logs and runtime artifacts
+# ----------------------------------------------------------
+
 *.log
 logs/
 log/
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -98,35 +138,52 @@ lerna-debug.log*
 pids/
 *.seed
 
+
+# ----------------------------------------------------------
 # 6. Build outputs and framework caches
+# ----------------------------------------------------------
+
 dist/
 build/
 out/
+
 .next/
 .nuxt/
 .nitro/
 .output/
 .svelte-kit/
 .angular/
+
 .parcel-cache/
 .turbo/
 .rpt2_cache/
+
 .eslintcache
 .stylelintcache
 *.tsbuildinfo
 
+
+# ----------------------------------------------------------
 # 7. Test output and coverage
+# ----------------------------------------------------------
+
 coverage/
 .nyc_output/
 test-results/
 playwright-report/
 blob-report/
+
 cypress/videos/
 cypress/screenshots/
+
 junit.xml
 *.lcov
 
+
+# ----------------------------------------------------------
 # 8. Hosting and infrastructure caches
+# ----------------------------------------------------------
+
 .wrangler/
 .vercel/
 .netlify/
@@ -134,24 +191,36 @@ junit.xml
 .terraform/
 .terragrunt-cache/
 
-# Terraform state and real secret variable files
+# Terraform state and real variable files
 *.tfstate
 *.tfstate.*
 *.tfvars
 *.tfvars.json
+
+# Allow reviewed example templates only
 !*.tfvars.example
 
+
+# ----------------------------------------------------------
 # 9. Operating system files
+# ----------------------------------------------------------
+
 .DS_Store
 .AppleDouble
 .LSOverride
+
 Thumbs.db
 Thumbs.db:encryptable
 Desktop.ini
 $RECYCLE.BIN/
 
-# 10. Editor and IDE files
+
+# ----------------------------------------------------------
+# 10. Editors and IDEs
+# ----------------------------------------------------------
+
 .idea/
+
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
@@ -162,28 +231,42 @@ $RECYCLE.BIN/
 *.orig
 *.rej
 
+
+# ----------------------------------------------------------
 # 11. Temporary files and caches
+# ----------------------------------------------------------
+
 .cache/
 .temp/
 .tmp/
 temp/
 tmp/
+
 *.tmp
 *.temp
 *.bak~
 *.old
 
-# 12. Local-only certificates and reports
+
+# ----------------------------------------------------------
+# 12. Local-only certificates and private reports
+# ----------------------------------------------------------
+
 certs/private/
 certificates/private/
 security-reports/private/
 
-# Do not blanket-ignore *.sarif:
-# reviewed security reports may belong in version control.
 
-# 13. Preserve essential project configuration
-# These files are not ignored by the rules above, so explicit
-# exceptions are unnecessary:
+# Do not blanket-ignore *.sarif.
+# Reviewed security reports may belong in version control.
+
+
+# ----------------------------------------------------------
+# 13. Preserve reviewed project configuration
+# ----------------------------------------------------------
+#
+# These files are not ignored by the rules above:
+#
 # package.json
 # package-lock.json
 # pnpm-lock.yaml
@@ -192,3 +275,9 @@ security-reports/private/
 # render.yml
 # README.md
 # .gitignore
+#
+# Do not add !/.env here.
+# .env must remain ignored.
+# ==========================================================
+!/.env
+

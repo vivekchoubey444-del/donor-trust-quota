@@ -1,42 +1,38 @@
-
 {
-  "name": "donor-trust-quota",
-  "version": "1.2.0",
-  "private": true,
-  "description": "Independent Donor Trust Quota application proposal and API",
-  "license": "UNLICENSED",
-  "main": "server.js",
-  "type": "commonjs",
-  "engines": {
-    "node": ">=20"
-  },
-  "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js",
+"name": "donor-trust-quota",
+"version": "1.2.1",
+"private": true,
+"description": "Independent Donor Trust Quota application proposal and API",
+"license": "UNLICENSED",
+"main": "server.js",
+"type": "commonjs",
+"engines": {
+"node": ">=20"
+},
+"scripts": {
+"start": "node server.js",
+"dev": "node –watch server.js",
 
-    "check": "node --check server.js",
-    "check:all": "node --check server.js && node --test",
+"check": "node --check server.js",
+"check:all": "npm run check && node --test",
+"test": "node --test",
+"test:watch": "node --test --watch",
+"db:check": "node scripts/db-check.js",
+"db:migrate": "node scripts/migrate.js",
+"audit": "npm audit",
+"audit:fix": "npm audit fix",
+"outdated": "npm outdated",
+"security:check": "npm audit --omit=dev",
+"verify": "npm run check:all && npm run security:check"
 
-    "test": "node --test",
-    "test:watch": "node --test --watch",
-
-    "db:check": "node scripts/db-check.js",
-    "db:migrate": "node scripts/migrate.js",
-
-    "audit": "npm audit",
-    "audit:fix": "npm audit fix",
-    "outdated": "npm outdated",
-
-    "security:check": "npm audit --omit=dev",
-    "verify": "npm run check && npm test && npm audit"
-  },
-  "dependencies": {
-    "express": "^5.1.0",
-    "express-rate-limit": "^8.1.0",
-    "helmet": "^8.1.0",
-    "pg": "^8.16.3"
-  },
-  "devDependencies": {
-    "supertest": "^7.1.4"
-  }
+},
+"dependencies": {
+"express": "^5.1.0",
+"express-rate-limit": "^8.1.0",
+"helmet": "^8.1.0",
+"pg": "^8.16.3"
+},
+"devDependencies": {
+"supertest": "^7.1.4"
+}
 }

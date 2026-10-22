@@ -1,92 +1,158 @@
 
-"use strict";
+'use strict';
 
-const crypto = require("node:crypto");
-const express = require("express");
+const crypto = require('node:crypto');
+const express = require('express');
 
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 100;
+const MAX_TOKEN_LENGTH = 8192;
+
+const SECURITY_HEADERS = Object.freeze({
+  'Cache-Control': 'no-store, no-cache, must-revalidate, private',
+  Pragma: 'no-cache',
+  Expires: '0',
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'X-Robots-Tag': 'noindex, nofollow, noarchive',
+  'Referrer-Policy': 'no-referrer',
+  'Cross-Origin-Resource-Policy': 'same-origin',
+});
+
+function jsonResponse(res, status, payload) {
+  res.set(SECURITY_HEADERS);
+  return res.status(status).json(payload);
+}
 
 function safeTokenEqual(provided, expected) {
   if (
-    typeof provided !== "string" ||
-    typeof expected !== "string" ||
-    !provided ||
-    !expected
+    typeof provided !== 'string' ||
+    typeof expected !== 'string' ||
+    provided.length === 0 ||
+    expected.length === 0 ||
+    Buffer.byteLength(provided, 'utf8') > MAX_TOKEN_LENGTH ||
+    Buffer.byteLength(expected, 'utf8') > MAX_TOKEN_LENGTH
   ) {
     return false;
   }
 
-  const a = Buffer.from(provided, "utf8");
-  const b = Buffer.from(expected, "utf8");
+  const providedDigest = crypto
+    .createHash('sha256')
+    .update(provided, 'utf8')
+    .digest();
 
-  return (
-    a.length === b.length &&
-    crypto.timingSafeEqual(a, b)
+  const expectedDigest = crypto
+    .createHash('sha256')
+    .update(expected, 'utf8')
+    .digest();
+
+  const digestMatches = crypto.timingSafeEqual(
+    providedDigest,
+    expectedDigest
   );
+
+  const lengthsMatch =
+    Buffer.byteLength(provided, 'utf8') ===
+    Buffer.byteLength(expected, 'utf8');
+
+  return digestMatches && lengthsMatch;
 }
 
 function extractBearerToken(req) {
-  const header = req.get("authorization") || "";
-  const match = /^Bearer ([^\s]+)$/.exec(header);
-  return match ? match[1] : "";
+  const header = req.get('authorization') || '';
+  const match = /^Bearer ([^\s]+)$/i.exec(header);
+
+  return match ? match[1] : '';
+}
+
+function parseLimit(rawLimit) {
+  if (rawLimit === undefined) {
+    return { ok: true, value: DEFAULT_LIMIT };
+  }
+
+  // Reject duplicate query parameters, arrays and non-decimal values.
+  if (
+    typeof rawLimit !== 'string' ||
+    !/^(?:[1-9]\d{0,2})$/.test(rawLimit)
+  ) {
+    return { ok: false };
+  }
+
+  const value = Number(rawLimit);
+
+  if (!Number.isSafeInteger(value) || value < 1 || value > MAX_LIMIT) {
+    return { ok: false };
+  }
+
+  return { ok: true, value };
+}
+
+function toIsoTimestamp(value) {
+  if (value === null || value === undefined) {
+    return null;
+  }
+
+  const date = value instanceof Date ? value : new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  return date.toISOString();
 }
 
 function createAdminAuditLogRouter(pool, options = {}) {
-  if (!pool || typeof pool.query !== "function") {
-    throw new TypeError("A PostgreSQL pool is required.");
+  if (!pool || typeof pool.query !== 'function') {
+    throw new TypeError('A PostgreSQL pool is required.');
   }
 
-  const configuredToken = String(
-    options.adminToken || process.env.ADMIN_API_TOKEN || ""
-  ).trim();
+  const suppliedToken =
+    options.adminToken ?? process.env.ADMIN_API_TOKEN ?? '';
+
+  const configuredToken =
+    typeof suppliedToken === 'string' ? suppliedToken.trim() : '';
+
+  const logger = options.logger ?? console;
+
+  if (logger && typeof logger.error !== 'function') {
+    throw new TypeError('logger.error must be a function.');
+  }
 
   const router = express.Router();
 
-  router.get("/audit-log", async (req, res) => {
-    res.set({
-      "Cache-Control": "no-store, no-cache, must-revalidate",
-      "Pragma": "no-cache",
-      "X-Content-Type-Options": "nosniff",
-      "X-Robots-Tag": "noindex, nofollow"
-    });
+  // Apply headers to all responses handled by this router.
+  router.use((req, res, next) => {
+    res.set(SECURITY_HEADERS);
+    next();
+  });
 
+  router.get('/audit-log', async (req, res) => {
     if (!configuredToken) {
-      return res.status(503).json({
+      return jsonResponse(res, 503, {
         ok: false,
-        message: "Admin authentication is not configured."
+        error: 'admin_auth_not_configured',
+        message: 'Admin authentication is not configured.',
       });
     }
 
-    if (!safeTokenEqual(extractBearerToken(req), configuredToken)) {
-      return res.status(401).json({
+    const providedToken = extractBearerToken(req);
+
+    if (!safeTokenEqual(providedToken, configuredToken)) {
+      return jsonResponse(res, 401, {
         ok: false,
-        message: "Administrator authentication failed."
+        error: 'authentication_failed',
+        message: 'Administrator authentication failed.',
       });
     }
 
-    const rawLimit = req.query.limit;
+    const parsedLimit = parseLimit(req.query.limit);
 
-    let limit = DEFAULT_LIMIT;
-
-    if (rawLimit !== undefined) {
-      const value = String(rawLimit);
-
-      if (!/^\d{1,3}$/.test(value)) {
-        return res.status(400).json({
-          ok: false,
-          message: "The limit must be an integer between 1 and 100."
-        });
-      }
-
-      limit = Number(value);
-
-      if (limit < 1 || limit > MAX_LIMIT) {
-        return res.status(400).json({
-          ok: false,
-          message: "The limit must be between 1 and 100."
-        });
-      }
+    if (!parsedLimit.ok) {
+      return jsonResponse(res, 400, {
+        ok: false,
+        error: 'invalid_limit',
+        message: 'The limit must be an integer between 1 and 100.',
+      });
     }
 
     try {
@@ -98,34 +164,62 @@ function createAdminAuditLogRouter(pool, options = {}) {
            reason,
            created_at
          FROM admin_audit_log
-         ORDER BY created_at DESC, id DESC
+         ORDER BY created_at DESC NULLS LAST, id DESC
          LIMIT $1`,
-        [limit]
+        [parsedLimit.value]
       );
 
-      const entries = result.rows.map((row) => ({
-        id: String(row.id),
-        requestId: row.request_id,
-        action: row.action,
-        reason: row.reason,
-        createdAt: new Date(row.created_at).toISOString()
-      }));
+      if (!result || !Array.isArray(result.rows)) {
+        throw new Error('Invalid database result.');
+      }
 
-      return res.status(200).json({
+      const entries = result.rows.map((row) => {
+        const createdAt = toIsoTimestamp(row.created_at);
+
+        if (
+          row.id === null ||
+          row.id === undefined ||
+          typeof row.request_id !== 'string' ||
+          typeof row.action !== 'string' ||
+          typeof row.reason !== 'string' ||
+          createdAt === null
+        ) {
+          throw new Error('Invalid audit record.');
+        }
+
+        return {
+          id: String(row.id),
+          requestId: row.request_id,
+          action: row.action,
+          reason: row.reason,
+          createdAt,
+        };
+      });
+
+      return jsonResponse(res, 200, {
         ok: true,
         count: entries.length,
-        entries
+        entries,
       });
     } catch (error) {
-      // Keep database diagnostics server-side.
-      console.error("Admin audit-log query failed:", {
-        name: error && error.name,
-        code: error && error.code
-      });
+      // Never log authorization headers, tokens or audit reasons.
+      try {
+        logger.error('Admin audit-log query failed.', {
+          name: error && error.name
+            ? String(error.name)
+            : 'Error',
+          code: error && error.code
+            ? String(error.code)
+            : 'INTERNAL_ERROR',
+        });
+      } catch {
+        // A logging failure must not expose internal details.
+      }
 
-      return res.status(503).json({
+      return jsonResponse(res, 503, {
         ok: false,
-        message: "Unable to retrieve the audit log."
+        error: 'audit_log_unavailable',
+        message: 'Unable to retrieve the audit log.',
       });
     }
   });
@@ -133,4 +227,9 @@ function createAdminAuditLogRouter(pool, options = {}) {
   return router;
 }
 
-module.exports = { createAdminAuditLogRouter };
+module.exports = {
+  createAdminAuditLogRouter,
+  safeTokenEqual,
+  extractBearerToken,
+  parseLimit,
+};

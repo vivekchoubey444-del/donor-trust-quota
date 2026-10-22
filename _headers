@@ -1,75 +1,202 @@
+============================================================
+
+Donor & Trust Quota Application Preparation System
+
+Cloudflare Pages HTTP Security Headers
+
+File: _headers
+
+============================================================
+
+Purpose:
+
+Apply browser security, cache-control and indexing policies.
+
+Important:
+
+Headers are defense in depth. They do not replace authentication,
+
+authorization, input validation, CSRF protection or secure storage.
+
+Verify these rules against the actual deployed routes and assets.
+
+Cloudflare Pages _headers rules do not apply to responses generated
+
+by Pages Functions in every circumstance; verify function responses
+
+and set required headers in the function code where necessary.
+
+============================================================
+
+----------------------------------------
+
+1. GLOBAL SECURITY HEADERS
+
+----------------------------------------
 
 /*
-  X-Content-Type-Options: nosniff
-  X-Frame-Options: DENY
-  Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
-  X-Permitted-Cross-Domain-Policies: none
-  X-DNS-Prefetch-Control: off
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+Referrer-Policy: strict-origin-when-cross-origin
+Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+X-Permitted-Cross-Domain-Policies: none
+X-DNS-Prefetch-Control: off
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+
+----------------------------------------
+
+2. TRANSPORT SECURITY
+
+----------------------------------------
+
+Enable HSTS only after HTTPS works throughout the production domain
+
+and all relevant subdomains. Do not add includeSubDomains or preload
+
+until every affected subdomain is permanently HTTPS-compatible.
+
+/*
+Strict-Transport-Security: max-age=31536000
+
+----------------------------------------
+
+3. HOMEPAGE
+
+----------------------------------------
 
 /
-  Cache-Control: no-cache, max-age=0, must-revalidate
+Cache-Control: no-cache, max-age=0, must-revalidate
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+
+----------------------------------------
+
+4. HTML PAGES
+
+----------------------------------------
 
 /*.html
-  Cache-Control: no-cache, max-age=0, must-revalidate
+Cache-Control: no-cache, max-age=0, must-revalidate
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+
+----------------------------------------
+
+5. APPLICATION API
+
+----------------------------------------
 
 /api
-  Cache-Control: no-store, no-cache, must-revalidate, private
-  Pragma: no-cache
-  X-Robots-Tag: noindex, nofollow, noarchive
-  X-Content-Type-Options: nosniff
+Cache-Control: no-store, no-cache, must-revalidate, private
+Pragma: no-cache
+X-Robots-Tag: noindex, nofollow, noarchive
+X-Content-Type-Options: nosniff
+Cross-Origin-Resource-Policy: same-origin
 
 /api/*
-  Cache-Control: no-store, no-cache, must-revalidate, private
-  Pragma: no-cache
-  X-Robots-Tag: noindex, nofollow, noarchive
-  X-Content-Type-Options: nosniff
-  Cross-Origin-Resource-Policy: same-origin
+Cache-Control: no-store, no-cache, must-revalidate, private
+Pragma: no-cache
+X-Robots-Tag: noindex, nofollow, noarchive
+X-Content-Type-Options: nosniff
+Cross-Origin-Resource-Policy: same-origin
+
+----------------------------------------
+
+6. ADMINISTRATION ROUTES
+
+----------------------------------------
 
 /admin
-  Cache-Control: no-store, no-cache, must-revalidate, private
-  X-Robots-Tag: noindex, nofollow, noarchive
-  X-Content-Type-Options: nosniff
+Cache-Control: no-store, no-cache, must-revalidate, private
+X-Robots-Tag: noindex, nofollow, noarchive
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
 
 /admin/*
-  Cache-Control: no-store, no-cache, must-revalidate, private
-  X-Robots-Tag: noindex, nofollow, noarchive
-  X-Content-Type-Options: nosniff
+Cache-Control: no-store, no-cache, must-revalidate, private
+X-Robots-Tag: noindex, nofollow, noarchive
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+
+----------------------------------------
+
+7. PRIVATE INTERFACE
+
+----------------------------------------
 
 /private
-  Cache-Control: no-store, no-cache, must-revalidate, private
-  X-Robots-Tag: noindex, nofollow, noarchive
-  X-Content-Type-Options: nosniff
+Cache-Control: no-store, no-cache, must-revalidate, private
+Pragma: no-cache
+X-Robots-Tag: noindex, nofollow, noarchive
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
 
 /private/*
-  Cache-Control: no-store, no-cache, must-revalidate, private
-  X-Robots-Tag: noindex, nofollow, noarchive
-  X-Content-Type-Options: nosniff
-  X-Frame-Options: DENY
+Cache-Control: no-store, no-cache, must-revalidate, private
+Pragma: no-cache
+X-Robots-Tag: noindex, nofollow, noarchive
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+
+----------------------------------------
+
+8. PRIVATE ADMINISTRATION ALIAS
+
+----------------------------------------
 
 /private-admin
-  Cache-Control: no-store, no-cache, must-revalidate, private
-  X-Robots-Tag: noindex, nofollow, noarchive
-  X-Content-Type-Options: nosniff
+Cache-Control: no-store, no-cache, must-revalidate, private
+Pragma: no-cache
+X-Robots-Tag: noindex, nofollow, noarchive
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
 
 /private-admin/*
-  Cache-Control: no-store, no-cache, must-revalidate, private
-  X-Robots-Tag: noindex, nofollow, noarchive
-  X-Content-Type-Options: nosniff
+Cache-Control: no-store, no-cache, must-revalidate, private
+Pragma: no-cache
+X-Robots-Tag: noindex, nofollow, noarchive
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+
+----------------------------------------
+
+9. STATIC ASSETS
+
+----------------------------------------
 
 /assets/*
-  X-Content-Type-Options: nosniff
+X-Content-Type-Options: nosniff
 
 /assets/*.js
-  X-Content-Type-Options: nosniff
+X-Content-Type-Options: nosniff
 
 /assets/*.css
-  X-Content-Type-Options: nosniff
+X-Content-Type-Options: nosniff
 
 /assets/*.svg
-  X-Content-Type-Options: nosniff
+X-Content-Type-Options: nosniff
 
 /assets/*.json
-  Cache-Control: no-cache, max-age=0, must-revalidate
-  X-Content-Type-Options: nosniff
-  X-Frame-Options: DENY
+Cache-Control: no-cache, max-age=0, must-revalidate
+X-Content-Type-Options: nosniff
+
+----------------------------------------
+
+10. SOURCE MAPS
+
+----------------------------------------
+
+Do not publish source maps containing source code or sensitive
+
+build information. Exclude them from deployment unless needed.
+
+/assets/*.map
+X-Robots-Tag: noindex, nofollow, noarchive
+Cache-Control: no-store, private
+
+============================================================
+
+END OF SECURITY HEADERS
+
+============================================================

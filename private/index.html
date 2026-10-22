@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -6,156 +7,556 @@
   <meta name="theme-color" content="#080909">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="dark">
   <title>Owner's Atelier | Donor Quota Trust</title>
+
   <style>
     :root {
-      color-scheme:dark;
-      --black:#080909;--panel:#111414;--gold:#d9b66b;
-      --gold-light:#f4df9d;--ink:#f4f0e6;--muted:#a6a397;
-      --line:rgba(219,187,112,.17);--green:#a8d9ad;
-      --red:#f1a39b;--amber:#f0ce7b;--radius:20px;
+      color-scheme: dark;
+      --black: #080909;
+      --panel: #111414;
+      --gold: #d9b66b;
+      --gold-light: #f4df9d;
+      --ink: #f4f0e6;
+      --muted: #a6a397;
+      --line: rgba(219,187,112,.17);
+      --green: #a8d9ad;
+      --red: #f1a39b;
+      --amber: #f0ce7b;
+      --radius: 20px;
     }
-    *{box-sizing:border-box}
-    html{min-height:100%;background:var(--black);scroll-behavior:smooth}
-    body{
-      margin:0;min-height:100vh;color:var(--ink);
-      background:radial-gradient(ellipse at 12% 0%,rgba(142,105,43,.12),transparent 34rem),
-      radial-gradient(ellipse at 95% 24%,rgba(218,182,105,.065),transparent 31rem),
-      linear-gradient(145deg,#080909,#0d0f0e 55%,#090a0a);
-      font:14px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-      -webkit-font-smoothing:antialiased
+
+    * { box-sizing: border-box; }
+
+    html {
+      min-height: 100%;
+      background: var(--black);
+      scroll-behavior: smooth;
     }
-    button,input,select{font:inherit}
-    button{cursor:pointer}
-    button:disabled{opacity:.5;cursor:not-allowed}
-    button:focus-visible,input:focus-visible,select:focus-visible{
-      outline:2px solid var(--gold-light);outline-offset:3px
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse at 12% 0%, rgba(142,105,43,.12), transparent 34rem),
+        radial-gradient(ellipse at 95% 24%, rgba(218,182,105,.065), transparent 31rem),
+        linear-gradient(145deg, #080909, #0d0f0e 55%, #090a0a);
+      font: 14px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
     }
-    code,.ref{color:#ebd8a5;overflow-wrap:anywhere}
-    .topbar{border-bottom:1px solid var(--line);background:rgba(8,9,9,.85)}
-    .top-inner,main{max-width:1220px;margin:auto}
-    .top-inner{
-      min-height:82px;padding:16px 24px;display:flex;align-items:center;
-      justify-content:space-between;gap:15px
+
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 2px solid var(--gold-light);
+      outline-offset: 3px;
     }
-    .brand{display:flex;align-items:center;gap:13px;min-width:0}
-    .brand-mark{
-      width:45px;height:45px;display:grid;place-items:center;
-      border:1px solid #8d6a2d;border-radius:14px;color:var(--gold-light);
-      background:#12120f;font-size:22px;flex-shrink:0
+
+    code, .ref {
+      color: #ebd8a5;
+      overflow-wrap: anywhere;
     }
-    .brand-name{font:500 18px Georgia,serif}
-    .brand-sub{color:var(--muted);font-size:10px;letter-spacing:1.3px;text-transform:uppercase}
-    .owner-pill,.connection,.mini-label{
-      display:inline-flex;align-items:center;gap:8px;
-      border:1px solid var(--line);border-radius:999px;padding:7px 11px;
-      color:#e7d8ad;background:rgba(211,178,105,.05);
-      font-size:10px;letter-spacing:.7px
+
+    .topbar {
+      border-bottom: 1px solid var(--line);
+      background: rgba(8,9,9,.85);
     }
-    .owner-dot,.connection-dot{
-      width:7px;height:7px;border-radius:50%;background:var(--gold)
+
+    .top-inner, main {
+      max-width: 1220px;
+      margin: auto;
     }
-    main{padding:38px 24px 55px}
-    .hero,.section-title,.card-heading{
-      display:flex;align-items:flex-end;justify-content:space-between;gap:18px
+
+    .top-inner {
+      min-height: 82px;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
     }
-    .hero{margin-bottom:27px}
-    .eyebrow{margin:0 0 10px;color:var(--gold);font-size:10px;font-weight:800;letter-spacing:2.3px;text-transform:uppercase}
-    h1,h2,h3,p{margin-top:0}
-    h1{margin-bottom:12px;font:400 clamp(34px,5vw,54px)/1.1 Georgia,serif;letter-spacing:-1.3px}
-    h2{font:400 23px Georgia,serif}
-    .gold-text{color:var(--gold-light)}
-    .intro{max-width:620px;color:#aaa79c;line-height:1.8}
-    .route,.help{color:#929187;font-size:11px;line-height:1.75}
-    .route{margin:12px 0 0}
-    .connection{color:#b7b3a6;white-space:nowrap}
-    .connection.secure{color:var(--green);border-color:rgba(142,203,152,.25)}
-    .connection.secure .connection-dot{background:var(--green)}
-    .layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:18px}
-    .card{
-      min-width:0;padding:24px;border:1px solid var(--line);
-      border-radius:var(--radius);
-      background:linear-gradient(140deg,rgba(255,255,255,.025),transparent 42%),rgba(22,23,20,.88);
-      box-shadow:0 20px 60px rgba(0,0,0,.2)
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      min-width: 0;
     }
-    .card-heading{align-items:flex-start;margin-bottom:20px}
-    .card-heading h2{margin-bottom:5px}
-    .card-heading p,.section-title p{margin:4px 0 0;color:var(--muted);font-size:12px}
-    .mini-label{font-size:9px;font-weight:800;text-transform:uppercase;white-space:nowrap}
-    label{display:block;margin-bottom:8px;color:#dedbd0;font-size:12px;font-weight:650}
-    .field{margin-bottom:15px}
-    input,select{
-      width:100%;min-width:0;min-height:45px;padding:11px 13px;
-      border:1px solid rgba(219,187,112,.2);border-radius:11px;
-      background:#0b0d0d;color:var(--ink)
+
+    .brand-mark {
+      width: 45px;
+      height: 45px;
+      display: grid;
+      place-items: center;
+      border: 1px solid #8d6a2d;
+      border-radius: 14px;
+      color: var(--gold-light);
+      background: #12120f;
+      font-size: 22px;
+      flex-shrink: 0;
     }
-    input::placeholder{color:#676960}
-    .btn{
-      min-height:42px;display:inline-flex;align-items:center;justify-content:center;
-      gap:8px;padding:10px 14px;border:1px solid transparent;border-radius:11px;
-      font-size:12px;font-weight:750
+
+    .brand-name { font: 500 18px Georgia, serif; }
+
+    .brand-sub {
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
     }
-    .btn-gold{color:#18140a;background:linear-gradient(120deg,#b78c3f,#f2dc9b 52%,#c49a4b)}
-    .btn-quiet{border-color:var(--line);color:#e5dfcd;background:rgba(255,255,255,.025)}
-    .btn-danger{border-color:rgba(222,119,105,.25);color:#f0a69b;background:rgba(180,65,54,.055)}
-    .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:13px}
-    .message{margin-top:14px;padding:11px 13px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.025);color:#c6c2b6;font-size:12px;overflow-wrap:anywhere}
-    .message.error{color:var(--red);border-color:rgba(241,163,155,.25)}
-    .message.success{color:var(--green);border-color:rgba(168,217,173,.25)}
-    .hidden{display:none!important}
-    .security-list{display:grid;gap:11px}
-    .security-item{display:grid;grid-template-columns:34px 1fr;gap:11px;padding:14px;border:1px solid rgba(219,187,112,.11);border-radius:13px;background:rgba(255,255,255,.018)}
-    .security-icon{width:32px;height:32px;display:grid;place-items:center;border:1px solid var(--line);border-radius:10px;color:var(--gold-light)}
-    .security-item strong{display:block;margin-bottom:4px;font-size:12px}
-    .security-item p{margin:0;color:#9b9a90;font-size:11px;line-height:1.7}
-    .dashboard{margin-top:28px}
-    .section-title{align-items:flex-end;margin-bottom:16px}
-    .section-title h2{margin:0}
-    .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-bottom:17px}
-    .stat{padding:19px}
-    .stat-label{color:#a7a598;font-size:11px;font-weight:650}
-    .stat-number{margin-top:7px;color:var(--gold-light);font:34px/1.15 Georgia,serif;overflow-wrap:anywhere}
-    .stat-foot{margin-top:5px;color:#77786f;font-size:10px}
-    .register{margin-top:17px;padding:23px}
-    .toolbar{display:grid;grid-template-columns:minmax(140px,1fr) 175px auto;gap:9px;margin:18px 0 14px}
-    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:13px}
-    table{width:100%;min-width:590px;border-collapse:collapse;text-align:left}
-    th{background:rgba(219,187,112,.045);color:#a9a38e;font-size:9px;letter-spacing:1px;text-transform:uppercase}
-    th,td{padding:13px 14px;border-bottom:1px solid rgba(219,187,112,.1);vertical-align:top}
-    tbody tr:last-child td{border-bottom:0}
-    td{color:#d7d3c8;font-size:12px}
-    .ref{font-weight:750;letter-spacing:.2px}
-    .status{display:inline-block;padding:4px 8px;border:1px solid rgba(255,255,255,.07);border-radius:999px;color:#c3c1b7;background:rgba(255,255,255,.035);font-size:10px;font-weight:750}
-    .status.active,.status.success,.status.verified,.status.approved,.status.submitted,.status.complete{color:var(--green)}
-    .status.locked,.status.denied,.status.failed,.status.blocked,.status.revoked,.status.archived{color:var(--red)}
-    .status.draft,.status.issued,.status.expired{color:var(--amber)}
-    .empty{padding:30px 15px;color:#929187;text-align:center}
-    .table-foot,.footer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:#828278;font-size:10px}
-    .table-foot{margin-top:12px}
-    .footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--line)}
-    .footer span:last-child{color:#9e8b5e}
-    .identity-preview{display:grid;grid-template-columns:1fr 160px;gap:16px;align-items:center}
-    .qr-box{min-height:140px;display:grid;place-items:center;padding:12px;border:1px dashed var(--line);border-radius:13px;color:var(--muted);text-align:center;font-size:11px}
-    .qr-box img{max-width:100%;height:auto}
-    @media (max-width:760px){
-      .top-inner{padding:14px 16px}main{padding:28px 15px 42px}
-      .hero{align-items:flex-start;flex-direction:column}
-      .layout{grid-template-columns:1fr}.toolbar{grid-template-columns:1fr 1fr}
-      .toolbar input{grid-column:1/-1}.stats{gap:9px}.stat{padding:14px}
-      .stat-number{font-size:28px}.section-title{align-items:flex-start}
+
+    .owner-pill, .connection, .mini-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 11px;
+      color: #e7d8ad;
+      background: rgba(211,178,105,.05);
+      font-size: 10px;
+      letter-spacing: .7px;
     }
-    @media (max-width:460px){
-      .brand-name{font-size:16px}.brand-sub{font-size:9px}
-      .brand-mark{width:39px;height:39px}.owner-pill{font-size:8px;padding:6px}
-      main{padding-right:11px;padding-left:11px}.card,.register{padding:17px}
-      .stats{grid-template-columns:1fr}.stat{display:flex;align-items:center;justify-content:space-between;gap:12px}
-      .stat-number{margin:0}.stat-foot{display:none}
-      .toolbar{grid-template-columns:1fr}.toolbar input{grid-column:auto}
-      .identity-preview{grid-template-columns:1fr}
+
+    .owner-dot, .connection-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--gold);
+      flex-shrink: 0;
     }
-    @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+    main { padding: 38px 24px 55px; }
+
+    .hero, .section-title, .card-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .hero { margin-bottom: 27px; }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--gold);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 2.3px;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      margin-bottom: 12px;
+      font: 400 clamp(34px,5vw,54px)/1.1 Georgia, serif;
+      letter-spacing: -1.3px;
+    }
+
+    h2 { font: 400 23px Georgia, serif; }
+    .gold-text { color: var(--gold-light); }
+
+    .intro {
+      max-width: 620px;
+      color: #aaa79c;
+      line-height: 1.8;
+    }
+
+    .route, .help {
+      color: #929187;
+      font-size: 11px;
+      line-height: 1.75;
+    }
+
+    .route { margin: 12px 0 0; }
+
+    .connection {
+      color: #b7b3a6;
+      white-space: nowrap;
+    }
+
+    .connection.secure {
+      color: var(--green);
+      border-color: rgba(142,203,152,.25);
+    }
+
+    .connection.secure .connection-dot { background: var(--green); }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0,1.15fr) minmax(280px,.85fr);
+      gap: 18px;
+    }
+
+    .card {
+      min-width: 0;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(140deg,rgba(255,255,255,.025),transparent 42%),
+        rgba(22,23,20,.88);
+      box-shadow: 0 20px 60px rgba(0,0,0,.2);
+    }
+
+    .card-heading {
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .card-heading h2 { margin-bottom: 5px; }
+
+    .card-heading p, .section-title p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .mini-label {
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #dedbd0;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .field { margin-bottom: 15px; }
+
+    input, select {
+      width: 100%;
+      min-width: 0;
+      min-height: 45px;
+      padding: 11px 13px;
+      border: 1px solid rgba(219,187,112,.2);
+      border-radius: 11px;
+      background: #0b0d0d;
+      color: var(--ink);
+    }
+
+    input::placeholder { color: #676960; }
+
+    .btn {
+      min-height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border: 1px solid transparent;
+      border-radius: 11px;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .btn-gold {
+      color: #18140a;
+      background: linear-gradient(120deg,#b78c3f,#f2dc9b 52%,#c49a4b);
+    }
+
+    .btn-quiet {
+      border-color: var(--line);
+      color: #e5dfcd;
+      background: rgba(255,255,255,.025);
+    }
+
+    .btn-danger {
+      border-color: rgba(222,119,105,.25);
+      color: #f0a69b;
+      background: rgba(180,65,54,.055);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 13px;
+    }
+
+    .message {
+      margin-top: 14px;
+      padding: 11px 13px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: rgba(255,255,255,.025);
+      color: #c6c2b6;
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .message.error {
+      color: var(--red);
+      border-color: rgba(241,163,155,.25);
+    }
+
+    .message.success {
+      color: var(--green);
+      border-color: rgba(168,217,173,.25);
+    }
+
+    .hidden { display: none !important; }
+
+    .security-list { display: grid; gap: 11px; }
+
+    .security-item {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 11px;
+      padding: 14px;
+      border: 1px solid rgba(219,187,112,.11);
+      border-radius: 13px;
+      background: rgba(255,255,255,.018);
+    }
+
+    .security-icon {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      color: var(--gold-light);
+    }
+
+    .security-item strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+
+    .security-item p {
+      margin: 0;
+      color: #9b9a90;
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    .dashboard { margin-top: 28px; }
+
+    .section-title {
+      align-items: flex-end;
+      margin-bottom: 16px;
+    }
+
+    .section-title h2 { margin: 0; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: 13px;
+      margin-bottom: 17px;
+    }
+
+    .stat { padding: 19px; }
+
+    .stat-label {
+      color: #a7a598;
+      font-size: 11px;
+      font-weight: 650;
+    }
+
+    .stat-number {
+      margin-top: 7px;
+      color: var(--gold-light);
+      font: 34px/1.15 Georgia,serif;
+      overflow-wrap: anywhere;
+    }
+
+    .stat-foot {
+      margin-top: 5px;
+      color: #77786f;
+      font-size: 10px;
+    }
+
+    .register {
+      margin-top: 17px;
+      padding: 23px;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(140px,1fr) 175px auto;
+      gap: 9px;
+      margin: 18px 0 14px;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 590px;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      background: rgba(219,187,112,.045);
+      color: #a9a38e;
+      font-size: 9px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    th, td {
+      padding: 13px 14px;
+      border-bottom: 1px solid rgba(219,187,112,.1);
+      vertical-align: top;
+    }
+
+    tbody tr:last-child td { border-bottom: 0; }
+
+    td {
+      color: #d7d3c8;
+      font-size: 12px;
+    }
+
+    .ref {
+      font-weight: 750;
+      letter-spacing: .2px;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 4px 8px;
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 999px;
+      color: #c3c1b7;
+      background: rgba(255,255,255,.035);
+      font-size: 10px;
+      font-weight: 750;
+    }
+
+    .status.active, .status.success, .status.verified,
+    .status.approved, .status.submitted, .status.complete {
+      color: var(--green);
+    }
+
+    .status.locked, .status.denied, .status.failed,
+    .status.blocked, .status.revoked, .status.archived,
+    .status.rejected {
+      color: var(--red);
+    }
+
+    .status.draft, .status.issued, .status.expired,
+    .status.pending {
+      color: var(--amber);
+    }
+
+    .empty {
+      padding: 30px 15px;
+      color: #929187;
+      text-align: center;
+    }
+
+    .table-foot, .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      color: #828278;
+      font-size: 10px;
+    }
+
+    .table-foot { margin-top: 12px; }
+
+    .footer {
+      margin-top: 34px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .footer span:last-child { color: #9e8b5e; }
+
+    .identity-preview {
+      display: grid;
+      grid-template-columns: 1fr 160px;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .qr-box {
+      min-height: 140px;
+      display: grid;
+      place-items: center;
+      padding: 12px;
+      border: 1px dashed var(--line);
+      border-radius: 13px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 11px;
+    }
+
+    .qr-box img {
+      max-width: 100%;
+      max-height: 220px;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .builder-notice {
+      color: #a7a598;
+      font-size: 11px;
+      line-height: 1.8;
+    }
+
+    #singleFileBuildStatus[role="alert"] { color: var(--red); }
+
+    @media (max-width:760px) {
+      .top-inner { padding: 14px 16px; }
+      main { padding: 28px 15px 42px; }
+      .hero { align-items: flex-start; flex-direction: column; }
+      .layout { grid-template-columns: 1fr; }
+      .toolbar { grid-template-columns: 1fr 1fr; }
+      .toolbar input { grid-column: 1/-1; }
+      .stats { gap: 9px; }
+      .stat { padding: 14px; }
+      .stat-number { font-size: 28px; }
+      .section-title { align-items: flex-start; }
+    }
+
+    @media (max-width:460px) {
+      .brand-name { font-size: 16px; }
+      .brand-sub { font-size: 9px; }
+      .brand-mark { width: 39px; height: 39px; }
+      .owner-pill { font-size: 8px; padding: 6px; }
+      main { padding-right: 11px; padding-left: 11px; }
+      .card, .register { padding: 17px; }
+      .stats { grid-template-columns: 1fr; }
+      .stat {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .stat-number { margin: 0; }
+      .stat-foot { display: none; }
+      .toolbar { grid-template-columns: 1fr; }
+      .toolbar input { grid-column: auto; }
+      .identity-preview { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+      html { scroll-behavior: auto; }
+    }
   </style>
 </head>
+
 <body>
 <header class="topbar">
   <div class="top-inner">
@@ -166,7 +567,10 @@
         <div class="brand-sub">Private application workspace</div>
       </div>
     </div>
-    <div class="owner-pill"><span class="owner-dot"></span>Owner · Vivekjee99</div>
+    <div class="owner-pill">
+      <span class="owner-dot"></span>
+      Owner · Vivekjee99
+    </div>
   </div>
 </header>
 
@@ -175,134 +579,450 @@
     <div>
       <p class="eyebrow">A quieter kind of control</p>
       <h1>Your private <span class="gold-text">workspace.</span></h1>
-      <p class="intro">A private view of application references, form identities, page references, shared locations and workflow activity.</p>
-      <p class="route">Owner profile: <strong>Vivekjee99</strong> · Route: <code>/private/index.html</code></p>
+      <p class="intro">
+        A private view of application references, form identities,
+        page references, shared locations, workflow activity and exports.
+      </p>
+      <p class="route">
+        Owner profile: <strong>Vivekjee99</strong> · Route:
+        <code>/private/index.html</code>
+      </p>
     </div>
+
     <div id="connectionTag" class="connection">
-      <span class="connection-dot"></span><span id="connectionText">Not connected</span>
+      <span class="connection-dot"></span>
+      <span id="connectionText">Not connected</span>
     </div>
   </section>
 
   <section class="layout" aria-label="Administrator access">
     <div class="card">
       <div class="card-heading">
-        <div><h2>Welcome back.</h2><p>Authenticate to open the private register.</p></div>
+        <div>
+          <h2>Welcome back.</h2>
+          <p>Authenticate to open the private register.</p>
+        </div>
         <span class="mini-label">Owner access</span>
       </div>
+
       <form id="authForm">
         <div class="field">
           <label for="adminSecret">Administrator secret</label>
-          <input id="adminSecret" type="password" autocomplete="current-password"
-            placeholder="Enter your private access secret" required
-            minlength="16" maxlength="512" spellcheck="false"
-            autocapitalize="off">
+          <input
+            id="adminSecret"
+            type="password"
+            autocomplete="current-password"
+            placeholder="Enter your private access secret"
+            required
+            minlength="16"
+            maxlength="512"
+            spellcheck="false"
+            autocapitalize="off"
+          >
         </div>
-        <button class="btn btn-gold" id="loginBtn" type="submit" style="width:100%">
+
+        <button
+          class="btn btn-gold"
+          id="loginBtn"
+          type="submit"
+          style="width:100%"
+        >
           Unlock workspace ↗
         </button>
-        <p class="help">The secret is kept in memory only while this page is open. Store the real secret as a Cloudflare Pages secret, never in this HTML.</p>
+
+        <p class="help">
+          The secret is kept in page memory while this page is open.
+          Store the real secret in a protected server-side environment,
+          never in this HTML file.
+        </p>
       </form>
-      <div id="authMessage" class="message" role="status" aria-live="polite">Your workspace is waiting for authentication.</div>
+
+      <div id="authMessage" class="message" role="status" aria-live="polite">
+        Your workspace is waiting for authentication.
+      </div>
+
       <div class="btn-row">
-        <button class="btn btn-quiet hidden" id="refreshBtn" type="button">Refresh register</button>
-        <button class="btn btn-danger" id="clearBtn" type="button">Sign out</button>
+        <button class="btn btn-quiet hidden" id="refreshBtn" type="button">
+          Refresh register
+        </button>
+        <button class="btn btn-danger" id="clearBtn" type="button">
+          Sign out
+        </button>
       </div>
     </div>
 
     <aside class="card">
       <div class="card-heading">
-        <div><h2>Quiet confidence.</h2><p>Security comes first.</p></div>
+        <div>
+          <h2>Quiet confidence.</h2>
+          <p>Security comes first.</p>
+        </div>
         <span class="mini-label">Protection</span>
       </div>
+
       <div class="security-list">
-        <div class="security-item"><div class="security-icon">◇</div><div><strong>Server-verified access</strong><p>Every protected API request must authenticate independently. The HTML page is not an access-control system.</p></div></div>
-        <div class="security-item"><div class="security-icon">⌑</div><div><strong>Private by design</strong><p>Protect <code>/private/*</code> with Cloudflare Access and secure the admin API independently.</p></div></div>
-        <div class="security-item"><div class="security-icon">✧</div><div><strong>Minimal information</strong><p>Display references and statuses rather than applicant documents or unnecessary personal data.</p></div></div>
-        <div class="security-item"><div class="security-icon">▦</div><div><strong>Traceable page identities</strong><p>QR/barcode references identify pages; server validation, not the image itself, enforces authorization.</p></div></div>
+        <div class="security-item">
+          <div class="security-icon" aria-hidden="true">◇</div>
+          <div>
+            <strong>Server-verified access</strong>
+            <p>Every protected API request must authenticate independently.</p>
+          </div>
+        </div>
+
+        <div class="security-item">
+          <div class="security-icon" aria-hidden="true">⌑</div>
+          <div>
+            <strong>Private by design</strong>
+            <p>Protect <code>/private/*</code> with Cloudflare Access and secure the admin API independently.</p>
+          </div>
+        </div>
+
+        <div class="security-item">
+          <div class="security-icon" aria-hidden="true">✧</div>
+          <div>
+            <strong>Minimal information</strong>
+            <p>Display references and statuses rather than applicant documents or unnecessary personal data.</p>
+          </div>
+        </div>
+
+        <div class="security-item">
+          <div class="security-icon" aria-hidden="true">▦</div>
+          <div>
+            <strong>Traceable page identities</strong>
+            <p>QR and barcode references identify pages; server validation enforces authorization.</p>
+          </div>
+        </div>
       </div>
     </aside>
   </section>
 
+  <!-- APPLICATION REGISTER -->
   <section id="dashboard" class="dashboard hidden">
     <div class="section-title">
-      <div><p class="eyebrow">Your overview</p><h2>Application register</h2><p>Clear records. A little less clutter.</p></div>
+      <div>
+        <p class="eyebrow">Your overview</p>
+        <h2>Application register</h2>
+        <p>Clear records. A little less clutter.</p>
+      </div>
       <span class="mini-label">Authenticated view</span>
     </div>
+
     <div class="stats">
-      <div class="card stat"><div><div class="stat-label">Loaded records</div><div class="stat-foot">Returned by the API</div></div><div class="stat-number" id="totalCount">0</div></div>
-      <div class="card stat"><div><div class="stat-label">Draft / pending</div><div class="stat-foot">Preparation or review required</div></div><div class="stat-number" id="pendingCount">0</div></div>
-      <div class="card stat"><div><div class="stat-label">Submitted / complete</div><div class="stat-foot">Status reported by the API</div></div><div class="stat-number" id="completeCount">0</div></div>
+      <div class="card stat">
+        <div>
+          <div class="stat-label">Loaded records</div>
+          <div class="stat-foot">Returned by the API</div>
+        </div>
+        <div class="stat-number" id="totalCount">0</div>
+      </div>
+
+      <div class="card stat">
+        <div>
+          <div class="stat-label">Draft / pending</div>
+          <div class="stat-foot">Preparation or review required</div>
+        </div>
+        <div class="stat-number" id="pendingCount">0</div>
+      </div>
+
+      <div class="card stat">
+        <div>
+          <div class="stat-label">Submitted / complete</div>
+          <div class="stat-foot">Status reported by the API</div>
+        </div>
+        <div class="stat-number" id="completeCount">0</div>
+      </div>
     </div>
 
     <div class="card register">
       <div class="section-title">
-        <div><h2>Application records</h2><p id="updatedAt">Waiting for records</p></div>
-        <button class="btn btn-quiet" id="refreshBtnTop" type="button">↻ Refresh</button>
+        <div>
+          <h2>Application records</h2>
+          <p id="updatedAt">Waiting for records</p>
+        </div>
+        <button class="btn btn-quiet" id="refreshBtnTop" type="button">
+          ↻ Refresh
+        </button>
       </div>
+
       <div class="toolbar">
-        <input id="searchInput" type="search" placeholder="Search application reference…" aria-label="Search application references">
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Search application reference…"
+          aria-label="Search application references"
+        >
+
         <select id="statusFilter" aria-label="Filter status">
-          <option value="all">All statuses</option><option value="draft">Draft</option>
-          <option value="pending">Pending</option><option value="received">Received</option>
-          <option value="under_review">Under review</option><option value="needs_information">Needs information</option>
-          <option value="submitted">Submitted</option><option value="complete">Complete</option>
-          <option value="completed">Completed</option><option value="approved">Approved</option>
-          <option value="rejected">Rejected</option><option value="withdrawn">Withdrawn</option>
+          <option value="all">All statuses</option>
+          <option value="draft">Draft</option>
+          <option value="pending">Pending</option>
+          <option value="received">Received</option>
+          <option value="under_review">Under review</option>
+          <option value="needs_information">Needs information</option>
+          <option value="submitted">Submitted</option>
+          <option value="complete">Complete</option>
+          <option value="completed">Completed</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+          <option value="withdrawn">Withdrawn</option>
         </select>
-        <button class="btn btn-quiet" id="resetFilterBtn" type="button">Reset filters</button>
+
+        <button class="btn btn-quiet" id="resetFilterBtn" type="button">
+          Reset filters
+        </button>
       </div>
-      <div class="table-wrap"><table>
-        <thead><tr><th>Application reference</th><th>Current status</th></tr></thead>
-        <tbody id="recordsBody"><tr><td colspan="2" class="empty">Authenticate to load records.</td></tr></tbody>
-      </table></div>
-      <div class="table-foot"><span id="shownCount">0 records shown</span><span>Personal information intentionally excluded</span></div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Application reference</th>
+              <th scope="col">Current status</th>
+            </tr>
+          </thead>
+          <tbody id="recordsBody">
+            <tr>
+              <td colspan="2" class="empty">Authenticate to load records.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-foot">
+        <span id="shownCount">0 records shown</span>
+        <span>Personal information intentionally excluded</span>
+      </div>
+
       <div id="dataMessage" class="message hidden" role="status" aria-live="polite"></div>
     </div>
   </section>
 
+  <!-- FORM AND PAGE REGISTRY -->
   <section id="identityDashboard" class="dashboard hidden">
     <div class="section-title">
-      <div><p class="eyebrow">Identity & traceability</p><h2>Form & Page Registry</h2><p>Unique identities, references, locations and activity.</p></div>
+      <div>
+        <p class="eyebrow">Identity & traceability</p>
+        <h2>Form & Page Registry</h2>
+        <p>Unique identities, references, locations and activity.</p>
+      </div>
       <span class="mini-label">Registry</span>
     </div>
+
     <div class="stats">
-      <div class="card stat"><div class="stat-label">Registered forms</div><div class="stat-number" id="formCount">--</div><div class="stat-foot">Server-reported total</div></div>
-      <div class="card stat"><div class="stat-label">Registered pages</div><div class="stat-number" id="pageCount">--</div><div class="stat-foot">Unique page identities</div></div>
-      <div class="card stat"><div class="stat-label">Activity events</div><div class="stat-number" id="activityCount">--</div><div class="stat-foot">Recorded by the backend</div></div>
+      <div class="card stat">
+        <div>
+          <div class="stat-label">Registered forms</div>
+          <div class="stat-foot">Server-reported total</div>
+        </div>
+        <div class="stat-number" id="formCount">--</div>
+      </div>
+
+      <div class="card stat">
+        <div>
+          <div class="stat-label">Registered pages</div>
+          <div class="stat-foot">Unique page identities</div>
+        </div>
+        <div class="stat-number" id="pageCount">--</div>
+      </div>
+
+      <div class="card stat">
+        <div>
+          <div class="stat-label">Activity events</div>
+          <div class="stat-foot">Recorded by the backend</div>
+        </div>
+        <div class="stat-number" id="activityCount">--</div>
+      </div>
     </div>
 
     <div class="card register">
-      <div class="section-title"><div><h2>Identity explorer</h2><p>Inspect registered forms, pages, locations and events.</p></div></div>
-      <div class="toolbar">
-        <input id="registrySearch" type="search" placeholder="Search IDs, names or references…" aria-label="Search registry">
-        <select id="registryType" aria-label="Registry type">
-          <option value="forms">Forms</option><option value="pages">Pages</option>
-          <option value="locations">Shared locations</option><option value="activity">Activity ledger</option>
-        </select>
-        <button class="btn btn-quiet" id="registryRefresh" type="button">↻ Refresh registry</button>
+      <div class="section-title">
+        <div>
+          <h2>Identity explorer</h2>
+          <p>Inspect registered forms, pages, locations and events.</p>
+        </div>
       </div>
-      <div class="table-wrap"><table><thead id="registryHead"></thead><tbody id="registryBody"><tr><td class="empty">Authenticate to load registry data.</td></tr></tbody></table></div>
-      <div class="table-foot"><span id="registryShown">No registry records loaded</span><span>References must be verified by the server</span></div>
+
+      <div class="toolbar">
+        <input
+          id="registrySearch"
+          type="search"
+          placeholder="Search IDs, names or references…"
+          aria-label="Search registry"
+        >
+
+        <select id="registryType" aria-label="Registry type">
+          <option value="forms">Forms</option>
+          <option value="pages">Pages</option>
+          <option value="locations">Shared locations</option>
+          <option value="activity">Activity ledger</option>
+        </select>
+
+        <button class="btn btn-quiet" id="registryRefresh" type="button">
+          ↻ Refresh registry
+        </button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead id="registryHead"></thead>
+          <tbody id="registryBody">
+            <tr><td class="empty">Authenticate to load registry data.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-foot">
+        <span id="registryShown">No registry records loaded</span>
+        <span>References must be verified by the server</span>
+      </div>
+
       <div id="registryMessage" class="message hidden" role="status" aria-live="polite"></div>
     </div>
 
+    <!-- PAGE REFERENCE VERIFICATION -->
     <div class="card register">
-      <div class="card-heading"><div><h2>Page identity verifier</h2><p>Check a reference against the server registry.</p></div><span class="mini-label">Verification</span></div>
+      <div class="card-heading">
+        <div>
+          <h2>Page identity verifier</h2>
+          <p>Check a reference against the server registry.</p>
+        </div>
+        <span class="mini-label">Verification</span>
+      </div>
+
       <form id="verifyPageForm">
-        <div class="field"><label for="pageReference">Page reference code</label><input id="pageReference" required maxlength="200" placeholder="Enter an issued page reference" autocomplete="off" spellcheck="false"></div>
-        <button class="btn btn-gold" id="verifyPageBtn" type="submit">Verify page reference</button>
+        <div class="field">
+          <label for="pageReference">Page reference code</label>
+          <input
+            id="pageReference"
+            required
+            maxlength="200"
+            placeholder="Enter an issued page reference"
+            autocomplete="off"
+            spellcheck="false"
+          >
+        </div>
+
+        <button class="btn btn-gold" id="verifyPageBtn" type="submit">
+          Verify page reference
+        </button>
       </form>
-      <div id="verifyResult" class="message" role="status" aria-live="polite">No reference verified yet.</div>
-      <p class="help">This checks the server registry. A barcode, QR code, page ID or copied URL alone is not authorization.</p>
+
+      <div id="verifyResult" class="message" role="status" aria-live="polite">
+        No reference verified yet.
+      </div>
+
+      <p class="help">
+        A barcode, QR code, page ID or copied URL alone is not authorization.
+      </p>
+    </div>
+
+    <!-- QR PREVIEW -->
+    <div class="card register">
+      <div class="card-heading">
+        <div>
+          <h2>QR / barcode identity</h2>
+          <p>View a QR image returned by your registry API.</p>
+        </div>
+        <span class="mini-label">Page identity</span>
+      </div>
+
+      <div class="identity-preview">
+        <div>
+          <p id="qrDescription" class="help">
+            Select a registered page with a QR image URL supplied by your backend.
+          </p>
+          <button id="clearQrBtn" class="btn btn-quiet" type="button">
+            Clear preview
+          </button>
+        </div>
+        <div id="qrBox" class="qr-box">No QR image loaded</div>
+      </div>
+
+      <p class="help">
+        Only load QR images from your trusted backend. Do not encode secrets or personal documents.
+      </p>
+    </div>
+  </section>
+
+  <!-- SINGLE-FILE APPLICATION BUILDER -->
+  <section id="singleFileBuilder" class="dashboard" aria-labelledby="builderTitle">
+    <div class="section-title">
+      <div>
+        <p class="eyebrow">Export & portability</p>
+        <h2 id="builderTitle">Single-file Application Builder</h2>
+        <p>Package the configured application pages into one downloadable HTML document.</p>
+      </div>
+      <span class="mini-label">HTML Export</span>
     </div>
 
     <div class="card register">
-      <div class="card-heading"><div><h2>QR / barcode identity</h2><p>View the QR image returned by your registry API.</p></div><span class="mini-label">Page identity</span></div>
-      <div class="identity-preview">
-        <div><p id="qrDescription" class="help">Select a registered page with a QR image URL supplied by your backend.</p><button id="clearQrBtn" class="btn btn-quiet" type="button">Clear preview</button></div>
-        <div id="qrBox" class="qr-box">No QR image loaded</div>
+      <div class="card-heading">
+        <div>
+          <h2>Build your application file.</h2>
+          <p>Combines configured pages into a page-by-page HTML viewer.</p>
+        </div>
+        <span class="mini-label">Local download</span>
       </div>
-      <p class="help">Only load QR images generated by your trusted backend or a local QR library. Do not encode secrets or personal documents.</p>
+
+      <div class="security-list">
+        <div class="security-item">
+          <div class="security-icon" aria-hidden="true">▤</div>
+          <div>
+            <strong>Configured HTML pages</strong>
+            <p>The page list is maintained in <code>/single-file.js</code>.</p>
+          </div>
+        </div>
+
+        <div class="security-item">
+          <div class="security-icon" aria-hidden="true">⇩</div>
+          <div>
+            <strong>One downloadable HTML file</strong>
+            <p>External assets, authentication, uploads and backend features may still require internet access.</p>
+          </div>
+        </div>
+
+        <div class="security-item">
+          <div class="security-icon" aria-hidden="true">◇</div>
+          <div>
+            <strong>Privacy reminder</strong>
+            <p>Package blank forms and guidance pages only. Do not include real applicant documents or administrator credentials.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button
+          class="btn btn-gold"
+          id="buildSingleFileBtn"
+          type="button"
+          data-build-single-file
+        >
+          Build single HTML file ↗
+        </button>
+
+        <button
+          class="btn btn-danger hidden"
+          id="cancelSingleFileBtn"
+          type="button"
+          data-cancel-single-file
+          disabled
+        >
+          Cancel build
+        </button>
+      </div>
+
+      <div
+        class="message"
+        id="singleFileBuildStatus"
+        data-build-status
+        role="status"
+        aria-live="polite"
+      >Ready to package the configured application pages.</div>
+
+      <p class="help">
+        This builder uses the public page list. It does not export private dashboard data,
+        submit applications, or replace the backend.
+      </p>
     </div>
   </section>
 
@@ -312,12 +1032,28 @@
   </footer>
 </main>
 
+<!-- OWNER DASHBOARD SCRIPT -->
 <script>
 (() => {
   "use strict";
 
+  const API_BASE = "/api/v1";
+  const REQUEST_TIMEOUT_MS = 15000;
+  const MAX_SECRET_LENGTH = 512;
+
   const $ = id => document.getElementById(id);
-  const state = {secret:"",records:[],authenticated:false,loading:false,registryRows:[]};
+
+  const state = {
+    secret: "",
+    records: [],
+    authenticated: false,
+    loadingApplications: false,
+    loadingRegistry: false,
+    registryRows: [],
+    registryType: "forms",
+    registryVersion: 0,
+    applicationVersion: 0
+  };
 
   const authMessage = $("authMessage");
   const dataMessage = $("dataMessage");
@@ -328,379 +1064,718 @@
   const loginBtn = $("loginBtn");
   const refreshBtn = $("refreshBtn");
   const refreshBtnTop = $("refreshBtnTop");
+  const registryRefresh = $("registryRefresh");
+  const verifyPageBtn = $("verifyPageBtn");
   const registryMessage = $("registryMessage");
 
   const registryColumns = {
-    forms:[
-      ["form_id","Form ID"],["form_code","Form code"],["form_name","Form name"],
-      ["form_version","Version"],["form_status","Status"],["route_path","Route"]
+    forms: [
+      ["form_id", "Form ID"],
+      ["form_code", "Form code"],
+      ["form_name", "Form name"],
+      ["form_version", "Version"],
+      ["form_status", "Status"],
+      ["route_path", "Route"]
     ],
-    pages:[
-      ["page_id","Page ID"],["page_code","Page code"],["page_name","Page name"],
-      ["form_id","Parent form"],["page_number","Page no."],["page_version","Version"],
-      ["page_status","Status"],["page_ref","Page reference"],["barcode_value","Barcode value"]
+    pages: [
+      ["page_id", "Page ID"],
+      ["page_code", "Page code"],
+      ["page_name", "Page name"],
+      ["form_id", "Parent form"],
+      ["page_number", "Page no."],
+      ["page_version", "Version"],
+      ["page_status", "Status"],
+      ["page_ref", "Page reference"],
+      ["barcode_value", "Barcode value"]
     ],
-    locations:[
-      ["location_id","Location ID"],["location_name","Location"],
-      ["location_type","Type"],["form_id","Form ID"],["page_id","Page ID"],
-      ["route_path","Route"],["location_status","Status"]
+    locations: [
+      ["location_id", "Location ID"],
+      ["location_name", "Location"],
+      ["location_type", "Type"],
+      ["form_id", "Form ID"],
+      ["page_id", "Page ID"],
+      ["route_path", "Route"],
+      ["location_status", "Status"]
     ],
-    activity:[
-      ["event_id","Event ID"],["event_code","Event code"],["actor_role","Actor role"],
-      ["action","Action"],["form_id","Form ID"],["page_id","Page ID"],
-      ["application_ref","Application"],["page_ref","Page reference"],
-      ["outcome","Outcome"],["created_at","Timestamp"]
+    activity: [
+      ["event_id", "Event ID"],
+      ["event_code", "Event code"],
+      ["actor_role", "Actor role"],
+      ["action", "Action"],
+      ["form_id", "Form ID"],
+      ["page_id", "Page ID"],
+      ["application_ref", "Application"],
+      ["page_ref", "Page reference"],
+      ["outcome", "Outcome"],
+      ["created_at", "Timestamp"]
     ]
   };
 
-  function setMessage(element,message,type=""){
-    element.textContent=message;
-    element.className="message"+(type?" "+type:"");
+  function setMessage(element, message, type = "") {
+    element.textContent = String(message ?? "");
+    element.className = "message" + (type ? " " + type : "");
     element.classList.remove("hidden");
   }
 
-  function setConnection(label,secure=false){
-    connectionText.textContent=label;
-    connectionTag.className="connection"+(secure?" secure":"");
+  function hideMessage(element) {
+    element.classList.add("hidden");
   }
 
-  function getStatus(record){
-    return String(record?.status??record?.state??"unknown").trim().toLowerCase()||"unknown";
+  function setConnection(label, secure = false) {
+    connectionText.textContent = label;
+    connectionTag.className = "connection" + (secure ? " secure" : "");
   }
 
-  function getReference(record){
-    return String(record?.application_ref??record?.reference??
-      record?.application_reference??record?.applicationReference??record?.ref??"")
-      .trim().slice(0,120);
+  function safeString(value, maxLength = 500) {
+    if (value === null || value === undefined) return "--";
+    if (!["string", "number", "boolean"].includes(typeof value)) return "--";
+    return String(value).slice(0, maxLength);
   }
 
-  function statusLabel(status){
-    return status.replace(/[_-]+/g," ").replace(/\b\w/g,c=>c.toUpperCase());
+  function statusOf(record) {
+    return String(record?.status ?? record?.state ?? "unknown")
+      .trim()
+      .toLowerCase() || "unknown";
   }
 
-  function isPending(status){
-    return ["draft","pending","incomplete","needs_information"].includes(status);
+  function referenceOf(record) {
+    return String(
+      record?.application_ref ??
+      record?.reference ??
+      record?.application_reference ??
+      record?.applicationReference ??
+      record?.ref ??
+      ""
+    ).trim().slice(0, 120);
   }
 
-  function isComplete(status){
-    return ["submitted","complete","completed","approved"].includes(status);
+  function statusLabel(status) {
+    return String(status)
+      .replace(/[_-]+/g, " ")
+      .replace(/\b\w/g, c => c.toUpperCase());
   }
 
-  function getRecordsFromPayload(payload){
-    if(Array.isArray(payload))return payload;
-    for(const key of ["applications","records","results"]){
-      if(Array.isArray(payload?.[key]))return payload[key];
+  function makeElement(tag, className, text) {
+    const element = document.createElement(tag);
+    if (className) element.className = className;
+    if (text !== undefined) element.textContent = String(text);
+    return element;
+  }
+
+  function makeStatusBadge(status) {
+    const badge = makeElement("span", "status", statusLabel(status));
+    badge.classList.add(String(status).replace(/[^a-z0-9_-]/g, "") || "unknown");
+    return badge;
+  }
+
+  function makeEmptyRow(colspan, message) {
+    const row = document.createElement("tr");
+    const cell = makeElement("td", "empty", message);
+    cell.colSpan = Math.max(1, colspan);
+    row.append(cell);
+    return row;
+  }
+
+  function getArray(payload, keys, description) {
+    if (Array.isArray(payload)) return payload;
+
+    for (const key of keys) {
+      if (Array.isArray(payload?.[key])) return payload[key];
     }
-    throw new Error("Unexpected application API response format.");
+
+    throw new Error("Unexpected " + description + " API response format.");
   }
 
-  function renderRecords(){
-    const query=$("searchInput").value.trim().toLowerCase();
-    const filter=$("statusFilter").value;
-    const filtered=state.records.filter(record=>
-      getReference(record).toLowerCase().includes(query)&&
-      (filter==="all"||getStatus(record)===filter)
+  function apiPath(path) {
+    if (typeof path !== "string" || !path.startsWith("/") || path.startsWith("//")) {
+      throw new Error("Invalid API route.");
+    }
+
+    const url = new URL(API_BASE + path, window.location.origin);
+
+    if (url.origin !== window.location.origin) {
+      throw new Error("Cross-origin API requests are not permitted.");
+    }
+
+    return url.pathname + url.search;
+  }
+
+  async function request(path, options = {}) {
+    if (!state.secret) {
+      throw new Error("Enter your administrator secret first.");
+    }
+
+    const controller = new AbortController();
+    const timeout = window.setTimeout(
+      () => controller.abort(),
+      REQUEST_TIMEOUT_MS
     );
 
-    $("totalCount").textContent=String(state.records.length);
-    $("pendingCount").textContent=String(state.records.filter(r=>isPending(getStatus(r))).length);
-    $("completeCount").textContent=String(state.records.filter(r=>isComplete(getStatus(r))).length);
-    $("shownCount").textContent=`${filtered.length} of ${state.records.length} loaded records shown`;
+    const headers = new Headers(options.headers || {});
+    headers.set("Authorization", "Bearer " + state.secret);
+    headers.set("Accept", "application/json");
 
-    const body=$("recordsBody");
-    body.replaceChildren();
-
-    if(!filtered.length){
-      const row=document.createElement("tr");
-      const cell=document.createElement("td");
-      cell.colSpan=2;cell.className="empty";
-      cell.textContent=state.records.length?"No matching records.":"No application records returned by the API.";
-      row.append(cell);body.append(row);return;
+    if (options.body !== undefined) {
+      headers.set("Content-Type", "application/json");
     }
 
-    for(const record of filtered){
-      const row=document.createElement("tr");
-      const refCell=document.createElement("td");
-      const ref=document.createElement("span");
-      ref.className="ref";ref.textContent=getReference(record)||"Unavailable";
-      refCell.append(ref);
-      const statusCell=document.createElement("td");
-      const badge=document.createElement("span");
-      const status=getStatus(record);
-      badge.className="status "+status.replace(/[^a-z0-9_-]/g,"");
-      badge.textContent=statusLabel(status);
-      statusCell.append(badge);row.append(refCell,statusCell);body.append(row);
-    }
-  }
-
-  async function loadRecords(){
-    if(!state.secret||state.loading)return;
-    state.loading=true;
-    loginBtn.disabled=true;refreshBtn.disabled=true;refreshBtnTop.disabled=true;
-    setConnection("Connecting");
-    setMessage(authMessage,"Verifying administrator access…");
-    dataMessage.classList.add("hidden");
-
-    try{
-      const response=await fetch("/api/admin/applications",{
-        method:"GET",
-        headers:{"Authorization":"Bearer "+state.secret,"Accept":"application/json"},
-        cache:"no-store",credentials:"same-origin",redirect:"error"
+    try {
+      const response = await fetch(apiPath(path), {
+        ...options,
+        headers,
+        signal: controller.signal,
+        cache: "no-store",
+        credentials: "same-origin",
+        redirect: "error",
+        referrerPolicy: "no-referrer"
       });
 
-      if(response.status===401||response.status===403){
-        state.authenticated=false;state.records=[];
-        dashboard.classList.add("hidden");identityDashboard.classList.add("hidden");
-        refreshBtn.classList.add("hidden");
-        renderRecords();setConnection("Access denied");
-        setMessage(authMessage,"Access denied. Check your Cloudflare Pages secret and administrator API configuration.","error");
-        return;
+      if (response.status === 401 || response.status === 403) {
+        signOut("Access expired or was denied. Sign in again.");
+        throw new Error("Access expired or was denied.");
       }
 
-      if(!response.ok)throw new Error("Admin API returned HTTP "+response.status+".");
-      if(!(response.headers.get("content-type")||"").toLowerCase().includes("application/json")){
-        throw new Error("The admin API did not return JSON.");
+      if (response.status === 423) {
+        throw new Error("The application workflow is locked or paused.");
       }
 
-      const payload=await response.json();
-      state.records=getRecordsFromPayload(payload).map(record=>({
-        application_ref:getReference(record),status:getStatus(record)
-      }));
-      state.authenticated=true;
-      dashboard.classList.remove("hidden");
-      identityDashboard.classList.remove("hidden");
-      refreshBtn.classList.remove("hidden");
-      setConnection("Connected",true);
-      setMessage(authMessage,"Authentication succeeded. Your register is ready.","success");
-      $("updatedAt").textContent="Last refreshed · "+new Date().toLocaleString();
-      renderRecords();
-
-      await loadRegistry();
-    }catch(error){
-      setConnection("Connection issue");
-      setMessage(authMessage,error instanceof Error?error.message:"Unable to load the register.","error");
-    }finally{
-      state.loading=false;
-      loginBtn.disabled=false;
-      refreshBtn.disabled=!state.authenticated;
-      refreshBtnTop.disabled=!state.authenticated;
-    }
-  }
-
-  async function registryRequest(path,options={}){
-    if(!state.secret||!state.authenticated)throw new Error("Authenticate before accessing the registry.");
-    const headers={"Authorization":"Bearer "+state.secret,"Accept":"application/json"};
-    if(options.body)headers["Content-Type"]="application/json";
-    Object.assign(headers,options.headers||{});
-
-    const response=await fetch(path,{
-      ...options,headers,cache:"no-store",credentials:"same-origin",redirect:"error"
-    });
-
-    if(response.status===401||response.status===403){
-      signOut();
-      throw new Error("Access expired or was denied. Sign in again.");
-    }
-    if(!response.ok)throw new Error("Registry API returned HTTP "+response.status+".");
-    if(!(response.headers.get("content-type")||"").toLowerCase().includes("application/json")){
-      throw new Error("The registry API did not return JSON.");
-    }
-    return response.json();
-  }
-
-  function getRegistryRows(payload,type){
-    if(Array.isArray(payload))return payload;
-    for(const key of ["records","results","items"]){
-      if(Array.isArray(payload?.[key]))return payload[key];
-    }
-    const key={forms:"forms",pages:"pages",locations:"locations",activity:"events"}[type];
-    if(key&&Array.isArray(payload?.[key]))return payload[key];
-    throw new Error("The "+type+" endpoint returned an unexpected response.");
-  }
-
-  function renderRegistryRows(rows,type){
-    const columns=registryColumns[type];
-    const query=$("registrySearch").value.trim().toLowerCase();
-    const filtered=rows.filter(row=>columns.some(([key])=>
-      String(row?.[key]??"").toLowerCase().includes(query)
-    ));
-
-    $("registryHead").replaceChildren();
-    $("registryBody").replaceChildren();
-
-    const header=document.createElement("tr");
-    for(const [,title] of columns){
-      const th=document.createElement("th");th.scope="col";th.textContent=title;header.append(th);
-    }
-    $("registryHead").append(header);
-
-    if(!filtered.length){
-      const tr=document.createElement("tr");
-      const td=document.createElement("td");td.colSpan=columns.length;td.className="empty";
-      td.textContent=rows.length?"No records match your search.":"No records returned by the server.";
-      tr.append(td);$("registryBody").append(tr);
-    }else{
-      for(const record of filtered){
-        const tr=document.createElement("tr");
-        for(const [key] of columns){
-          const td=document.createElement("td");
-          const value=String(record?.[key]??"--").slice(0,500);
-
-          if(key.endsWith("_id")||key.endsWith("_code")||key==="page_ref"||key==="barcode_value"){
-            const span=document.createElement("span");span.className="ref";span.textContent=value;td.append(span);
-          }else if(["form_status","page_status","location_status","outcome","verification_status"].includes(key)){
-            const badge=document.createElement("span");badge.className="status "+value.toLowerCase().replace(/[^a-z0-9_-]/g,"");badge.textContent=value;td.append(badge);
-          }else{
-            td.textContent=value;
-          }
-
-          tr.append(td);
-        }
-
-        if(type==="pages"&&record.qr_image_url){
-          const td=document.createElement("td");
-          const button=document.createElement("button");
-          button.type="button";button.className="btn btn-quiet";button.textContent="Show QR";
-          button.addEventListener("click",()=>showQr(record));
-          td.append(button);tr.append(td);
-        }
-
-        $("registryBody").append(tr);
+      if (response.status === 429) {
+        throw new Error("Too many requests. Wait before trying again.");
       }
-    }
 
-    $("registryShown").textContent=`${filtered.length} of ${rows.length} records shown`;
+      if (!response.ok) {
+        throw new Error("API request failed with HTTP " + response.status + ".");
+      }
+
+      const contentType = (response.headers.get("content-type") || "").toLowerCase();
+
+      if (!contentType.includes("application/json")) {
+        throw new Error("The API did not return JSON. Check the endpoint configuration.");
+      }
+
+      try {
+        return await response.json();
+      } catch {
+        throw new Error("The API returned invalid JSON.");
+      }
+    } catch (error) {
+      if (error?.name === "AbortError") {
+        throw new Error("Request timed out. Check the server and try again.");
+      }
+      if (error instanceof TypeError) {
+        throw new Error("Network error. Check your connection and API deployment.");
+      }
+      throw error;
+    } finally {
+      clearTimeout(timeout);
+    }
   }
 
-  function showQr(record){
-    const box=$("qrBox");box.replaceChildren();
-    const url=record?.qr_image_url;
-    const reference=String(record?.page_ref??"");
-    $("qrDescription").textContent=
-      `${String(record?.page_name??"Registered page")} · ${reference||"No page reference returned"}`;
+  function renderRecords() {
+    const query = $("searchInput").value.trim().toLowerCase();
+    const filter = $("statusFilter").value;
 
-    if(typeof url!=="string"||!url.startsWith("/")||url.startsWith("//")){
-      box.textContent="No trusted same-origin QR image supplied by the API.";
+    const filtered = state.records.filter(record =>
+      referenceOf(record).toLowerCase().includes(query) &&
+      (filter === "all" || statusOf(record) === filter)
+    );
+
+    $("totalCount").textContent = String(state.records.length);
+
+    $("pendingCount").textContent = String(
+      state.records.filter(record =>
+        ["draft", "pending", "incomplete", "needs_information"]
+          .includes(statusOf(record))
+      ).length
+    );
+
+    $("completeCount").textContent = String(
+      state.records.filter(record =>
+        ["submitted", "complete", "completed", "approved"]
+          .includes(statusOf(record))
+      ).length
+    );
+
+    $("shownCount").textContent =
+      filtered.length + " of " + state.records.length + " loaded records shown";
+
+    const body = $("recordsBody");
+    body.replaceChildren();
+
+    if (!filtered.length) {
+      body.append(makeEmptyRow(
+        2,
+        state.records.length
+          ? "No matching records."
+          : "No application records returned by the API."
+      ));
       return;
     }
 
-    const image=document.createElement("img");
-    image.alt="QR identity for "+String(record?.page_name??"registered page");
-    image.referrerPolicy="no-referrer";
-    image.src=url;
-    image.addEventListener("error",()=>{box.textContent="QR image could not be loaded.";},{once:true});
+    const fragment = document.createDocumentFragment();
+
+    for (const record of filtered) {
+      const row = document.createElement("tr");
+      const refCell = document.createElement("td");
+      refCell.append(makeElement("span", "ref", referenceOf(record) || "Unavailable"));
+
+      const statusCell = document.createElement("td");
+      statusCell.append(makeStatusBadge(statusOf(record)));
+
+      row.append(refCell, statusCell);
+      fragment.append(row);
+    }
+
+    body.append(fragment);
+  }
+
+  async function loadRecords() {
+    if (state.loadingApplications || !state.secret) return;
+
+    state.loadingApplications = true;
+    const version = ++state.applicationVersion;
+
+    loginBtn.disabled = true;
+    refreshBtn.disabled = true;
+    refreshBtnTop.disabled = true;
+
+    setConnection("Connecting");
+    setMessage(authMessage, "Verifying administrator access…");
+    hideMessage(dataMessage);
+
+    try {
+      const payload = await request("/admin/applications", { method: "GET" });
+
+      if (version !== state.applicationVersion) return;
+
+      const records = getArray(
+        payload,
+        ["applications", "records", "results", "items"],
+        "application"
+      );
+
+      state.records = records.map(record => ({
+        application_ref: referenceOf(record),
+        status: statusOf(record)
+      }));
+
+      state.authenticated = true;
+      dashboard.classList.remove("hidden");
+      identityDashboard.classList.remove("hidden");
+      refreshBtn.classList.remove("hidden");
+
+      setConnection("Connected", true);
+      setMessage(authMessage, "Authentication succeeded. Your register is ready.", "success");
+      $("updatedAt").textContent = "Last refreshed · " + new Date().toLocaleString();
+
+      renderRecords();
+
+      // Registry failures do not erase the loaded application register.
+      await loadRegistry();
+    } catch (error) {
+      if (version !== state.applicationVersion) return;
+
+      setConnection("Connection issue");
+      setMessage(
+        authMessage,
+        error instanceof Error ? error.message : "Unable to load the register.",
+        "error"
+      );
+    } finally {
+      if (version === state.applicationVersion) {
+        state.loadingApplications = false;
+        loginBtn.disabled = false;
+        refreshBtn.disabled = !state.authenticated;
+        refreshBtnTop.disabled = !state.authenticated;
+      }
+    }
+  }
+
+  async function registryRequest(path, options = {}) {
+    if (!state.secret || !state.authenticated) {
+      throw new Error("Authenticate before accessing the registry.");
+    }
+
+    return request(path, options);
+  }
+
+  function renderRegistryRows(rows, type) {
+    const columns = registryColumns[type];
+    if (!columns) throw new Error("Unsupported registry category.");
+
+    const query = $("registrySearch").value.trim().toLowerCase();
+
+    const filtered = rows.filter(record =>
+      columns.some(([key]) =>
+        String(record?.[key] ?? "").toLowerCase().includes(query)
+      )
+    );
+
+    const head = $("registryHead");
+    const body = $("registryBody");
+    head.replaceChildren();
+    body.replaceChildren();
+
+    const header = document.createElement("tr");
+
+    for (const [, title] of columns) {
+      const th = makeElement("th", "", title);
+      th.scope = "col";
+      header.append(th);
+    }
+
+    if (type === "pages") {
+      const th = makeElement("th", "", "QR preview");
+      th.scope = "col";
+      header.append(th);
+    }
+
+    head.append(header);
+
+    if (!filtered.length) {
+      body.append(makeEmptyRow(
+        columns.length + (type === "pages" ? 1 : 0),
+        rows.length ? "No records match your search." : "No records returned by the server."
+      ));
+    } else {
+      const fragment = document.createDocumentFragment();
+
+      for (const record of filtered) {
+        const row = document.createElement("tr");
+
+        for (const [key] of columns) {
+          const cell = document.createElement("td");
+          const value = safeString(record?.[key]);
+
+          if (
+            key.endsWith("_id") ||
+            key.endsWith("_code") ||
+            key === "page_ref" ||
+            key === "barcode_value"
+          ) {
+            cell.append(makeElement("span", "ref", value));
+          } else if ([
+            "form_status", "page_status", "location_status",
+            "outcome", "verification_status"
+          ].includes(key)) {
+            cell.append(makeStatusBadge(value.toLowerCase()));
+          } else if (key === "created_at") {
+            const date = new Date(record?.[key]);
+            cell.textContent = Number.isNaN(date.getTime())
+              ? value
+              : date.toLocaleString();
+          } else {
+            cell.textContent = value;
+          }
+
+          row.append(cell);
+        }
+
+        if (type === "pages") {
+          const cell = document.createElement("td");
+
+          if (record?.qr_image_url) {
+            const button = makeElement("button", "btn btn-quiet", "Show QR");
+            button.type = "button";
+            button.addEventListener("click", () => showQr(record));
+            cell.append(button);
+          } else {
+            cell.textContent = "--";
+          }
+
+          row.append(cell);
+        }
+
+        fragment.append(row);
+      }
+
+      body.append(fragment);
+    }
+
+    $("registryShown").textContent =
+      filtered.length + " of " + rows.length + " records shown";
+  }
+
+  async function loadRegistry() {
+    if (!state.authenticated || state.loadingRegistry) return;
+
+    const type = $("registryType").value;
+    if (!registryColumns[type]) return;
+
+    state.loadingRegistry = true;
+    state.registryType = type;
+
+    const version = ++state.registryVersion;
+    registryRefresh.disabled = true;
+    setMessage(registryMessage, "Loading " + type + "…");
+
+    try {
+      const query = new URLSearchParams({ type });
+      const payload = await registryRequest(
+        "/admin/registry?" + query.toString(),
+        { method: "GET" }
+      );
+
+      if (version !== state.registryVersion) return;
+
+      const keys = {
+        forms: ["forms", "records", "results", "items"],
+        pages: ["pages", "records", "results", "items"],
+        locations: ["locations", "records", "results", "items"],
+        activity: ["events", "activity", "records", "results", "items"]
+      }[type];
+
+      const rows = getArray(payload, keys, type + " registry");
+      state.registryRows = rows;
+      renderRegistryRows(rows, type);
+
+      if (type === "forms") $("formCount").textContent = String(payload?.total ?? rows.length);
+      if (type === "pages") $("pageCount").textContent = String(payload?.total ?? rows.length);
+      if (type === "activity") $("activityCount").textContent = String(payload?.total ?? rows.length);
+
+      setMessage(registryMessage, "Registry data loaded from the server.", "success");
+    } catch (error) {
+      if (version !== state.registryVersion) return;
+
+      setMessage(
+        registryMessage,
+        error instanceof Error ? error.message : "Unable to load registry.",
+        "error"
+      );
+
+      $("registryHead").replaceChildren();
+      $("registryBody").replaceChildren(
+        makeEmptyRow(
+          registryColumns[type].length + (type === "pages" ? 1 : 0),
+          "Registry unavailable. Confirm that the backend endpoint is deployed."
+        )
+      );
+    } finally {
+      if (version === state.registryVersion) {
+        state.loadingRegistry = false;
+        registryRefresh.disabled = false;
+      }
+    }
+  }
+
+  function safeSameOriginPath(value) {
+    if (
+      typeof value !== "string" ||
+      !value.startsWith("/") ||
+      value.startsWith("//") ||
+      value.includes("\\") ||
+      /[\u0000-\u001f]/.test(value)
+    ) {
+      return null;
+    }
+
+    try {
+      const url = new URL(value, window.location.origin);
+      if (url.origin !== window.location.origin) return null;
+      if (!["http:", "https:"].includes(url.protocol)) return null;
+      return url.pathname + url.search;
+    } catch {
+      return null;
+    }
+  }
+
+  function showQr(record) {
+    const box = $("qrBox");
+    box.replaceChildren();
+
+    $("qrDescription").textContent =
+      safeString(record?.page_name, 120) + " · " +
+      safeString(record?.page_ref, 200);
+
+    const url = safeSameOriginPath(record?.qr_image_url);
+
+    if (!url) {
+      box.textContent = "No valid same-origin QR image URL supplied by the API.";
+      return;
+    }
+
+    const image = document.createElement("img");
+    image.alt = "QR image for registered page";
+    image.referrerPolicy = "no-referrer";
+    image.loading = "lazy";
+
+    image.addEventListener("error", () => {
+      box.replaceChildren();
+      box.textContent = "QR image could not be loaded.";
+    }, { once: true });
+
+    image.src = url;
     box.append(image);
   }
 
-  async function loadRegistry(){
-    if(!state.authenticated)return;
-    const type=$("registryType").value;
-    const button=$("registryRefresh");
-    button.disabled=true;
-    setMessage(registryMessage,"Loading "+type+"…");
-
-    try{
-      const payload=await registryRequest("/api/admin/registry?type="+encodeURIComponent(type));
-      const rows=getRegistryRows(payload,type);
-      state.registryRows=rows;
-      renderRegistryRows(rows,type);
-
-      if(type==="forms")$("formCount").textContent=String(payload.total??rows.length);
-      if(type==="pages")$("pageCount").textContent=String(payload.total??rows.length);
-      if(type==="activity")$("activityCount").textContent=String(payload.total??rows.length);
-
-      setMessage(registryMessage,"Registry data loaded from the server.","success");
-    }catch(error){
-      setMessage(registryMessage,error instanceof Error?error.message:"Unable to load registry.","error");
-      $("registryHead").replaceChildren();$("registryBody").replaceChildren();
-      const tr=document.createElement("tr");const td=document.createElement("td");
-      td.colSpan=registryColumns[type].length;td.className="empty";
-      td.textContent="Registry unavailable. Confirm that the backend endpoint is deployed.";
-      tr.append(td);$("registryBody").append(tr);
-    }finally{
-      button.disabled=false;
-    }
+  function clearQr() {
+    $("qrBox").replaceChildren();
+    $("qrBox").textContent = "No QR image loaded";
+    $("qrDescription").textContent =
+      "Select a registered page with a QR image URL supplied by your backend.";
   }
 
-  function signOut(){
-    state.secret="";state.records=[];state.authenticated=false;state.registryRows=[];
-    $("adminSecret").value="";$("searchInput").value="";$("statusFilter").value="all";
-    dashboard.classList.add("hidden");identityDashboard.classList.add("hidden");
+  function signOut(message = "You have been signed out.") {
+    state.applicationVersion++;
+    state.registryVersion++;
+
+    state.secret = "";
+    state.records = [];
+    state.registryRows = [];
+    state.authenticated = false;
+    state.loadingApplications = false;
+    state.loadingRegistry = false;
+
+    $("adminSecret").value = "";
+    $("searchInput").value = "";
+    $("statusFilter").value = "all";
+    $("registrySearch").value = "";
+    $("pageReference").value = "";
+
+    dashboard.classList.add("hidden");
+    identityDashboard.classList.add("hidden");
     refreshBtn.classList.add("hidden");
-    $("qrBox").textContent="No QR image loaded";
-    $("qrDescription").textContent="Select a registered page with a QR image URL supplied by your backend.";
+
+    $("recordsBody").replaceChildren(makeEmptyRow(2, "Authenticate to load records."));
+    $("registryHead").replaceChildren();
+    $("registryBody").replaceChildren(makeEmptyRow(1, "Authenticate to load registry data."));
+
+    $("totalCount").textContent = "0";
+    $("pendingCount").textContent = "0";
+    $("completeCount").textContent = "0";
+    $("formCount").textContent = "--";
+    $("pageCount").textContent = "--";
+    $("activityCount").textContent = "--";
+    $("shownCount").textContent = "0 records shown";
+    $("registryShown").textContent = "No registry records loaded";
+
+    clearQr();
     setConnection("Not connected");
-    setMessage(authMessage,"You have been signed out.");
-    dataMessage.classList.add("hidden");
-    renderRecords();
+    setMessage(authMessage, message);
+    hideMessage(dataMessage);
+    hideMessage(registryMessage);
+
+    loginBtn.disabled = false;
+    refreshBtn.disabled = false;
+    refreshBtnTop.disabled = false;
+    registryRefresh.disabled = false;
+    verifyPageBtn.disabled = false;
   }
 
-  $("authForm").addEventListener("submit",async event=>{
+  $("authForm").addEventListener("submit", async event => {
     event.preventDefault();
-    if(state.loading)return;
-    const secret=$("adminSecret").value;
-    if(secret.length<16){
-      setMessage(authMessage,"Enter your administrator secret.","error");return;
+    if (state.loadingApplications) return;
+
+    const secret = $("adminSecret").value;
+
+    if (
+      typeof secret !== "string" ||
+      secret.length < 16 ||
+      secret.length > MAX_SECRET_LENGTH
+    ) {
+      setMessage(authMessage, "Enter a valid administrator secret.", "error");
+      return;
     }
-    state.secret=secret;
-    $("adminSecret").value="";
+
+    state.secret = secret;
+    $("adminSecret").value = "";
+
     await loadRecords();
   });
 
-  $("clearBtn").addEventListener("click",signOut);
-  refreshBtn.addEventListener("click",loadRecords);
-  refreshBtnTop.addEventListener("click",loadRecords);
-  $("searchInput").addEventListener("input",renderRecords);
-  $("statusFilter").addEventListener("change",renderRecords);
-  $("resetFilterBtn").addEventListener("click",()=>{
-    $("searchInput").value="";$("statusFilter").value="all";renderRecords();
+  $("clearBtn").addEventListener("click", () => signOut());
+  refreshBtn.addEventListener("click", loadRecords);
+  refreshBtnTop.addEventListener("click", loadRecords);
+
+  $("searchInput").addEventListener("input", renderRecords);
+  $("statusFilter").addEventListener("change", renderRecords);
+
+  $("resetFilterBtn").addEventListener("click", () => {
+    $("searchInput").value = "";
+    $("statusFilter").value = "all";
+    renderRecords();
   });
 
-  $("registryType").addEventListener("change",loadRegistry);
-  $("registrySearch").addEventListener("input",()=>{
-    renderRegistryRows(state.registryRows,$("registryType").value);
-  });
-  $("registryRefresh").addEventListener("click",loadRegistry);
-  $("clearQrBtn").addEventListener("click",()=>{
-    $("qrBox").textContent="No QR image loaded";
-    $("qrDescription").textContent="Select a registered page with a QR image URL supplied by your backend.";
+  $("registryType").addEventListener("change", () => {
+    state.registryRows = [];
+    loadRegistry();
   });
 
-  $("verifyPageForm").addEventListener("submit",async event=>{
+  $("registrySearch").addEventListener("input", () => {
+    if (registryColumns[state.registryType]) {
+      renderRegistryRows(state.registryRows, state.registryType);
+    }
+  });
+
+  registryRefresh.addEventListener("click", loadRegistry);
+  $("clearQrBtn").addEventListener("click", clearQr);
+
+  $("verifyPageForm").addEventListener("submit", async event => {
     event.preventDefault();
-    const reference=$("pageReference").value.trim();
-    const button=$("verifyPageBtn");
-    const result=$("verifyResult");
 
-    if(!reference||reference.length>200){
-      setMessage(result,"Enter a valid page reference.","error");return;
+    const reference = $("pageReference").value.trim();
+    const result = $("verifyResult");
+
+    if (!reference || reference.length > 200) {
+      setMessage(result, "Enter a valid page reference.", "error");
+      return;
     }
 
-    button.disabled=true;
-    setMessage(result,"Verifying reference with the server…");
+    if (!state.authenticated) {
+      setMessage(result, "Authenticate before verifying a page reference.", "error");
+      return;
+    }
 
-    try{
-      const payload=await registryRequest("/api/admin/registry/verify",{
-        method:"POST",body:JSON.stringify({page_ref:reference})
+    verifyPageBtn.disabled = true;
+    setMessage(result, "Verifying reference with the server…");
+
+    try {
+      const payload = await registryRequest("/admin/registry/verify", {
+        method: "POST",
+        body: JSON.stringify({ page_ref: reference })
       });
-      if(payload.verified===true){
-        setMessage(result,"Verified. "+String(payload.message||"Reference is valid."),"success");
-      }else{
-        setMessage(result,"Not verified. "+String(payload.message||"Invalid, expired or revoked reference."),"error");
+
+      if (payload?.verified === true) {
+        setMessage(
+          result,
+          "Verified. " + safeString(payload.message || "Reference is valid.", 300),
+          "success"
+        );
+      } else {
+        setMessage(
+          result,
+          "Not verified. " + safeString(
+            payload?.message || "Invalid, expired, revoked or unrecognized reference.",
+            300
+          ),
+          "error"
+        );
       }
-    }catch(error){
-      setMessage(result,error instanceof Error?error.message:"Verification failed.","error");
-    }finally{
-      button.disabled=false;
+    } catch (error) {
+      setMessage(
+        result,
+        error instanceof Error ? error.message : "Verification failed.",
+        "error"
+      );
+    } finally {
+      verifyPageBtn.disabled = false;
     }
   });
 
-  window.addEventListener("pagehide",()=>{
-    state.secret="";state.records=[];state.registryRows=[];state.authenticated=false;
+  window.addEventListener("pagehide", () => {
+    state.secret = "";
+    state.records = [];
+    state.registryRows = [];
+    state.authenticated = false;
   });
 
   renderRecords();
+  clearQr();
 })();
 </script>
+
+<!-- SINGLE-FILE PACKAGER -->
+<!-- Keep this file at public/single-file.js -->
+<script src="/single-file.js" defer></script>
 </body>
 </html>

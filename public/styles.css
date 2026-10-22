@@ -1,73 +1,48 @@
+/* =========================================================MEDORBITS | APPLICATION PREPARATION PORTAL
+  Responsive monochrome design system
+  File: styles.css
 
-/* =========================================================
-   MEDORBITS | APPLICATION PREPARATION PORTAL
-   Unified Responsive Design System
-   File: styles.css
+  Supports:
+  - Phones, tablets, laptops and desktop screens
+  - English, Hindi, Bengali and Nepali content
+  - Multi-step forms, uploads, review screens and document previews
+  - A4 print / browser Save as PDF
 
-   Design: Strict black and white
-   Devices: iPhone, Android, tablets, laptops, desktops
-   Languages: English, Hindi, Bengali, Nepali
-   Output: Responsive screens and A4 print/PDF
+  Include in HTML:
+  <link rel="stylesheet" href="/styles.css">
 
-   Link in HTML:
-   <link rel="stylesheet" href="styles.css">
+  CSS controls presentation only. It does not submit forms, upload
+  documents, save data securely, or generate PDFs by itself.
+  =========================================================*/
 
-   This stylesheet does not itself submit forms or upload files.
-   ========================================================= */
-
-/* =========================================================
-   1. DESIGN TOKENS
-   ========================================================= */
-
+/* 1. Design tokens */
 :root {
   color-scheme: light;
-
-  --ink: #111111;
-  --muted: #555555;
-  --paper: #ffffff;
+  --ink: #111;
+  --muted: #555;
+  --paper: #fff;
   --surface: #f5f5f5;
-  --surface-dark: #eaeaea;
-  --line: #222222;
+  --surface-2: #eaeaea;
+  --line: #222;
   --soft-line: #d0d0d0;
-
-  --danger: #111111;
-  --success: #111111;
-  --focus: #000000;
-
+  --focus: #000;
   --content-width: 1080px;
   --page-gutter: 20px;
   --control-height: 46px;
-
   --border-width: 1px;
   --page-border: 2px;
-  --radius: 0px;
-
+  --radius: 0;
   --font-latin: Arial, Helvetica, sans-serif;
-  --font-devanagari:
-    "Noto Sans Devanagari",
-    "Nirmala UI",
-    Mangal,
-    sans-serif;
-  --font-bengali:
-    "Noto Sans Bengali",
-    "Nirmala UI",
-    Vrinda,
-    sans-serif;
-
+  --font-devanagari:  "Noto Sans Devanagari",  "Nirmala UI", Mangal, sans-serif;
+  --font-bengali:  "Noto Sans Bengali",  "Nirmala UI", Vrinda, sans-serif;
   --shadow: none;
   --transition: 150ms ease;
 }
 
-/* =========================================================
-   2. RESET AND BOX SIZING
-   ========================================================= */
-
-*,
-*::before,
-*::after {
+/* 2. Reset and baseline */
+*, *::before, *::after {
   box-sizing: border-box;
 }
-
 html {
   width: 100%;
   min-height: 100%;
@@ -82,7 +57,6 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: 16px;
 }
-
 body {
   width: 100%;
   min-width: 0;
@@ -95,146 +69,132 @@ body {
   font-family: var(--font-latin);
   font-size: 15px;
   line-height: 1.65;
-  overflow-wrap: break-word;
-  word-break: normal;
+  overflow-wrap: anywhere;
   -webkit-font-smoothing: antialiased;
 }
-
 * {
   -webkit-tap-highlight-color: transparent;
 }
-
-img,
-picture,
-video,
-canvas,
-svg,
-iframe {
+img, picture, video, canvas, svg, iframe {
   max-width: 100%;
 }
-
 img {
   height: auto;
 }
-
 iframe {
   border: 0;
 }
-
 [hidden] {
   display: none !important;
 }
-
-[disabled] {
+[disabled], [aria-disabled="true"] {
   cursor: not-allowed !important;
 }
-
-:where(header, footer, main, section, article, nav, aside, form) {
+:where(header, footer, main, section, article, nav, aside, form, fieldset, figure) {
   min-width: 0;
 }
-
-:where(p, li, label, small, strong, span, a, h1, h2, h3, h4, h5, h6) {
+:where(p, li, label, small, strong, span, a, h1, h2, h3, h4, h5, h6, th, td) {
   min-width: 0;
+  overflow-wrap: anywhere;
   word-break: normal;
-  overflow-wrap: break-word;
+}
+:where(input, select, textarea, button) {
+  font: inherit;
+}
+:where(button, input, select, textarea) {
+  max-width: 100%;
 }
 
-/* =========================================================
-   3. LANGUAGE SUPPORT
-   ========================================================= */
-
+/* 3. Language support */
 :lang(en) {
   font-family: var(--font-latin);
 }
-
-:lang(hi),
-:lang(ne) {
+:lang(hi), :lang(ne) {
   font-family: var(--font-devanagari);
   line-height: 1.8;
 }
-
 :lang(bn) {
   font-family: var(--font-bengali);
   line-height: 1.85;
 }
 
-:where(input, select, textarea, button) {
-  font-family: inherit;
-}
-
-/* =========================================================
-   4. LINKS AND KEYBOARD ACCESSIBILITY
-   ========================================================= */
-
+/* 4. Links and accessible focus */
 a {
   color: var(--ink);
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
 }
-
 a:hover {
   text-decoration-thickness: 2px;
 }
-
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 3px;
 }
-
+:where(input, select, textarea):focus-visible {
+  border-color: var(--ink);
+}
 ::selection {
-  background: #111111;
-  color: #ffffff;
+  background: var(--ink);
+  color: var(--paper);
+}
+.skip-link {
+  position: absolute;
+  z-index: 9999;
+  top: 8px;
+  left: 8px;
+  padding: 10px 14px;
+  transform: translateY(-160%);
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+}
+.skip-link:focus {
+  transform: translateY(0);
 }
 
-/* =========================================================
-   5. PAGE LAYOUT
-   ========================================================= */
-
-.container,
-.page-container,
-.form-container {
-  width: min(
-    calc(100% - 2 * var(--page-gutter)),
-    var(--content-width)
-  );
+/* 5. Layout */
+.container, .page-container, .form-container {
+  width: min(calc(100% - 2 * var(--page-gutter)), var(--content-width));
   min-width: 0;
-  margin-right: auto;
-  margin-left: auto;
+  margin-inline: auto;
 }
-
-main,
-.site-main {
+main, .site-main {
   display: block;
   width: 100%;
-  min-width: 0;
   max-width: var(--content-width);
-  margin-right: auto;
-  margin-left: auto;
+  min-width: 0;
+  margin-inline: auto;
   padding: 28px var(--page-gutter) 42px;
 }
-
 section {
   min-width: 0;
   margin-block: 22px;
 }
-
-hr,
-.divider {
+hr, .divider {
   height: 0;
   margin: 24px 0;
   border: 0;
   border-top: 1px solid var(--ink);
 }
+.stack > * + * {
+  margin-top: 14px;
+}
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.flow > * + * {
+  margin-top: 1rem;
+}
 
-/* =========================================================
-   6. HEADER AND FOOTER
-   ========================================================= */
-
+/* 6. Header, top line and footer */
 .topline {
   border-bottom: 1px solid var(--ink);
   background: var(--paper);
 }
-
 .topline-inner {
   display: flex;
   min-height: 44px;
@@ -243,30 +203,24 @@ hr,
   gap: 12px;
   padding-block: 9px;
   font-size: 11px;
-  letter-spacing: 0.06em;
+  letter-spacing: .06em;
   text-transform: uppercase;
 }
-
 .brand {
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: .08em;
 }
-
 .independent {
   color: var(--muted);
   text-align: right;
 }
-
-header,
-.site-header {
+header, .site-header {
   min-width: 0;
   padding: 24px var(--page-gutter);
   border-bottom: 2px solid var(--ink);
   background: var(--paper);
 }
-
-footer,
-.site-footer {
+footer, .site-footer {
   min-width: 0;
   padding: 18px var(--page-gutter);
   border-top: 2px solid var(--ink);
@@ -274,7 +228,6 @@ footer,
   color: var(--muted);
   font-size: 12px;
 }
-
 .footer-inner {
   display: flex;
   flex-wrap: wrap;
@@ -282,45 +235,33 @@ footer,
   justify-content: space-between;
   gap: 12px;
 }
-
 .footer-inner > * {
   min-width: 0;
 }
-
 #letter {
   margin-top: 20px;
   padding: 20px;
   border: 1px solid var(--ink);
   white-space: pre-wrap;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
 }
 
-/* =========================================================
-   7. TYPOGRAPHY
-   ========================================================= */
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+/* 7. Typography */
+h1, h2, h3, h4, h5, h6 {
   color: var(--ink);
   font-family: inherit;
   font-weight: 700;
   letter-spacing: normal;
   word-spacing: normal;
   word-break: normal;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
 }
-
 h1 {
   max-width: 900px;
   margin: 0 0 16px;
   font-size: clamp(26px, 4vw, 42px);
   line-height: 1.2;
 }
-
 h2 {
   margin: 26px 0 14px;
   padding-bottom: 9px;
@@ -328,82 +269,69 @@ h2 {
   font-size: clamp(20px, 3vw, 27px);
   line-height: 1.35;
 }
-
 h3 {
   margin: 20px 0 10px;
   font-size: 18px;
   line-height: 1.4;
 }
-
 h4 {
   margin: 16px 0 8px;
   font-size: 15px;
   line-height: 1.45;
 }
-
-h5,
-h6 {
+h5, h6 {
   margin: 14px 0 8px;
   font-size: 14px;
 }
-
 p {
   margin: 0 0 14px;
 }
-
 p:last-child {
   margin-bottom: 0;
 }
-
-ul,
-ol {
+ul, ol {
   padding-left: 24px;
 }
-
 li {
   margin-bottom: 7px;
 }
-
-small,
-.small,
-.help-text,
-.field-help,
-.field-note,
-.hint {
+small, .small, .help-text, .field-help, .field-note, .hint {
   color: var(--muted);
   font-size: 12px;
   line-height: 1.55;
 }
-
-strong,
-b {
+strong, b {
   font-weight: 700;
 }
-
 .subtitle {
   max-width: 780px;
   margin-top: 10px;
   color: var(--muted);
   font-size: 15px;
 }
-
-.eyebrow,
-.section-number {
+.eyebrow, .section-number {
   margin-bottom: 9px;
   color: var(--muted);
   font-size: 11px;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: .08em;
   text-transform: uppercase;
 }
+.muted, .text-muted {
+  color: var(--muted);
+}
+.text-center {
+  text-align: center;
+}
+.text-right {
+  text-align: right;
+}
+.break-anywhere {
+  overflow-wrap: anywhere;
+}
 
-/* =========================================================
-   8. APPLICATION AND DOCUMENT HEADINGS
-   ========================================================= */
-
-.official-heading,
-.application-heading,
-.document-heading {
+/* 8. Application/document headings */
+.official-heading, .application-heading, .document-heading {
   display: grid;
   grid-template-columns: 76px minmax(0, 1fr) 76px;
   align-items: center;
@@ -416,45 +344,32 @@ b {
   background: var(--paper);
   text-align: center;
 }
-
 .heading-text {
   min-width: 0;
   text-align: center;
 }
-
-.heading-text h1,
-.official-heading h1,
-.application-heading h1,
-.document-heading h1 {
+.heading-text h1, .official-heading h1, .application-heading h1, .document-heading h1 {
   margin: 0 0 7px;
   font-size: clamp(20px, 3.5vw, 30px);
   line-height: 1.3;
   letter-spacing: normal;
   text-transform: none;
 }
-
-.heading-text p,
-.official-heading p,
-.application-heading p,
-.document-heading p {
+.heading-text p, .official-heading p, .application-heading p, .document-heading p {
   margin: 4px 0;
   font-size: 12px;
   line-height: 1.6;
 }
-
-.heading-logo,
-.official-heading .heading-logo {
+.heading-logo, .official-heading .heading-logo {
   display: block;
   width: 100%;
   max-width: 76px;
   height: 76px;
-  margin: 0 auto;
+  margin-inline: auto;
   object-fit: contain;
   object-position: center;
 }
-
-.status,
-.status-badge {
+.status, .status-badge {
   display: inline-block;
   max-width: 100%;
   margin-top: 12px;
@@ -465,68 +380,38 @@ b {
   font-size: 10px;
   font-weight: 800;
   line-height: 1.5;
-  letter-spacing: 0.04em;
+  letter-spacing: .04em;
   text-align: center;
-  overflow-wrap: break-word;
   text-transform: uppercase;
 }
 
-/* =========================================================
-   9. NOTICES, PANELS AND CARDS
-   ========================================================= */
-
-.notice,
-.alert,
-.info-box,
-.information-panel,
-.status-panel,
-.reference-box,
-.fee-box {
+/* 9. Notices, panels and cards */
+.notice, .alert, .info-box, .information-panel, .status-panel,
+.reference-box, .fee-box {
   min-width: 0;
   margin: 18px 0;
   padding: 15px 17px;
   border: 1px solid var(--ink);
   background: var(--paper);
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
 }
-
-.notice,
-.alert,
-.info-box {
+.notice, .alert, .info-box {
   border-left: 4px solid var(--ink);
   background: var(--surface);
 }
-
-.notice h2,
-.alert h2,
-.info-box h2 {
+.notice h2, .alert h2, .info-box h2 {
   margin-top: 0;
   font-size: 17px;
 }
-
-.notice p:last-child,
-.alert p:last-child,
-.info-box p:last-child {
+.notice p:last-child, .alert p:last-child, .info-box p:last-child {
   margin-bottom: 0;
 }
-
-.notice.success,
-.alert.success,
-.notice.error,
-.alert.error {
+.notice.success, .alert.success, .notice.error, .alert.error {
   border-left-color: var(--ink);
   color: var(--ink);
 }
-
-.panel,
-.card,
-.form-card,
-.document-panel,
-.form-section,
-.application-section,
-.document-section,
-.resource-card,
-.step-card {
+.panel, .card, .form-card, .document-panel, .form-section, .application-section,
+.document-section, .resource-card, .step-card {
   min-width: 0;
   margin: 0 0 22px;
   padding: clamp(15px, 3vw, 26px);
@@ -535,28 +420,16 @@ b {
   background: var(--paper);
   box-shadow: none;
 }
-
-.panel h2:first-child,
-.card h2:first-child,
-.form-card h2:first-child,
-.document-panel h2:first-child,
-.form-section h2:first-child,
-.application-section h2:first-child,
-.document-section h2:first-child {
+.panel h2:first-child, .card h2:first-child, .form-card h2:first-child,
+.document-panel h2:first-child, .form-section h2:first-child,
+.application-section h2:first-child, .document-section h2:first-child {
   margin-top: 0;
 }
-
 .intro {
   margin-bottom: 20px;
   color: var(--muted);
   font-size: 14px;
 }
-
-.muted,
-.text-muted {
-  color: var(--muted);
-}
-
 .reference-panel {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -568,13 +441,10 @@ b {
   border: 1px solid var(--ink);
   background: var(--paper);
 }
-
-.reference-panel > *,
-.reference-item {
+.reference-panel > *, .reference-item {
   min-width: 0;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
 }
-
 .reference-value {
   display: block;
   margin-top: 5px;
@@ -584,16 +454,14 @@ b {
   overflow-wrap: anywhere;
   font-variant-numeric: tabular-nums;
 }
-
 .fee-label {
   display: block;
   color: var(--muted);
   font-size: 11px;
   font-weight: 800;
-  letter-spacing: 0.06em;
+  letter-spacing: .06em;
   text-transform: uppercase;
 }
-
 .fee-amount {
   display: block;
   margin-top: 5px;
@@ -603,54 +471,31 @@ b {
   font-variant-numeric: tabular-nums;
 }
 
-/* =========================================================
-   10. FORM LAYOUT
-   ========================================================= */
-
+/* 10. Form layout */
 form {
   width: 100%;
   min-width: 0;
 }
-
-.form-grid,
-.grid,
-.form-row {
+.form-grid, .grid, .form-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px 18px;
   width: 100%;
   min-width: 0;
 }
-
-.form-grid > *,
-.grid > *,
-.form-row > *,
-.field,
-.form-group,
-.form-field {
+.form-grid > *, .grid > *, .form-row > *, .field, .form-group, .form-field {
   min-width: 0;
 }
-
-.field,
-.form-group,
-.form-field {
+.field, .form-group, .form-field {
   display: flex;
   flex-direction: column;
   gap: 6px;
   margin-bottom: 14px;
 }
-
-.full,
-.full-width,
-.grid-full,
-.field.full,
-.form-group.full,
-.form-field.full {
+.full, .full-width, .grid-full, .field.full, .form-group.full, .form-field.full {
   grid-column: 1 / -1;
 }
-
-label,
-.field-label {
+label, .field-label {
   display: block;
   margin: 5px 0;
   color: var(--ink);
@@ -658,112 +503,82 @@ label,
   font-weight: 700;
   line-height: 1.5;
 }
-
-.required,
-.required-mark {
+.required, .required-mark {
   color: var(--ink);
   font-weight: 800;
 }
-
-.field-help,
-.field-note,
-.help-text,
-.hint {
+.field-help, .field-note, .help-text, .hint {
   display: block;
   margin-top: 3px;
 }
-
 fieldset {
   min-width: 0;
   margin: 16px 0;
   padding: 15px;
   border: 1px solid var(--ink);
 }
-
 legend {
   max-width: 100%;
   padding: 0 7px;
   font-weight: 700;
 }
+.form-grid > .field, .grid > .field, .form-row > .field {
+  margin-bottom: 0;
+}
 
-/* =========================================================
-   11. INPUTS AND SELECT CONTROLS
-   ========================================================= */
-
-input,
-select,
-textarea {
+/* 11. Inputs and selects */
+input, select, textarea {
   max-width: 100%;
   color: var(--ink);
   font-family: inherit;
   font-size: 16px;
 }
-
 input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]),
-select,
-textarea {
+select, textarea {
   display: block;
   width: 100%;
   min-width: 0;
   min-height: var(--control-height);
   padding: 10px 12px;
-  border: 1px solid #666666;
+  border: 1px solid #666;
   border-radius: var(--radius);
   background: var(--paper);
   color: var(--ink);
   line-height: 1.5;
   box-shadow: none;
-  transition: border-color var(--transition);
+  transition: border-color var(--transition), outline-color var(--transition);
 }
-
 textarea {
   min-height: 112px;
   resize: vertical;
 }
-
 select {
   cursor: pointer;
 }
-
-input::placeholder,
-textarea::placeholder {
-  color: #666666;
+input::placeholder, textarea::placeholder {
+  color: #666;
   opacity: 1;
 }
-
-input:focus,
-select:focus,
-textarea:focus {
+input:focus, select:focus, textarea:focus {
   border-color: var(--ink);
   outline: 2px solid var(--ink);
   outline-offset: 1px;
   box-shadow: none;
 }
-
-input:disabled,
-select:disabled,
-textarea:disabled {
-  background: var(--surface-dark);
-  color: #555555;
+input:disabled, select:disabled, textarea:disabled {
+  background: var(--surface-2);
+  color: #555;
   cursor: not-allowed;
 }
-
-input[aria-invalid="true"],
-select[aria-invalid="true"],
-textarea[aria-invalid="true"] {
+input[aria-invalid="true"], select[aria-invalid="true"], textarea[aria-invalid="true"] {
   border: 2px solid var(--ink);
 }
-
-input[type="date"],
-input[type="time"],
-input[type="datetime-local"] {
+input[type="date"], input[type="time"], input[type="datetime-local"] {
   min-height: var(--control-height);
 }
-
 input[type="number"] {
   font-variant-numeric: tabular-nums;
 }
-
 input[type="file"] {
   display: block;
   width: 100%;
@@ -774,7 +589,6 @@ input[type="file"] {
   border-radius: 0;
   background: var(--surface);
 }
-
 input[type="file"]::file-selector-button {
   max-width: 100%;
   margin-right: 9px;
@@ -789,36 +603,34 @@ input[type="file"]::file-selector-button {
   font-weight: 700;
   cursor: pointer;
 }
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--ink);
+}
+input[type="color"] {
+  min-height: 44px;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+}
+output {
+  font-variant-numeric: tabular-nums;
+}
 
-/* =========================================================
-   12. CHECKBOXES, RADIOS AND CONSENT
-   ========================================================= */
-
-.check,
-.inline-check,
-.checkbox-row,
-.radio-row,
-.consent-row {
+/* 12. Checkboxes, radios, consent and validation */
+.check, .inline-check, .checkbox-row, .radio-row, .consent-row {
   display: flex;
   align-items: flex-start;
   gap: 10px;
   min-width: 0;
   margin: 14px 0;
 }
-
-.check label,
-.inline-check label,
-.checkbox-row label,
-.radio-row label,
-.consent-row label {
+.check label, .inline-check label, .checkbox-row label, .radio-row label, .consent-row label {
   min-width: 0;
   margin: 0;
   font-weight: 400;
   cursor: pointer;
 }
-
-input[type="checkbox"],
-input[type="radio"] {
+input[type="checkbox"], input[type="radio"] {
   display: inline-block;
   width: 19px;
   height: 19px;
@@ -829,29 +641,30 @@ input[type="radio"] {
   accent-color: var(--ink);
   cursor: pointer;
 }
-
-.field-error,
-.error-message,
-.validation-message {
+.field-error, .error-message, .validation-message {
   display: block;
   margin-top: 4px;
   color: var(--ink);
   font-size: 12px;
   font-weight: 700;
 }
+.error {
+  display: none;
+  margin: 16px 0;
+  padding: 12px;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+}
+.error.show {
+  display: block;
+}
+[aria-describedby] {
+  scroll-margin-block: 20px;
+}
 
-/* =========================================================
-   13. BUTTONS
-   All buttons use monochrome styling.
-   ========================================================= */
-
-button,
-.btn,
-.button,
-a.btn,
-input[type="submit"],
-input[type="button"],
-input[type="reset"] {
+/* 13. Buttons */
+button, .btn, .button, a.btn, input[type="submit"], input[type="button"], input[type="reset"] {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -870,93 +683,49 @@ input[type="reset"] {
   text-align: center;
   text-decoration: none;
   white-space: normal;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
   cursor: pointer;
   box-shadow: none;
-  transition:
-    background-color var(--transition),
-    color var(--transition);
+  transition: background-color var(--transition), color var(--transition);
 }
-
-button:hover,
-.btn:hover,
-.button:hover,
-a.btn:hover,
-input[type="button"]:hover,
-input[type="reset"]:hover {
+button:hover, .btn:hover, .button:hover, a.btn:hover, input[type="button"]:hover, input[type="reset"]:hover {
   background: var(--surface);
   color: var(--ink);
 }
-
-button.primary,
-.btn.primary,
-.button.primary,
-button[type="submit"],
-input[type="submit"] {
+button.primary, .btn.primary, .button.primary, button[type="submit"], input[type="submit"] {
   border-color: var(--ink);
   background: var(--ink);
   color: var(--paper);
 }
-
-button.primary:hover,
-.btn.primary:hover,
-.button.primary:hover,
-button[type="submit"]:hover,
-input[type="submit"]:hover {
-  border-color: #333333;
-  background: #333333;
+button.primary:hover, .btn.primary:hover, .button.primary:hover, button[type="submit"]:hover, input[type="submit"]:hover {
+  border-color: #333;
+  background: #333;
   color: var(--paper);
 }
-
-.btn-secondary,
-.button-secondary,
-button.secondary,
-button.back-button {
+.btn-secondary, .button-secondary, button.secondary, button.back-button {
   border-color: var(--ink);
   background: var(--paper);
   color: var(--ink);
 }
-
-.btn-secondary:hover,
-.button-secondary:hover,
-button.secondary:hover,
-button.back-button:hover {
+.btn-secondary:hover, .button-secondary:hover, button.secondary:hover, button.back-button:hover {
   background: var(--surface);
-  color: var(--ink);
 }
-
-.btn-danger,
-.button-danger,
-button.danger {
+.btn-danger, .button-danger, button.danger {
   border-color: var(--ink);
   background: var(--ink);
   color: var(--paper);
 }
-
-button:disabled,
-.btn:disabled,
-.button:disabled,
-button[aria-disabled="true"],
-.btn[aria-disabled="true"],
-input:disabled {
-  opacity: 0.55;
+button:disabled, .btn:disabled, .button:disabled, button[aria-disabled="true"], .btn[aria-disabled="true"], input:disabled {
+  opacity: .55;
   cursor: not-allowed;
 }
-
-button:disabled:hover,
-.btn:disabled:hover {
+button:disabled:hover, .btn:disabled:hover {
   background: var(--paper);
   color: var(--ink);
 }
 
-/* =========================================================
-   14. FORM ACTIONS AND NAVIGATION
-   ========================================================= */
-
-.actions,
-.form-actions,
-.button-group,
-.navigation-buttons {
+/* 14. Actions and navigation */
+.actions, .form-actions, .button-group, .navigation-buttons {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -965,78 +734,37 @@ button:disabled:hover,
   min-width: 0;
   margin-top: 24px;
 }
-
-.actions > *,
-.form-actions > *,
-.button-group > *,
-.navigation-buttons > * {
+.actions > *, .form-actions > *, .button-group > *, .navigation-buttons > * {
   min-width: 0;
   max-width: 100%;
 }
-
-/* Save and Continue remains black, not green or colored. */
-.actions button.primary,
-.actions .btn.primary,
-.form-actions button.primary,
-.form-actions .btn.primary {
-  border-color: #111111;
-  background: #111111;
-  color: #ffffff;
+.actions button.primary, .actions .btn.primary, .form-actions button.primary, .form-actions .btn.primary {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
 }
-
-.actions button.primary:hover,
-.actions .btn.primary:hover,
-.form-actions button.primary:hover,
-.form-actions .btn.primary:hover {
-  border-color: #333333;
-  background: #333333;
-  color: #ffffff;
-}
-
-.message,
-[role="status"],
-[role="alert"] {
+.message, [role="status"], [role="alert"] {
   min-width: 0;
   min-height: 1.5em;
   overflow-wrap: anywhere;
 }
 
-.error {
-  display: none;
-  margin: 16px 0;
-  padding: 12px;
-  border: 2px solid var(--ink);
-  background: var(--paper);
-  color: var(--ink);
-}
-
-.error.show {
-  display: block;
-}
-
-/* =========================================================
-   15. PROGRESS AND APPLICATION STEPS
-   ========================================================= */
-
-.progress,
-.progress-track {
+/* 15. Progress and steps */
+.progress, .progress-track {
   width: 100%;
   height: 8px;
   overflow: hidden;
   border: 1px solid var(--ink);
   border-radius: 0;
-  background: var(--surface-dark);
+  background: var(--surface-2);
 }
-
 .progress-bar {
   width: 0;
   height: 100%;
   background: var(--ink);
   transition: width var(--transition);
 }
-
-.steps,
-.step-list {
+.steps, .step-list {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -1045,9 +773,7 @@ button:disabled:hover,
   padding: 0;
   list-style: none;
 }
-
-.steps li,
-.step-list li {
+.steps li, .step-list li {
   flex: 1 1 110px;
   min-width: 0;
   margin: 0;
@@ -1057,18 +783,13 @@ button:disabled:hover,
   color: var(--ink);
   font-size: 12px;
   text-align: center;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
 }
-
-.steps li.active,
-.step-list li.active,
-.steps li[aria-current="step"],
-.step-list li[aria-current="step"] {
+.steps li.active, .step-list li.active, .steps li[aria-current="step"], .step-list li[aria-current="step"] {
   border: 2px solid var(--ink);
   background: var(--surface);
   font-weight: 700;
 }
-
 .step-link {
   display: flex;
   align-items: center;
@@ -1080,13 +801,10 @@ button:disabled:hover,
   color: var(--ink);
   text-decoration: none;
 }
-
 .step-link:hover {
   background: var(--surface);
 }
-
-.step-num,
-.num {
+.step-num, .num {
   display: grid;
   width: 36px;
   height: 36px;
@@ -1095,44 +813,28 @@ button:disabled:hover,
   border: 1px solid var(--ink);
   font-weight: 700;
 }
-
-.step-text,
-.steptext {
+.step-text, .steptext {
   flex: 1;
   min-width: 0;
 }
-
-.step-text strong,
-.step-text small,
-.steptext strong,
-.steptext small {
+.step-text strong, .step-text small, .steptext strong, .steptext small {
   display: block;
 }
-
-.step-text small,
-.steptext small {
+.step-text small, .steptext small {
   margin-top: 3px;
   color: var(--muted);
   font-size: 12px;
 }
 
-/* =========================================================
-   16. RESOURCE CARDS AND CONTENT GRIDS
-   ========================================================= */
-
-.resource-list,
-.resource-grid,
-.card-grid,
-.steps-grid {
+/* 16. Resource cards and grids */
+.resource-list, .resource-grid, .card-grid, .steps-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
   min-width: 0;
   margin: 20px 0;
 }
-
-.resource,
-.resource-card {
+.resource, .resource-card {
   display: block;
   min-width: 0;
   min-height: 84px;
@@ -1141,57 +843,40 @@ button:disabled:hover,
   background: var(--paper);
   color: var(--ink);
   text-decoration: none;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
 }
-
-.resource:hover,
-.resource-card:hover {
+.resource:hover, .resource-card:hover {
   background: var(--surface);
 }
-
-.resource strong,
-.resource span {
+.resource strong, .resource span {
   display: block;
 }
-
 .resource strong {
   margin-bottom: 5px;
   font-size: 14px;
 }
-
 .resource span {
   color: var(--muted);
   font-size: 12px;
 }
-
-.resource-list .resource,
-.steps-grid > *,
-.card-grid > *,
-.resource-grid > * {
+.resource-list .resource, .steps-grid > *, .card-grid > *, .resource-grid > * {
   min-width: 0;
 }
-
 .list-clean {
   margin: 0;
   padding: 0;
   list-style: none;
 }
-
 .list-clean li {
   padding: 9px 0;
   border-bottom: 1px solid var(--soft-line);
 }
-
 .list-clean li:last-child {
   border-bottom: 0;
 }
 
-/* =========================================================
-   17. IMAGES, LOGOS AND UPLOAD PREVIEWS
-   ========================================================= */
-
-.logo,
-.site-logo {
+/* 17. Images, logos and upload previews */
+.logo, .site-logo {
   display: block;
   width: auto;
   max-width: 100%;
@@ -1200,11 +885,7 @@ button:disabled:hover,
   margin: 0 auto 12px;
   object-fit: contain;
 }
-
-.preview,
-.image-preview,
-.photo-preview,
-.signature-preview {
+.preview, .image-preview, .photo-preview, .signature-preview {
   display: block;
   width: auto;
   max-width: 100%;
@@ -1215,38 +896,37 @@ button:disabled:hover,
   object-fit: contain;
   object-position: center;
 }
-
 .photo-preview {
   width: 150px;
   height: 180px;
 }
-
 .signature-preview {
   width: 240px;
   height: 100px;
 }
-
 .upload-card {
   min-width: 0;
   padding: 14px;
   border: 1px dashed var(--ink);
   background: var(--surface);
 }
-
-video,
-canvas {
+video, canvas {
   display: block;
   max-width: 100%;
   border: 1px solid var(--ink);
   background: var(--paper);
 }
+figure {
+  margin: 18px 0;
+}
+figcaption {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 12px;
+}
 
-/* =========================================================
-   18. TABLES
-   ========================================================= */
-
-.table-wrap,
-.table-responsive {
+/* 18. Tables */
+.table-wrap, .table-responsive {
   width: 100%;
   min-width: 0;
   margin: 18px 0;
@@ -1254,7 +934,6 @@ canvas {
   overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
 }
-
 table {
   width: 100%;
   border-collapse: collapse;
@@ -1262,27 +941,20 @@ table {
   color: var(--ink);
   font-size: 13px;
 }
-
-th,
-td {
+th, td {
   padding: 10px;
   border: 1px solid var(--ink);
   text-align: left;
   vertical-align: top;
-  overflow-wrap: break-word;
-  word-break: normal;
+  overflow-wrap: anywhere;
 }
-
 th {
   background: var(--surface);
   font-weight: 700;
 }
-
-.table-wrap table,
-.table-responsive table {
+.table-wrap table, .table-responsive table {
   min-width: 560px;
 }
-
 .fineprint {
   margin-top: 22px;
   padding-top: 16px;
@@ -1291,26 +963,11 @@ th {
   font-size: 12px;
 }
 
-/* =========================================================
-   19. FORM AND REFERENCE INFORMATION
-   ========================================================= */
-
-.reference-box,
-.fee-box {
-  overflow-wrap: break-word;
-}
-
-.reference-value,
-.fee-amount {
-  font-variant-numeric: tabular-nums;
-}
-
-code,
-pre {
+/* 19. Code, letter and review output */
+code, pre {
   max-width: 100%;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
 }
-
 pre {
   overflow-x: auto;
   padding: 14px;
@@ -1318,684 +975,444 @@ pre {
   background: var(--surface);
   white-space: pre-wrap;
 }
+.review-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  margin: 0;
+}
+.review-row {
+  display: grid;
+  grid-template-columns: minmax(130px, .7fr) minmax(0, 1.3fr);
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--soft-line);
+}
+.review-row dt {
+  font-weight: 700;
+}
+.review-row dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.signature-line {
+  min-height: 48px;
+  border-bottom: 1px solid var(--ink);
+}
+.page-break-before {
+  break-before: page;
+  page-break-before: always;
+}
+.keep-together {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
 
-/* =========================================================
-   20. RESPONSIVE TABLET AND SMALL LAPTOP
-   ========================================================= */
-
+/* 20. Tablet and small laptop */
 @media (max-width: 900px) {
   :root {
-    --page-gutter: 16px;
+  --page-gutter: 16px;
   }
-
-  main,
-  .site-main {
-    padding-top: 24px;
-    padding-bottom: 34px;
+  main, .site-main {
+  padding-top: 24px;
+  padding-bottom: 34px;
   }
-
-  .official-heading,
-  .application-heading,
-  .document-heading {
-    grid-template-columns: 58px minmax(0, 1fr) 58px;
-    gap: 10px;
-    padding: 15px 10px;
+  .official-heading, .application-heading, .document-heading {
+  grid-template-columns: 58px minmax(0, 1fr) 58px;
+  gap: 10px;
+  padding: 15px 10px;
   }
-
-  .heading-logo,
-  .official-heading .heading-logo {
-    max-width: 58px;
-    height: 58px;
+  .heading-logo, .official-heading .heading-logo {
+  max-width: 58px;
+  height: 58px;
   }
-
-  .panel,
-  .card,
-  .form-card,
-  .document-panel,
-  .form-section,
-  .application-section,
-  .document-section {
-    padding: 18px;
+  .panel, .card, .form-card, .document-panel, .form-section, .application-section, .document-section {
+  padding: 18px;
   }
 }
 
-/* =========================================================
-   21. RESPONSIVE MOBILE DEVICES
-   ========================================================= */
-
+/* 21. Mobile */
 @media (max-width: 700px) {
   :root {
-    --page-gutter: 12px;
-    --control-height: 46px;
+  --page-gutter: 12px;
+  --control-height: 46px;
   }
-
   body {
-    font-size: 14px;
-    line-height: 1.65;
+  font-size: 14px;
+  line-height: 1.65;
   }
-
-  header,
-  .site-header {
-    padding: 18px var(--page-gutter);
+  header, .site-header {
+  padding: 18px var(--page-gutter);
   }
-
-  main,
-  .site-main {
-    padding: 18px var(--page-gutter) 30px;
+  main, .site-main {
+  padding: 18px var(--page-gutter) 30px;
   }
-
-  footer,
-  .site-footer {
-    padding: 16px var(--page-gutter);
+  footer, .site-footer {
+  padding: 16px var(--page-gutter);
   }
-
-  .container,
-  .page-container,
-  .form-container {
-    width: calc(100% - 2 * var(--page-gutter));
+  .container, .page-container, .form-container {
+  width: calc(100% - 2 * var(--page-gutter));
   }
-
   h1 {
-    font-size: clamp(24px, 6vw, 32px);
+  font-size: clamp(24px, 6vw, 32px);
   }
-
   h2 {
-    font-size: clamp(19px, 4.8vw, 24px);
+  font-size: clamp(19px, 4.8vw, 24px);
   }
-
   h3 {
-    font-size: 17px;
+  font-size: 17px;
   }
-
-  .form-grid,
-  .grid,
-  .form-row,
-  .card-grid,
-  .resource-grid,
-  .resource-list,
-  .steps-grid,
-  .reference-panel {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
+  .form-grid, .grid, .form-row, .card-grid, .resource-grid, .resource-list, .steps-grid, .reference-panel {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
   }
-
-  .full,
-  .full-width,
-  .grid-full,
-  .field.full,
-  .form-group.full,
-  .form-field.full {
-    grid-column: auto;
+  .full, .full-width, .grid-full, .field.full, .form-group.full, .form-field.full {
+  grid-column: auto;
   }
-
-  .field,
-  .form-group,
-  .form-field {
-    margin-bottom: 12px;
+  .field, .form-group, .form-field {
+  margin-bottom: 12px;
   }
-
-  .panel,
-  .card,
-  .form-card,
-  .document-panel,
-  .form-section,
-  .application-section,
-  .document-section {
-    margin-bottom: 16px;
-    padding: 15px;
+  .panel, .card, .form-card, .document-panel, .form-section, .application-section, .document-section {
+  margin-bottom: 16px;
+  padding: 15px;
   }
-
-  .official-heading,
-  .application-heading,
-  .document-heading {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 8px;
-    padding: 15px 12px;
+  .official-heading, .application-heading, .document-heading {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  padding: 15px 12px;
   }
-
-  .heading-logo,
-  .official-heading .heading-logo {
-    display: none;
+  .heading-logo, .official-heading .heading-logo {
+  display: none;
   }
-
-  .heading-text,
-  .official-heading,
-  .application-heading,
-  .document-heading {
-    text-align: center;
+  .heading-text, .official-heading, .application-heading, .document-heading {
+  text-align: center;
   }
-
-  .heading-text h1,
-  .official-heading h1,
-  .application-heading h1,
-  .document-heading h1 {
-    font-size: clamp(20px, 5.5vw, 27px);
+  .heading-text h1, .official-heading h1, .application-heading h1, .document-heading h1 {
+  font-size: clamp(20px, 5.5vw, 27px);
   }
-
   .topline-inner {
-    flex-wrap: wrap;
-    align-items: flex-start;
-    font-size: 10px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  font-size: 10px;
   }
-
   .independent {
-    text-align: left;
+  text-align: left;
   }
-
-  .actions,
-  .form-actions,
-  .button-group,
-  .navigation-buttons {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-start;
-    gap: 10px;
+  .actions, .form-actions, .button-group, .navigation-buttons {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 10px;
   }
-
-  .actions > button,
-  .actions > .btn,
-  .actions > .button,
-  .form-actions > button,
-  .form-actions > .btn,
-  .button-group > button,
-  .navigation-buttons > button,
-  .navigation-buttons > .btn {
-    width: 100%;
-    max-width: none;
-    min-height: 46px;
+  .actions > button, .actions > .btn, .actions > .button,
+  .form-actions > button, .form-actions > .btn, .button-group > button,
+  .navigation-buttons > button, .navigation-buttons > .btn {
+  width: 100%;
+  max-width: none;
+  min-height: 46px;
   }
-
-  .steps li,
-  .step-list li {
-    flex: 1 1 100px;
+  .steps li, .step-list li {
+  flex: 1 1 100px;
   }
-
   .step-link {
-    padding: 11px;
+  padding: 11px;
   }
-
   .footer-inner {
-    flex-direction: column;
-    gap: 8px;
+  flex-direction: column;
+  gap: 8px;
   }
-
   #letter {
-    padding: 14px;
+  padding: 14px;
   }
-
-  th,
-  td {
-    padding: 8px;
-    font-size: 12px;
+  th, td {
+  padding: 8px;
+  font-size: 12px;
+  }
+  .review-row {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3px;
   }
 }
 
-/* =========================================================
-   22. SMALL MOBILE / IPHONE SE-SIZED SCREENS
-   ========================================================= */
-
+/* 22. Small mobile */
 @media (max-width: 420px) {
   :root {
-    --page-gutter: 10px;
-    --control-height: 46px;
+  --page-gutter: 10px;
+  --control-height: 46px;
   }
-
   body {
-    border-width: 1px;
-    font-size: 14px;
+  border-width: 1px;
+  font-size: 14px;
   }
-
-  header,
-  .site-header {
-    padding: 15px 10px;
+  header, .site-header {
+  padding: 15px 10px;
   }
-
-  main,
-  .site-main {
-    padding: 15px 10px 24px;
+  main, .site-main {
+  padding: 15px 10px 24px;
   }
-
-  .container,
-  .page-container,
-  .form-container {
-    width: calc(100% - 20px);
+  .container, .page-container, .form-container {
+  width: calc(100% - 20px);
   }
-
   h1 {
-    font-size: 24px;
+  font-size: 24px;
   }
-
   h2 {
-    font-size: 19px;
+  font-size: 19px;
   }
-
-  .panel,
-  .card,
-  .form-card,
-  .document-panel,
-  .form-section,
-  .application-section,
-  .document-section {
-    padding: 12px;
+  .panel, .card, .form-card, .document-panel, .form-section, .application-section, .document-section {
+  padding: 12px;
   }
-
-  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]),
-  select,
-  textarea {
-    padding: 10px;
-    font-size: 16px;
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]), select, textarea {
+  padding: 10px;
+  font-size: 16px;
   }
-
-  button,
-  .btn,
-  .button,
-  input[type="submit"],
-  input[type="button"],
-  input[type="reset"] {
-    width: 100%;
-    padding: 11px 12px;
+  button, .btn, .button, input[type="submit"], input[type="button"], input[type="reset"] {
+  width: 100%;
+  padding: 11px 12px;
   }
-
-  .status,
-  .status-badge {
-    font-size: 9px;
-    letter-spacing: 0.02em;
+  .status, .status-badge {
+  font-size: 9px;
+  letter-spacing: .02em;
   }
-
   fieldset {
-    padding: 10px;
+  padding: 10px;
   }
-
   .reference-panel {
-    padding: 12px;
+  padding: 12px;
   }
 }
 
-/* =========================================================
-   23. VERY NARROW SCREENS
-   ========================================================= */
-
+/* 23. Very narrow screens */
 @media (max-width: 360px) {
   :root {
-    --page-gutter: 8px;
+  --page-gutter: 8px;
   }
-
-  header,
-  .site-header {
-    padding: 12px 8px;
+  header, .site-header {
+  padding: 12px 8px;
   }
-
-  main,
-  .site-main {
-    padding: 12px 8px 22px;
+  main, .site-main {
+  padding: 12px 8px 22px;
   }
-
-  .container,
-  .page-container,
-  .form-container {
-    width: calc(100% - 16px);
+  .container, .page-container, .form-container {
+  width: calc(100% - 16px);
   }
-
   .topline-inner {
-    gap: 7px;
-    font-size: 9px;
+  gap: 7px;
+  font-size: 9px;
   }
-
   .reference-value {
-    font-size: 16px;
+  font-size: 16px;
   }
-
-  .step-num,
-  .num {
-    width: 30px;
-    height: 30px;
-    flex-basis: 30px;
+  .step-num, .num {
+  width: 30px;
+  height: 30px;
+  flex-basis: 30px;
   }
 }
 
-/* =========================================================
-   24. LANDSCAPE MOBILE
-   ========================================================= */
-
+/* 24. Landscape mobile */
 @media (max-height: 500px) and (orientation: landscape) {
-  header,
-  .site-header {
-    padding-top: 12px;
-    padding-bottom: 12px;
+  header, .site-header {
+  padding-top: 12px;
+  padding-bottom: 12px;
   }
-
-  main,
-  .site-main {
-    padding-top: 14px;
-    padding-bottom: 20px;
+  main, .site-main {
+  padding-top: 14px;
+  padding-bottom: 20px;
   }
-
-  .official-heading,
-  .application-heading,
-  .document-heading {
-    padding-top: 10px;
-    padding-bottom: 10px;
+  .official-heading, .application-heading, .document-heading {
+  padding-top: 10px;
+  padding-bottom: 10px;
   }
-
-  .status,
-  .status-badge {
-    margin-top: 6px;
+  .status, .status-badge {
+  margin-top: 6px;
   }
 }
 
-/* =========================================================
-   25. PRINT AND A4 PDF
-   ========================================================= */
-
+/* 25. Print / A4 PDF */
 @page {
   size: A4;
   margin: 12mm;
 }
-
 @media print {
   :root {
-    --page-gutter: 0;
+  --page-gutter: 0;
   }
-
-  html,
-  body {
-    width: 100%;
-    min-width: 0;
-    min-height: auto;
-    margin: 0;
-    padding: 0;
-    border: 0 !important;
-    background: #ffffff !important;
-    color: #000000 !important;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 10.5pt;
-    line-height: 1.45;
-    overflow: visible;
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
+  html, body {
+  width: 100%;
+  min-width: 0;
+  min-height: auto;
+  margin: 0;
+  padding: 0;
+  border: 0 !important;
+  background: #fff !important;
+  color: #000 !important;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.45;
+  overflow: visible !important;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
   }
-
-  header,
-  .site-header,
-  footer,
-  .site-footer,
-  .no-print,
-  .actions,
-  .form-actions,
-  .button-group,
-  .navigation-buttons,
-  button,
-  .btn,
-  .button,
-  input[type="submit"],
-  input[type="button"],
-  input[type="reset"],
-  .language-switcher,
-  #paymentPanel,
-  #gate {
-    display: none !important;
+  header, .site-header, footer, .site-footer, .no-print, .actions, .form-actions,
+  .button-group, .navigation-buttons, button, .btn, .button, input[type="submit"],
+  input[type="button"], input[type="reset"], .language-switcher, #paymentPanel, #gate {
+  display: none !important;
   }
-
-  main,
-  .site-main,
-  .container,
-  .page-container,
-  .form-container {
-    width: 100%;
-    max-width: none;
-    margin: 0;
-    padding: 0;
+  main, .site-main, .container, .page-container, .form-container {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
   }
-
-  h1,
-  h2,
-  h3,
-  h4 {
-    color: #000000 !important;
-    break-after: avoid;
-    page-break-after: avoid;
+  h1, h2, h3, h4 {
+  color: #000 !important;
+  break-after: avoid;
+  page-break-after: avoid;
   }
-
-  .official-heading,
-  .application-heading,
-  .document-heading {
-    grid-template-columns: 60px minmax(0, 1fr) 60px;
-    margin-bottom: 12px;
-    padding: 10px;
-    border: 1px solid #000000;
+  .official-heading, .application-heading, .document-heading {
+  grid-template-columns: 55px minmax(0, 1fr) 55px;
+  margin-bottom: 12px;
+  padding: 10px;
+  border: 1px solid #000;
+  break-inside: avoid;
   }
-
-  .heading-logo,
-  .official-heading .heading-logo {
-    display: block !important;
-    max-width: 55px;
-    height: 55px;
+  .heading-logo, .official-heading .heading-logo {
+  display: block !important;
+  max-width: 50px;
+  height: 50px;
   }
-
-  .heading-text h1,
-  .official-heading h1,
-  .application-heading h1,
-  .document-heading h1 {
-    font-size: 17pt;
+  .heading-text h1, .official-heading h1, .application-heading h1, .document-heading h1 {
+  font-size: 17pt;
   }
-
-  .form-grid,
-  .grid,
-  .form-row,
-  .reference-panel {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .form-grid, .grid, .form-row, .reference-panel {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-
-  .panel,
-  .card,
-  .form-card,
-  .document-panel,
-  .form-section,
-  .application-section,
-  .document-section,
-  .notice,
-  .reference-panel,
-  .reference-box,
-  .fee-box,
-  #letter {
-    padding: 10px;
-    border-color: #000000;
-    background: #ffffff !important;
-    color: #000000 !important;
-    box-shadow: none !important;
-    break-inside: avoid;
-    page-break-inside: avoid;
+  .panel, .card, .form-card, .document-panel, .form-section, .application-section,
+  .document-section, .notice, .reference-panel, .reference-box, .fee-box, #letter {
+  padding: 10px;
+  border-color: #000;
+  background: #fff !important;
+  color: #000 !important;
+  box-shadow: none !important;
+  break-inside: avoid;
+  page-break-inside: avoid;
   }
-
-  input,
-  select,
-  textarea {
-    min-height: 24px;
-    padding: 5px;
-    border: 1px solid #777777;
-    border-radius: 0;
-    background: #ffffff !important;
-    color: #000000 !important;
-    box-shadow: none !important;
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+  select, textarea {
+  min-height: 24px;
+  padding: 5px;
+  border: 1px solid #777;
+  border-radius: 0;
+  background: #fff !important;
+  color: #000 !important;
+  box-shadow: none !important;
+  appearance: none;
   }
-
-  input[type="checkbox"],
-  input[type="radio"] {
-    display: inline-block;
+  input[type="checkbox"], input[type="radio"] {
+  display: inline-block;
   }
-
   input[type="file"] {
-    display: none;
+  display: none !important;
   }
-
   table {
-    width: 100%;
-    font-size: 9pt;
-    break-inside: auto;
+  width: 100%;
+  font-size: 9pt;
+  break-inside: auto;
   }
-
   thead {
-    display: table-header-group;
+  display: table-header-group;
   }
-
+  tfoot {
+  display: table-footer-group;
+  }
   tr {
-    break-inside: avoid;
-    page-break-inside: avoid;
+  break-inside: avoid;
+  page-break-inside: avoid;
   }
-
-  th,
-  td {
-    padding: 6px;
-    border: 1px solid #000000;
-    background: #ffffff !important;
-    color: #000000 !important;
+  th, td {
+  padding: 6px;
+  border: 1px solid #000;
+  background: #fff !important;
+  color: #000 !important;
   }
-
-  .table-wrap,
-  .table-responsive {
-    overflow: visible;
+  .table-wrap, .table-responsive {
+  overflow: visible !important;
   }
-
-  .table-wrap table,
-  .table-responsive table {
-    min-width: 0;
+  .table-wrap table, .table-responsive table {
+  min-width: 0;
   }
-
-  .preview,
-  .image-preview,
-  .photo-preview,
-  .signature-preview {
-    max-height: 160px;
-    break-inside: avoid;
+  .preview, .image-preview, .photo-preview, .signature-preview {
+  max-height: 150px;
+  break-inside: avoid;
   }
-
-  .resource-list,
-  .resource-grid,
-  .card-grid,
-  .steps-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .resource-list, .resource-grid, .card-grid, .steps-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-
   a {
-    color: #000000 !important;
-    text-decoration: none;
+  color: #000 !important;
+  text-decoration: none;
   }
-
   a[href]::after {
-    content: none !important;
+  content: none !important;
   }
-
   section {
-    break-inside: auto;
+  break-inside: auto;
+  }
+  #letter {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  }
+  .page-break-before {
+  break-before: page;
+  page-break-before: always;
+  }
+  .keep-together {
+  break-inside: avoid;
+  page-break-inside: avoid;
   }
 
-  #letter {
-    white-space: pre-wrap;
-    overflow-wrap: break-word;
+  /* Show text entered into controls when browser print supports it. */
+  ::placeholder {
+  color: transparent !important;
   }
 }
 
-/* =========================================================
-   26. REDUCED MOTION
-   ========================================================= */
-
+/* 26. Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   html {
-    scroll-behavior: auto;
+  scroll-behavior: auto;
   }
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  *, *::before, *::after {
+  animation-duration: .01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: .01ms !important;
+  scroll-behavior: auto !important;
   }
 }
 
-/* =========================================================
-   27. FINAL STABILITY RULES
-   ========================================================= */
-
-.container,
-.page-container,
-.form-container,
-form,
-form > section,
-.official-heading,
-.application-heading,
-.document-heading,
-.heading-text,
-.reference-panel,
-.form-grid,
-.grid,
-.form-row,
-.actions,
-.panel,
-.card,
-.notice {
+/* 27. Stability rules */
+.container, .page-container, .form-container, form, form > section,
+.official-heading, .application-heading, .document-heading, .heading-text,
+.reference-panel, .form-grid, .grid, .form-row, .actions, .panel, .card, .notice {
   min-width: 0;
   max-width: 100%;
 }
-
-body,
-header,
-main,
-footer,
-.container,
-form,
-label,
-input,
-select,
-textarea,
-button,
-.btn,
-p,
-li,
-small,
-strong,
-span {
+body, header, main, footer, .container, form, label, input, select, textarea,
+button, .btn, p, li, small, strong, span {
   letter-spacing: normal;
 }
-
-.official-heading,
-.application-heading,
-.document-heading,
-.panel,
-.card,
-.form-card,
-.document-panel,
-.form-section,
-.application-section,
-.document-section,
-.notice,
-.reference-box,
-.fee-box,
-.step-link,
-.resource,
-.steps li,
-#letter {
+.official-heading, .application-heading, .document-heading, .panel, .card,
+.form-card, .document-panel, .form-section, .application-section, .document-section,
+.notice, .reference-box, .fee-box, .step-link, .resource, .steps li, #letter {
   border-radius: 0;
   box-shadow: none;
 }
-
-/* Keep media within the viewport without hiding photographs. */
-img,
-picture,
-video,
-canvas,
-svg {
+img, picture, video, canvas, svg {
   max-width: 100%;
 }
-
-/* Prevent legacy page animations from moving form controls. */
-button,
-.btn,
-input,
-select,
-textarea {
+button, .btn, input, select, textarea {
   animation: none;
   transform: none;
 }

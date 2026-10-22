@@ -4,21 +4,27 @@
 -- Migration 001: Core database foundation
 -- PostgreSQL 14+
 --
--- Creates:
+-- Creates and validates:
 --   1. applications
 --   2. administrators
---   3. Core integrity constraints
---   4. API query indexes
---   5. updated_at triggers
+--   3. Reviewer foreign key
+--   4. Integrity constraints
+--   5. Query indexes
+--   6. Monotonic updated_at triggers
 --
 -- IMPORTANT:
 --   * Apply migrations in numerical order.
 --   * Test against a restored database backup.
 --   * Do not edit an already-applied migration in production.
 --   * This migration does not implement API authentication.
+--   * Existing tables are checked, not automatically reconciled.
 -- ============================================================
 
 BEGIN;
+
+-- ============================================================
+-- 0. SERIALIZE MIGRATION EXECUTION
+-- ============================================================
 
 SELECT pg_advisory_xact_lock(
     hashtext('donor-trust-quota:migration:001')
@@ -28,7 +34,7 @@ SELECT pg_advisory_xact_lock(
 -- 1. APPLICATIONS
 -- ============================================================
 
-CREATE TABLE IF NOT EXISTS applications (
+CREATE TABLE IF NOT EXISTS public.applications (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 
     reference VARCHAR(80) NOT NULL UNIQUE,
@@ -118,7 +124,7 @@ CREATE TABLE IF NOT EXISTS applications (
 -- 2. ADMINISTRATORS
 -- ============================================================
 
-CREATE TABLE IF NOT EXISTS administrators (
+CREATE TABLE IF NOT EXISTS public.administrators (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 
     external_subject VARCHAR(255) UNIQUE,
@@ -173,7 +179,62 @@ CREATE TABLE IF NOT EXISTS administrators (
 );
 
 -- ============================================================
--- 3. APPLICATION REVIEWER FOREIGN KEY
+-- 3. VERIFY EXISTING TABLE SHAPES
+-- ============================================================
+
+DO $$
+DECLARE
+    missing_columns TEXT;
+BEGIN
+    SELECT STRING_AGG(
+        required.table_name || '.' || required.column_name,
+        ', '
+    )
+    INTO missing_columns
+    FROM (
+        VALUES
+            ('applications', 'id'),
+            ('applications', 'reference'),
+            ('applications', 'status'),
+            ('applications', 'applicant_name'),
+            ('applications', 'applicant_email'),
+            ('applications', 'payload'),
+            ('applications', 'idempotency_key'),
+            ('applications', 'created_at'),
+            ('applications', 'updated_at'),
+            ('applications', 'submitted_at'),
+            ('applications', 'reviewed_at'),
+            ('applications', 'reviewed_by'),
+            ('applications', 'deleted_at'),
+            ('applications', 'retention_until'),
+            ('administrators', 'id'),
+            ('administrators', 'external_subject'),
+            ('administrators', 'email'),
+            ('administrators', 'display_name'),
+            ('administrators', 'role'),
+            ('administrators', 'active'),
+            ('administrators', 'created_at'),
+            ('administrators', 'updated_at'),
+            ('administrators', 'last_login_at')
+    ) AS required(table_name, column_name)
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM information_schema.columns AS actual
+        WHERE actual.table_schema = 'public'
+          AND actual.table_name = required.table_name
+          AND actual.column_name = required.column_name
+    );
+
+    IF missing_columns IS NOT NULL THEN
+        RAISE EXCEPTION
+            'Migration 001 aborted: missing columns: %',
+            missing_columns;
+    END IF;
+END;
+$$;
+
+-- ============================================================
+-- 4. REVIEWER FOREIGN KEY
 -- ============================================================
 
 DO $$
@@ -182,128 +243,124 @@ BEGIN
         SELECT 1
         FROM pg_constraint
         WHERE conname = 'applications_reviewed_by_fkey'
-          AND conrelid = 'applications'::regclass
+          AND conrelid = 'public.applications'::regclass
     ) THEN
-        ALTER TABLE applications
+        ALTER TABLE public.applications
             ADD CONSTRAINT applications_reviewed_by_fkey
             FOREIGN KEY (reviewed_by)
-            REFERENCES administrators(id)
+            REFERENCES public.administrators(id)
             ON DELETE SET NULL
             NOT VALID;
     END IF;
-END
+END;
 $$;
 
-ALTER TABLE applications
+ALTER TABLE public.applications
     VALIDATE CONSTRAINT applications_reviewed_by_fkey;
 
 -- ============================================================
--- 4. VALIDATE EXISTING DATA
---
--- If these checks fail on a pre-existing schema, inspect and
--- repair the affected records before retrying.
+-- 5. VALIDATE EXISTING IDEMPOTENCY DATA
 -- ============================================================
 
 DO $$
-DECLARE
-    duplicate_key_found BOOLEAN;
 BEGIN
-    SELECT EXISTS (
+    IF EXISTS (
         SELECT 1
-        FROM applications
+        FROM public.applications
         WHERE idempotency_key IS NOT NULL
         GROUP BY idempotency_key
         HAVING COUNT(*) > 1
-    )
-    INTO duplicate_key_found;
-
-    IF duplicate_key_found THEN
+    ) THEN
         RAISE EXCEPTION
             'Migration 001 aborted: duplicate idempotency keys exist.';
     END IF;
-END
+END;
 $$;
 
 -- ============================================================
--- 5. INDEXES FOR APPLICATION QUERIES
+-- 6. APPLICATION QUERY INDEXES
 -- ============================================================
 
 CREATE INDEX IF NOT EXISTS idx_applications_created_at
-    ON applications (created_at DESC, id DESC);
+    ON public.applications (created_at DESC, id DESC);
 
 CREATE INDEX IF NOT EXISTS idx_applications_status
-    ON applications (status);
+    ON public.applications (status);
 
 CREATE INDEX IF NOT EXISTS idx_applications_email
-    ON applications (lower(applicant_email));
+    ON public.applications (lower(applicant_email));
 
 CREATE INDEX IF NOT EXISTS idx_applications_updated_at
-    ON applications (updated_at DESC);
+    ON public.applications (updated_at DESC);
 
 CREATE INDEX IF NOT EXISTS idx_applications_active_created
-    ON applications (created_at DESC, id DESC)
+    ON public.applications (created_at DESC, id DESC)
     WHERE deleted_at IS NULL;
 
 CREATE INDEX IF NOT EXISTS idx_applications_retention
-    ON applications (retention_until)
+    ON public.applications (retention_until)
     WHERE retention_until IS NOT NULL;
 
 CREATE UNIQUE INDEX IF NOT EXISTS
     uq_applications_idempotency_key
-ON applications (idempotency_key)
+ON public.applications (idempotency_key)
 WHERE idempotency_key IS NOT NULL;
 
 CREATE INDEX IF NOT EXISTS idx_applications_reviewed_by
-    ON applications (reviewed_by, reviewed_at DESC)
+    ON public.applications (reviewed_by, reviewed_at DESC)
     WHERE reviewed_by IS NOT NULL;
 
 -- ============================================================
--- 6. INDEXES FOR ADMINISTRATOR QUERIES
+-- 7. ADMINISTRATOR QUERY INDEXES
 -- ============================================================
 
 CREATE INDEX IF NOT EXISTS idx_administrators_active
-    ON administrators (active, role);
+    ON public.administrators (active, role);
 
-CREATE INDEX IF NOT EXISTS idx_administrators_external_subject
-    ON administrators (external_subject)
-    WHERE external_subject IS NOT NULL;
+-- external_subject and email already have UNIQUE constraints,
+-- which create their own indexes. Avoid duplicate indexes.
 
 -- ============================================================
--- 7. SHARED UPDATED_AT TRIGGER FUNCTION
+-- 8. MONOTONIC UPDATED_AT TRIGGER FUNCTION
 -- ============================================================
 
-CREATE OR REPLACE FUNCTION set_updated_at()
+CREATE OR REPLACE FUNCTION
+    donor_trust_set_updated_at()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 AS $$
 BEGIN
     NEW.updated_at := GREATEST(
-        NOW(),
-        OLD.updated_at
+        clock_timestamp(),
+        OLD.updated_at + INTERVAL '1 microsecond'
     );
 
     RETURN NEW;
 END;
 $$;
 
+-- Applications
+
 DROP TRIGGER IF EXISTS trg_applications_updated_at
-    ON applications;
+    ON public.applications;
 
 CREATE TRIGGER trg_applications_updated_at
-BEFORE UPDATE ON applications
+BEFORE UPDATE ON public.applications
 FOR EACH ROW
-EXECUTE FUNCTION set_updated_at();
+EXECUTE FUNCTION donor_trust_set_updated_at();
+
+-- Administrators
 
 DROP TRIGGER IF EXISTS trg_administrators_updated_at
-    ON administrators;
+    ON public.administrators;
 
 CREATE TRIGGER trg_administrators_updated_at
-BEFORE UPDATE ON administrators
+BEFORE UPDATE ON public.administrators
 FOR EACH ROW
-EXECUTE FUNCTION set_updated_at();
+EXECUTE FUNCTION donor_trust_set_updated_at();
 
 -- ============================================================
--- 8. FINAL SCHEMA VERIFICATION
+-- 9. SCHEMA VERIFICATION
 -- ============================================================
 
 DO $$
@@ -312,7 +369,7 @@ BEGIN
         SELECT 1
         FROM pg_constraint
         WHERE conname = 'applications_payload_object'
-          AND conrelid = 'applications'::regclass
+          AND conrelid = 'public.applications'::regclass
     ) THEN
         RAISE EXCEPTION
             'Migration 001 verification failed: payload constraint missing.';
@@ -322,19 +379,51 @@ BEGIN
         SELECT 1
         FROM pg_constraint
         WHERE conname = 'administrators_role_valid'
-          AND conrelid = 'administrators'::regclass
+          AND conrelid = 'public.administrators'::regclass
     ) THEN
         RAISE EXCEPTION
             'Migration 001 verification failed: administrator role constraint missing.';
     END IF;
 
+    IF NOT EXISTS (
+        SELECT 1
+        FROM pg_constraint
+        WHERE conname = 'applications_reviewed_by_fkey'
+          AND conrelid = 'public.applications'::regclass
+    ) THEN
+        RAISE EXCEPTION
+            'Migration 001 verification failed: reviewer foreign key missing.';
+    END IF;
+
     IF to_regclass(
-        'uq_applications_idempotency_key'
+        'public.uq_applications_idempotency_key'
     ) IS NULL THEN
         RAISE EXCEPTION
             'Migration 001 verification failed: idempotency index missing.';
     END IF;
-END
+
+    IF NOT EXISTS (
+        SELECT 1
+        FROM pg_trigger
+        WHERE tgname = 'trg_applications_updated_at'
+          AND tgrelid = 'public.applications'::regclass
+          AND NOT tgisinternal
+    ) THEN
+        RAISE EXCEPTION
+            'Migration 001 verification failed: applications timestamp trigger missing.';
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1
+        FROM pg_trigger
+        WHERE tgname = 'trg_administrators_updated_at'
+          AND tgrelid = 'public.administrators'::regclass
+          AND NOT tgisinternal
+    ) THEN
+        RAISE EXCEPTION
+            'Migration 001 verification failed: administrators timestamp trigger missing.';
+    END IF;
+END;
 $$;
 
 COMMIT;
