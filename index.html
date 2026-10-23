@@ -1,1050 +1,1025 @@
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#000000">
-<meta name="description" content="Independent MBBS application preparation and document checklist tool.">
-<title>MBBS Application Preparation Form</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Applicant preparation portal for organizing application information, supporting documents, payment verification and applicant access.">
+  <title>Applicant Preparation Portal | DONOR/TRUST QUOTA </title>
+  <link rel="stylesheet" href="styles.css">
 
-<style>
-:root {
-  --black: #000;
-  --white: #fff;
-  --gray: #666;
-  --light: #f3f3f3;
-  --border: #c9c9c9;
-}
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  background: #ededed;
-  color: #111;
-  font-family: Arial, Helvetica, sans-serif;
-  line-height: 1.55;
-}
-header {
-  background: #000;
-  color: #fff;
-  padding: 26px 16px;
-  text-align: center;
-  border-bottom: 5px solid #777;
-}
-header h1 { margin: 0 0 8px; font-size: 27px; }
-header p { margin: 4px 0; font-size: 14px; }
-.container { max-width: 1000px; margin: 22px auto; padding: 0 14px 40px; }
-.notice {
-  border: 2px solid #000;
-  background: #fff;
-  padding: 15px;
-  margin-bottom: 18px;
-}
-.notice strong { display: block; margin-bottom: 5px; }
-.progress-card, .form-card, .summary-card {
-  background: #fff;
-  border: 1px solid #bbb;
-  margin-bottom: 18px;
-  padding: 20px;
-}
-.progress-card { border-top: 5px solid #000; }
-.progress-track { height: 9px; background: #ddd; margin-top: 12px; }
-.progress-bar { height: 9px; background: #000; width: 0; transition: width .2s; }
-.progress-label { font-size: 13px; color: #444; margin-top: 7px; }
-.page-title { margin: 0 0 5px; font-size: 22px; }
-.page-description { margin: 0 0 20px; color: #555; }
-.field-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-.field { min-width: 0; }
-.field.full { grid-column: 1 / -1; }
-label { display: block; font-weight: 700; margin-bottom: 6px; font-size: 14px; }
-.required { color: #000; }
-input, select, textarea {
-  width: 100%;
-  min-height: 43px;
-  border: 1px solid #777;
-  border-radius: 2px;
-  background: #fff;
-  padding: 10px;
-  color: #111;
-  font: inherit;
-}
-textarea { min-height: 100px; resize: vertical; }
-input[type="checkbox"], input[type="radio"] {
-  width: auto; min-height: auto; margin-right: 8px;
-}
-input[type="file"] { padding: 8px; }
-.help { font-size: 12px; color: #555; margin-top: 5px; }
-.check-row {
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-  padding: 10px 0;
-}
-.check-row label { font-weight: 400; margin: 0; }
-.error { color: #000; font-size: 12px; font-weight: 700; margin-top: 4px; }
-.field.invalid input, .field.invalid select, .field.invalid textarea {
-  border: 2px solid #000;
-  background: #f4f4f4;
-}
-.actions {
-  display: flex; flex-wrap: wrap; gap: 9px; margin-top: 22px;
-}
-button, .button {
-  display: inline-block;
-  border: 1px solid #000;
-  padding: 11px 16px;
-  background: #000;
-  color: #fff;
-  font-weight: 700;
-  font-size: 14px;
-  cursor: pointer;
-  text-decoration: none;
-}
-button.secondary { background: #fff; color: #000; }
-button:disabled { opacity: .35; cursor: not-allowed; }
-button:hover { opacity: .8; }
-.section-heading {
-  border-bottom: 2px solid #000;
-  padding-bottom: 8px;
-  margin: 22px 0 14px;
-}
-.review-item {
-  border-bottom: 1px solid #ddd;
-  padding: 10px 0;
-  overflow-wrap: anywhere;
-}
-.review-item strong { display: block; font-size: 13px; }
-.review-item span { white-space: pre-wrap; }
-.review-section { margin-bottom: 24px; }
-.review-section h3 { border-bottom: 1px solid #777; padding-bottom: 5px; }
-.status-message {
-  padding: 12px;
-  border: 1px solid #000;
-  background: #f3f3f3;
-  margin-top: 12px;
-}
-footer { text-align: center; color: #444; font-size: 12px; padding: 20px; }
-.hidden { display: none !important; }
-.small { font-size: 12px; color: #555; }
-@media(max-width: 650px) {
-  .field-grid { grid-template-columns: 1fr; }
-  .field.full { grid-column: auto; }
-  header h1 { font-size: 22px; }
-  .form-card, .progress-card, .summary-card { padding: 15px; }
-  button { flex: 1 1 auto; }
-}
-@media print {
-  @page { size: A4; margin: 14mm; }
-  body { background: #fff; color: #000; font-size: 10pt; }
-  header { background: #fff; color: #000; border: 2px solid #000; padding: 12px; }
-  .container { max-width: none; margin: 0; padding: 0; }
-  .notice, .form-card, .summary-card, .progress-card {
-    border: 1px solid #777;
-    margin: 10px 0;
-    padding: 12px;
-    break-inside: avoid;
-  }
-  .no-print, .actions, footer { display: none !important; }
-  .print-only { display: block !important; }
-  input, select, textarea {
-    border: 0;
-    border-bottom: 1px solid #aaa;
-    padding: 4px 0;
-    min-height: 25px;
-    background: #fff;
-    color: #000;
-  }
-  input[type="file"], input[type="checkbox"], input[type="radio"] { display: none; }
-  .page-title { font-size: 17pt; }
-  .field-grid { gap: 10px; }
-  .page { display: block !important; }
-  .review-section { break-inside: avoid; }
-}
-</style>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #171717;
+      --muted: #5c5c5c;
+      --line: #d8d8d8;
+      --paper: #ffffff;
+      --soft: #f5f5f5;
+      --focus: #111111;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+    }
+
+    a { color: inherit; }
+
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .container {
+      width: min(100% - 32px, 1040px);
+      margin-inline: auto;
+    }
+
+    .topline {
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .topline-inner {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-block: 10px;
+      font-size: 12px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .brand {
+      font-weight: 800;
+      letter-spacing: .12em;
+    }
+
+    .independent {
+      color: var(--muted);
+      text-align: right;
+    }
+
+    header {
+      padding: 48px 0 34px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 780px;
+      margin: 0;
+      font-size: clamp(30px, 5vw, 48px);
+      line-height: 1.12;
+      letter-spacing: -.035em;
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: clamp(22px, 3vw, 29px);
+      line-height: 1.25;
+    }
+
+    h3 {
+      margin: 20px 0 8px;
+      font-size: 17px;
+    }
+
+    .subtitle {
+      max-width: 700px;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      margin-top: 22px;
+      padding: 7px 11px;
+      border: 1px solid var(--ink);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .06em;
+    }
+
+    main { padding-block: 30px 52px; }
+
+    .notice {
+      margin-bottom: 24px;
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--ink);
+      background: var(--soft);
+    }
+
+    .notice h2 {
+      margin: 0 0 6px;
+      font-size: 17px;
+    }
+
+    .notice p {
+      margin: 0 0 10px;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .notice p:last-child { margin-bottom: 0; }
+
+    .panel {
+      margin-bottom: 22px;
+      padding: clamp(20px, 4vw, 36px);
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .section-number {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .intro {
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    label {
+      display: block;
+      margin: 16px 0 7px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    input {
+      display: block;
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 14px;
+      border: 1px solid #999;
+      border-radius: 0;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    input[type="file"] {
+      min-height: auto;
+      padding: 12px;
+    }
+
+    input::placeholder { color: #777; }
+
+    .hint {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    button,
+    .button {
+      display: inline-flex;
+      min-height: 46px;
+      align-items: center;
+      justify-content: center;
+      padding: 11px 18px;
+      border: 1px solid var(--ink);
+      border-radius: 0;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    button.primary,
+    .button.primary {
+      background: var(--ink);
+      color: #fff;
+    }
+
+    button:disabled {
+      cursor: wait;
+      opacity: .6;
+    }
+
+    .message {
+      min-height: 24px;
+      margin: 16px 0 0;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    .reference-box,
+    .fee-box {
+      margin: 18px 0;
+      padding: 18px;
+      border: 1px solid var(--ink);
+      overflow-wrap: anywhere;
+    }
+
+    .reference-value {
+      display: block;
+      margin-top: 6px;
+      font-size: clamp(20px, 4vw, 28px);
+      font-weight: 800;
+      letter-spacing: .03em;
+    }
+
+    .fee-label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .fee-amount {
+      display: block;
+      margin-top: 4px;
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    .resource-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+      margin: 22px 0;
+    }
+
+    .resource {
+      min-height: 90px;
+      padding: 15px;
+      border: 1px solid var(--line);
+      text-decoration: none;
+    }
+
+    .resource strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .resource span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 10px;
+      margin: 22px 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .steps li {
+      padding: 13px;
+      border: 1px solid var(--line);
+      font-size: 13px;
+    }
+
+    .steps b {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 11px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .fineprint {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .inline-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 18px;
+      font-weight: 400;
+    }
+
+    .inline-check input {
+      width: 18px;
+      min-height: 18px;
+      flex: 0 0 18px;
+      margin-top: 4px;
+    }
+
+    [hidden] { display: none !important; }
+
+    footer {
+      padding: 24px 0;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    @media (max-width: 520px) {
+      .container { width: min(100% - 24px, 1040px); }
+      header { padding-top: 34px; }
+      .topline-inner { align-items: flex-start; }
+      .independent { max-width: 52%; }
+      .actions > * { width: 100%; }
+    }
+
+    @media print {
+      .topline, #paymentPanel, #gate, .actions, footer {
+        display: none !important;
+      }
+      body { color: #000; }
+      header { padding-top: 0; }
+    }
+  </style>
 </head>
 
 <body>
-<header>
-  <h1>MBBS APPLICATION PREPARATION FORM</h1>
-  <p>Donor Quota / Trust Quota -- Information and Document Checklist</p>
-  <p>Independent preparation tool | Black-and-white printable format</p>
-</header>
-
-<main class="container">
-  <div class="notice">
-    <strong>IMPORTANT DISCLAIMER</strong>
-    This is an independent form-preparation tool and is not an official application issued by WBMCC, the Government of West Bengal, any medical college, or any counselling authority. Completing this form does not submit an application, establish eligibility, confirm that a donor/trust quota exists, reserve a seat, or guarantee admission. Verify the applicable admission rules and procedures directly with the competent authority. Do not make payments to anyone claiming guaranteed admission.
+  <div class="topline">
+    <div class="container topline-inner">
+      <div class="brand">WEST BENGAL MEDICAL COUNSELLING COMMITTEE</div>
+              <div class="independent">Independent preparation service -- WBMCC Authorised</div>
+    </div>
   </div>
 
-  <div class="progress-card no-print">
-    <strong id="progressTitle">Section 1 of 7</strong>
-    <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
-    <div class="progress-label" id="progressLabel">0% complete</div>
-  </div>
-
-  <form id="applicationForm" novalidate>
-    <section class="form-card page" data-page="0">
-      <h2 class="page-title">1. Consent and Instructions</h2>
-      <p class="page-description">Read the notices and indicate your consent before entering personal information.</p>
-
-      <div class="notice">
-        <strong>Data handling</strong>
-        This tool is designed to keep information in the browser on the device being used. It does not provide an official online submission service. Local browser storage is not encrypted document storage. Do not use a shared device, and do not upload unnecessary sensitive documents.
-      </div>
-
-      <div class="field-grid">
-        <div class="field full">
-          <div class="check-row">
-            <input type="checkbox" id="consentUnderstand" name="consentUnderstand" required>
-            <label for="consentUnderstand">I understand that this is a preparation tool and not an official government or counselling application. *</label>
-          </div>
-        </div>
-        <div class="field full">
-          <div class="check-row">
-            <input type="checkbox" id="consentPrivacy" name="consentPrivacy" required>
-            <label for="consentPrivacy">I understand that information may be saved in this browser and that I should protect this device and my downloaded backups. *</label>
-          </div>
-        </div>
-        <div class="field full">
-          <div class="check-row">
-            <input type="checkbox" id="consentAccuracy" name="consentAccuracy" required>
-            <label for="consentAccuracy">I will provide accurate information and verify requirements with the relevant official authority. *</label>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="form-card page hidden" data-page="1">
-      <h2 class="page-title">2. Applicant Details</h2>
-      <p class="page-description">Enter the applicant's basic information. Required fields are marked with an asterisk.</p>
-
-      <div class="field-grid">
-        <div class="field">
-          <label for="applicantName">Full name as per official records *</label>
-          <input id="applicantName" name="applicantName" required autocomplete="name">
-        </div>
-        <div class="field">
-          <label for="dob">Date of birth *</label>
-          <input id="dob" name="dob" type="date" required>
-        </div>
-        <div class="field">
-          <label for="gender">Gender (if required by the application)</label>
-          <select id="gender" name="gender">
-            <option value="">Select</option>
-            <option>Female</option>
-            <option>Male</option>
-            <option>Other</option>
-            <option>Prefer not to say</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="nationality">Nationality *</label>
-          <input id="nationality" name="nationality" value="Indian" required>
-        </div>
-        <div class="field">
-          <label for="mobile">Mobile number *</label>
-          <input id="mobile" name="mobile" type="tel" inputmode="tel" required>
-        </div>
-        <div class="field">
-          <label for="email">Email address *</label>
-          <input id="email" name="email" type="email" required autocomplete="email">
-        </div>
-        <div class="field">
-          <label for="fatherName">Father's name</label>
-          <input id="fatherName" name="fatherName">
-        </div>
-        <div class="field">
-          <label for="motherName">Mother's name</label>
-          <input id="motherName" name="motherName">
-        </div>
-        <div class="field">
-          <label for="guardianName">Guardian's name (if applicable)</label>
-          <input id="guardianName" name="guardianName">
-        </div>
-        <div class="field">
-          <label for="relationship">Relationship of guardian (if applicable)</label>
-          <input id="relationship" name="relationship">
-        </div>
-        <div class="field full">
-          <label for="address">Full residential address *</label>
-          <textarea id="address" name="address" required></textarea>
-        </div>
-        <div class="field">
-          <label for="state">State of residence</label>
-          <input id="state" name="state">
-        </div>
-        <div class="field">
-          <label for="district">District</label>
-          <input id="district" name="district">
-        </div>
-        <div class="field">
-          <label for="pinCode">PIN code</label>
-          <input id="pinCode" name="pinCode" inputmode="numeric" maxlength="10">
-        </div>
-        <div class="field">
-          <label for="idType">Identity document type (optional)</label>
-          <select id="idType" name="idType">
-            <option value="">Select</option>
-            <option>Aadhaar card</option>
-            <option>Passport</option>
-            <option>Voter ID</option>
-            <option>Other government-issued ID</option>
-          </select>
-        </div>
-        <div class="field full">
-          <label for="idLastDigits">Identity document reference (optional; avoid full ID numbers)</label>
-          <input id="idLastDigits" name="idLastDigits" maxlength="20">
-          <div class="help">For privacy, enter only a non-sensitive reference or last few digits if needed.</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="form-card page hidden" data-page="2">
-      <h2 class="page-title">3. Academic and NEET Details</h2>
-      <p class="page-description">Enter examination details as shown on the relevant records.</p>
-
-      <div class="field-grid">
-        <div class="field">
-          <label for="board">Class 12 board</label>
-          <input id="board" name="board">
-        </div>
-        <div class="field">
-          <label for="passingYear">Class 12 passing year</label>
-          <input id="passingYear" name="passingYear" type="number" min="1990" max="2100">
-        </div>
-        <div class="field">
-          <label for="physicsMarks">Physics marks</label>
-          <input id="physicsMarks" name="physicsMarks" type="number" min="0">
-        </div>
-        <div class="field">
-          <label for="chemistryMarks">Chemistry marks</label>
-          <input id="chemistryMarks" name="chemistryMarks" type="number" min="0">
-        </div>
-        <div class="field">
-          <label for="biologyMarks">Biology/Biotechnology marks</label>
-          <input id="biologyMarks" name="biologyMarks" type="number" min="0">
-        </div>
-        <div class="field">
-          <label for="englishMarks">English marks</label>
-          <input id="englishMarks" name="englishMarks" type="number" min="0">
-        </div>
-        <div class="field">
-          <label for="neetYear">NEET-UG examination year *</label>
-          <input id="neetYear" name="neetYear" type="number" min="2000" max="2100" required>
-        </div>
-        <div class="field">
-          <label for="neetRoll">NEET-UG roll number *</label>
-          <input id="neetRoll" name="neetRoll" required>
-        </div>
-        <div class="field">
-          <label for="neetApplication">NEET application number (if applicable)</label>
-          <input id="neetApplication" name="neetApplication">
-        </div>
-        <div class="field">
-          <label for="neetScore">NEET-UG score *</label>
-          <input id="neetScore" name="neetScore" type="number" min="0" required>
-        </div>
-        <div class="field">
-          <label for="neetRank">All India Rank (AIR)</label>
-          <input id="neetRank" name="neetRank" type="number" min="1">
-        </div>
-        <div class="field">
-          <label for="neetCategory">NEET category (as applicable)</label>
-          <select id="neetCategory" name="neetCategory">
-            <option value="">Select</option>
-            <option>General</option>
-            <option>EWS</option>
-            <option>OBC-NCL</option>
-            <option>SC</option>
-            <option>ST</option>
-            <option>Other / as shown on official record</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="neetQualified">NEET qualification status</label>
-          <select id="neetQualified" name="neetQualified">
-            <option value="">Select</option>
-            <option>Qualified according to official result</option>
-            <option>Not qualified</option>
-            <option>Awaiting result / not confirmed</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="attempts">NEET attempt number (optional)</label>
-          <input id="attempts" name="attempts" type="number" min="1">
-        </div>
-        <div class="field full">
-          <label for="academicNotes">Additional academic information</label>
-          <textarea id="academicNotes" name="academicNotes"></textarea>
-        </div>
-      </div>
-    </section>
-
-    <section class="form-card page hidden" data-page="3">
-      <h2 class="page-title">4. Counselling and Eligibility Information</h2>
-      <p class="page-description">These questions are for record preparation only. They do not determine eligibility.</p>
-
-      <div class="field-grid">
-        <div class="field">
-          <label for="domicile">Domicile / residence certificate status</label>
-          <select id="domicile" name="domicile">
-            <option value="">Select</option>
-            <option>Available</option>
-            <option>Applied for</option>
-            <option>Not available</option>
-            <option>Not applicable / to verify</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="categoryCertificate">Category certificate status (if applicable)</label>
-          <select id="categoryCertificate" name="categoryCertificate">
-            <option value="">Select</option>
-            <option>Available</option>
-            <option>Applied for</option>
-            <option>Not available</option>
-            <option>Not applicable</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="registrationStatus">Counselling registration status</label>
-          <select id="registrationStatus" name="registrationStatus">
-            <option value="">Select</option>
-            <option>Registered</option>
-            <option>Not registered</option>
-            <option>Registration in progress</option>
-            <option>To be verified</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="counsellingAuthority">Counselling authority / process</label>
-          <input id="counsellingAuthority" name="counsellingAuthority">
-        </div>
-        <div class="field">
-          <label for="registrationNumber">Counselling registration number (if applicable)</label>
-          <input id="registrationNumber" name="registrationNumber">
-        </div>
-        <div class="field">
-          <label for="quotaDescription">Quota / category being enquired about</label>
-          <select id="quotaDescription" name="quotaDescription">
-            <option value="">Select</option>
-            <option>Donor quota -- existence and rules to be verified</option>
-            <option>Trust quota -- existence and rules to be verified</option>
-            <option>Management quota -- rules to be verified</option>
-            <option>Other / not yet confirmed</option>
-          </select>
-        </div>
-        <div class="field full">
-          <label for="eligibilityNotes">Eligibility questions to verify with the official authority</label>
-          <textarea id="eligibilityNotes" name="eligibilityNotes" placeholder="Record questions about domicile, eligibility, counselling, documents, deadlines or fees."></textarea>
-        </div>
-      </div>
-
-      <div class="notice">
-        Do not assume that a donor or trust quota is available at a particular institution. Confirm the legal admission route, seat category, fees, eligibility requirements, and application procedure with the competent authority before paying any money.
-      </div>
-    </section>
-
-    <section class="form-card page hidden" data-page="4">
-      <h2 class="page-title">5. Document Checklist and Uploads</h2>
-      <p class="page-description">Mark documents you have checked. Uploads are optional and are stored in this browser's local form data when supported.</p>
-
-      <div class="notice">
-        Only upload documents that are necessary for your own preparation. Files are not transmitted to an official authority by this page. Large files may exceed browser storage limits; keep secure original copies separately.
-      </div>
-
-      <h3 class="section-heading">Document checklist</h3>
-      <div class="field-grid">
-        <div class="field full">
-          <div class="check-row"><input type="checkbox" id="docPhoto" name="docPhoto"><label for="docPhoto">Recent passport-size photograph checked</label></div>
-          <div class="check-row"><input type="checkbox" id="docSignature" name="docSignature"><label for="docSignature">Applicant signature image checked</label></div>
-          <div class="check-row"><input type="checkbox" id="docIdentity" name="docIdentity"><label for="docIdentity">Identity document checked</label></div>
-          <div class="check-row"><input type="checkbox" id="docBirth" name="docBirth"><label for="docBirth">Date-of-birth proof checked</label></div>
-          <div class="check-row"><input type="checkbox" id="docClass10" name="docClass10"><label for="docClass10">Class 10 certificate / marksheet checked</label></div>
-          <div class="check-row"><input type="checkbox" id="docClass12" name="docClass12"><label for="docClass12">Class 12 marksheet / certificate checked</label></div>
-          <div class="check-row"><input type="checkbox" id="docNeet" name="docNeet"><label for="docNeet">NEET-UG scorecard checked</label></div>
-          <div class="check-row"><input type="checkbox" id="docAdmit" name="docAdmit"><label for="docAdmit">NEET-UG admit card checked</label></div>
-          <div class="check-row"><input type="checkbox" id="docDomicile" name="docDomicile"><label for="docDomicile">Domicile certificate checked, if required</label></div>
-          <div class="check-row"><input type="checkbox" id="docCategory" name="docCategory"><label for="docCategory">Category certificate checked, if applicable</label></div>
-          <div class="check-row"><input type="checkbox" id="docMedical" name="docMedical"><label for="docMedical">Medical fitness certificate checked, if required</label></div>
-          <div class="check-row"><input type="checkbox" id="docCounselling" name="docCounselling"><label for="docCounselling">Counselling registration / allotment records checked, if applicable</label></div>
-          <div class="check-row"><input type="checkbox" id="docOther" name="docOther"><label for="docOther">Other documents required by the official authority checked</label></div>
-        </div>
-
-        <div class="field full">
-          <label for="photoUpload">Photograph (optional)</label>
-          <input id="photoUpload" name="photoUpload" type="file" accept="image/*,.pdf">
-          <div class="help" id="photoUploadStatus">No file selected.</div>
-        </div>
-        <div class="field full">
-          <label for="signatureUpload">Signature image (optional)</label>
-          <input id="signatureUpload" name="signatureUpload" type="file" accept="image/*,.pdf">
-          <div class="help" id="signatureUploadStatus">No file selected.</div>
-        </div>
-        <div class="field full">
-          <label for="academicUpload">Academic documents (optional)</label>
-          <input id="academicUpload" name="academicUpload" type="file" accept="image/*,.pdf" multiple>
-          <div class="help" id="academicUploadStatus">No files selected.</div>
-        </div>
-        <div class="field full">
-          <label for="neetUpload">NEET documents (optional)</label>
-          <input id="neetUpload" name="neetUpload" type="file" accept="image/*,.pdf" multiple>
-          <div class="help" id="neetUploadStatus">No files selected.</div>
-        </div>
-        <div class="field full">
-          <label for="otherUpload">Other relevant documents (optional)</label>
-          <input id="otherUpload" name="otherUpload" type="file" accept="image/*,.pdf" multiple>
-          <div class="help" id="otherUploadStatus">No files selected.</div>
-        </div>
-      </div>
-      <p class="small">The checklist is for personal tracking only. The official authority may require different documents, formats, attestation or verification.</p>
-    </section>
-
-    <section class="form-card page hidden" data-page="5">
-      <h2 class="page-title">6. Institution and Process Notes</h2>
-      <p class="page-description">Record the institution and information you have independently verified.</p>
-
-      <div class="field-grid">
-        <div class="field">
-          <label for="preferredCollege">Preferred medical college</label>
-          <input id="preferredCollege" name="preferredCollege">
-        </div>
-        <div class="field">
-          <label for="collegeLocation">College location</label>
-          <input id="collegeLocation" name="collegeLocation">
-        </div>
-        <div class="field">
-          <label for="officialContact">Official office / contact checked</label>
-          <input id="officialContact" name="officialContact">
-        </div>
-        <div class="field">
-          <label for="officialWebsite">Official website URL</label>
-          <input id="officialWebsite" name="officialWebsite" type="url" placeholder="https://">
-        </div>
-        <div class="field">
-          <label for="deadline">Verified deadline, if applicable</label>
-          <input id="deadline" name="deadline" type="date">
-        </div>
-        <div class="field">
-          <label for="feeStatus">Official fee information status</label>
-          <select id="feeStatus" name="feeStatus">
-            <option value="">Select</option>
-            <option>Verified from official source</option>
-            <option>Awaiting written confirmation</option>
-            <option>Not yet verified</option>
-          </select>
-        </div>
-        <div class="field full">
-          <label for="officialRules">Official rules / notifications reviewed</label>
-          <textarea id="officialRules" name="officialRules"></textarea>
-        </div>
-        <div class="field full">
-          <label for="processNotes">Questions, follow-ups and additional notes</label>
-          <textarea id="processNotes" name="processNotes"></textarea>
-        </div>
-        <div class="field full">
-          <div class="check-row">
-            <input type="checkbox" id="verifiedOfficial" name="verifiedOfficial">
-            <label for="verifiedOfficial">I have independently checked the relevant official information to the extent indicated in my notes.</label>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="form-card page hidden" data-page="6">
-      <h2 class="page-title">7. Final Declaration and Review</h2>
-      <p class="page-description">Review the details entered and complete the declaration before printing your preparation copy.</p>
-
-      <div class="field-grid">
-        <div class="field full">
-          <div class="check-row">
-            <input type="checkbox" id="declarationAccuracy" name="declarationAccuracy" required>
-            <label for="declarationAccuracy">I declare that the information I have entered is accurate to the best of my knowledge. *</label>
-          </div>
-        </div>
-        <div class="field full">
-          <div class="check-row">
-            <input type="checkbox" id="declarationNoGuarantee" name="declarationNoGuarantee" required>
-            <label for="declarationNoGuarantee">I understand that this document is not an official submission, admission offer, seat allotment, or guarantee of admission. *</label>
-          </div>
-        </div>
-        <div class="field full">
-          <div class="check-row">
-            <input type="checkbox" id="declarationRules" name="declarationRules" required>
-            <label for="declarationRules">I will follow the applicable official admission rules and provide documents directly through the prescribed official process when required. *</label>
-          </div>
-        </div>
-        <div class="field">
-          <label for="declarationPlace">Place</label>
-          <input id="declarationPlace" name="declarationPlace">
-        </div>
-        <div class="field">
-          <label for="declarationDate">Declaration date</label>
-          <input id="declarationDate" name="declarationDate" type="date">
-        </div>
-        <div class="field full">
-          <label for="declarationName">Applicant's full name for this declaration *</label>
-          <input id="declarationName" name="declarationName" required>
-        </div>
-      </div>
-
-      <div class="actions no-print">
-        <button type="button" id="reviewButton">Review entered information</button>
-      </div>
-      <div id="reviewArea" class="summary-card hidden"></div>
-    </section>
-
-    <div class="form-card no-print">
-      <div id="statusMessage" class="status-message" role="status" aria-live="polite">Your information is saved in this browser when storage is available.</div>
-      <div class="actions">
-        <button type="button" class="secondary" id="backButton">Previous</button>
-        <button type="button" id="nextButton">Next section</button>
-        <button type="button" class="secondary" id="saveButton">Save now</button>
-        <button type="button" class="secondary" id="exportButton">Download JSON backup</button>
-        <button type="button" class="secondary" id="importButton">Import JSON backup</button>
-        <input type="file" id="importFile" accept=".json,application/json" class="hidden">
-        <button type="button" class="secondary" id="printButton">Print / Save PDF</button>
-        <button type="button" class="secondary" id="downloadHtmlButton">Download blank HTML</button>
-        <button type="button" class="secondary" id="resetButton">Reset form</button>
+  <header>
+    <div class="container">
+      <p class="eyebrow">Medical admissions · Application preparation for MBBS 2026-27</p>
+      <h1>Donor / Trust Quota Application Preparation</h1>
+      <p class="subtitle">
+        A structured workspace for organizing applicant information,
+        preparing supporting documents and reviewing an application draft.
+      </p>
+      <div class="status-badge">
+        INDEPENDENT APPLICATION-WBMCC AUTHORISED PREPARATION SERVICE
       </div>
     </div>
-  </form>
+  </header>
 
-  <section id="printReview" class="summary-card hidden print-only">
-    <h2>Application Preparation Copy</h2>
-    <p>This is a user-prepared record, not an official application or proof of eligibility or admission.</p>
-    <div id="printReviewContent"></div>
-  </section>
-</main>
+  <main class="container">
+    <section class="notice" aria-labelledby="important-heading">
+      <h2 id="important-heading">Important Information and Disclaimer</h2>
+      <p>
+        WBMCC Authorization -- This portal provides independent application-preparation assistance.
+        It is authorised by WBMCC .
+        Access verification does not establish eligibility, confirm the
+        availability of any quota, guarantee admission or constitute official
+        application submission.
+      </p>
+      <p>
+        Before making a payment or sharing sensitive documents, applicants
+        should verify the applicable admission route, eligibility criteria,
+        deadlines, authorized recipient and fee requirements against current
+        official notices.
+      </p>
+    </section>
 
-<footer>
-  Independent preparation tool. Confirm all requirements and procedures with the relevant official authority.
-</footer>
+    <section class="panel" id="paymentPanel" aria-labelledby="payment-heading">
+      <p class="section-number">01 · Fees and verification</p>
+      <h2 id="payment-heading">Applicable Processing Fees and Access Activation</h2>
+      <p class="intro">
+        Request a payment reference after Completing the payment and review the verified payment
+        instructions. After payment, submit the transaction details and
+        supporting proof for review. Applicant access remains restricted
+        until approval is recorded by the authorized verification process.
+      </p>
 
-<script>
-"use strict";
+      <div class="fee-box">
+        <span class="fee-label">Applicable Processing Fees</span>
+        <span class="fee-amount">₹13,250/-</span>
+        <p class="hint">
+          The amount shown is subject to confirmation by the WBMCC as processing fees
+          and the applicable written fee schedule. It must be treated as
+          an official WBMCC fee and may confirmed by a relevant authority.
+          Verify the amount, purpose and recipient before making any payment.
+        </p>
+      </div>
 
-const STORAGE_KEY = "mbbs_application_preparation_v1";
-const form = document.getElementById("applicationForm");
-const pages = Array.from(document.querySelectorAll(".page"));
-const progressBar = document.getElementById("progressBar");
-const progressTitle = document.getElementById("progressTitle");
-const progressLabel = document.getElementById("progressLabel");
-const statusMessage = document.getElementById("statusMessage");
-const reviewArea = document.getElementById("reviewArea");
-const printReviewContent = document.getElementById("printReviewContent");
+      <div id="paymentStart">
+        <button class="primary" id="requestReferenceButton" type="button">
+          Request Payment Reference
+        </button>
+      </div>
 
-let currentPage = 0;
-let fileData = {};
-let saveTimer = null;
+      <div id="paymentDetails" hidden>
+        <div class="reference-box">
+          <span class="fee-label">Payment Reference Number</span>
+          <span class="reference-value" id="paymentReference">Pending</span>
+          <p class="hint">
+            Retain this reference for payment-proof submission and
+            verification-status enquiries.
+          </p>
+          <div class="actions">
+            <button id="copyReferenceButton" type="button">
+              Copy Reference
+            </button>
+          </div>
+        </div>
 
-function message(text) {
-  statusMessage.textContent = text;
-}
+        <h3>Payment Instructions</h3>
+        <p>
+          <strong>Amount displayed:</strong> ₹13,250/-
+        </p>
+        <p>
+          <strong>Payment recipient:</strong>
+          <span id="paymentRecipient">
+            Awaiting verified recipient information
+          </span>
+        </p>
+        <p id="paymentInstructions" class="hint">
+          Instructions will be displayed only if supplied by the Application Form.
+          Do not transfer funds using unverified payment details.
+        </p>
 
-function allFields() {
-  return Array.from(form.querySelectorAll("input[name], select[name], textarea[name]"));
-}
+        <form id="paymentProofForm">
+          <label for="transactionReference">
+            Transaction / UTR Reference *
+          </label>
+          <input
+            id="transactionReference"
+            name="transactionReference"
+            type="text"
+            required
+            maxlength="120"
+            autocomplete="off"
+            placeholder="Enter the transaction reference"
+          >
 
-function fieldValue(el) {
-  if (el.type === "checkbox" || el.type === "radio") return el.checked;
-  if (el.type === "file") return undefined;
-  return el.value;
-}
+          <label for="paymentProofFile">Payment Proof Document *</label>
+          <input
+            id="paymentProofFile"
+            name="paymentProof"
+            type="file"
+            accept="image/jpeg,image/png,application/pdf"
+            required
+          >
+          <p class="hint">
+            Select a readable PDF, JPG or PNG file no larger than 5 MB.
+            Never upload a payment PIN, password, CVV or other
+            authentication credentials.
+          </p>
 
-function collectValues() {
-  const values = {};
-  allFields().forEach(el => {
-    if (el.type !== "file") values[el.name] = fieldValue(el);
-  });
-  return values;
-}
+          <label class="inline-check" for="paymentAccuracy">
+            <input
+              id="paymentAccuracy"
+              name="paymentAccuracy"
+              type="checkbox"
+              required
+            >
+            <span>
+              I confirm that the transaction information and uploaded proof
+              are accurate to the best of my knowledge.
+            </span>
+          </label>
 
-function applyValues(values) {
-  allFields().forEach(el => {
-    if (el.type === "file" || !(el.name in values)) return;
-    if (el.type === "checkbox" || el.type === "radio") {
-      el.checked = Boolean(values[el.name]);
-    } else {
-      el.value = values[el.name] ?? "";
-    }
-  });
-}
+          <div class="actions">
+            <button class="primary" id="submitProofButton" type="submit">
+              Submit Payment Proof
+            </button>
+            <button id="checkPaymentStatusButton" type="button">
+              Check Verification Status
+            </button>
+          </div>
+        </form>
 
-function makeBackup() {
-  return {
-    application: "Independent MBBS Application Preparation Form",
-    version: 1,
-    savedAt: new Date().toISOString(),
-    values: collectValues(),
-    files: fileData
-  };
-}
+        <div id="paymentStatusPanel" hidden>
+          <h3>Verification Status</h3>
+          <p
+            id="paymentStatusMessage"
+            class="message"
+            role="status"
+            aria-live="polite"
+          ></p>
 
-function saveData(showMessage = true) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(makeBackup()));
-    if (showMessage) message("Information saved in this browser.");
-  } catch (err) {
-    if (showMessage) {
-      message("Browser storage limit reached or storage unavailable. Download a JSON backup to keep your information.");
-    }
-  }
-}
+          <p id="applicantTokenMessage" hidden>
+            The server reports that payment has been approved. An access
+            token will be displayed only if returned by the authorized
+            token-issuance process.
+          </p>
 
-function scheduleSave() {
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => saveData(false), 300);
-}
+          <div id="issuedTokenBox" class="reference-box" hidden>
+            <span class="fee-label">Applicant Access Code</span>
+            <span id="issuedTokenValue" class="reference-value"></span>
+            <div class="actions">
+              <button id="copyTokenButton" type="button">
+                Copy Access Code
+              </button>
+              <button id="useTokenButton" class="primary" type="button">
+                Enter Code in Access Form
+              </button>
+            </div>
+            <p class="hint">
+              Keep this token confidential. Do not share it with other applicants.
+            </p>
+          </div>
+        </div>
+      </div>
 
-function loadData() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return;
-    const data = JSON.parse(raw);
-    if (data.values) applyValues(data.values);
-    if (data.files && typeof data.files === "object") fileData = data.files;
-    updateFileStatuses();
-    message("Previously saved information loaded from this browser.");
-  } catch (err) {
-    message("Previously saved information could not be loaded.");
-  }
-}
+      <p class="fineprint">
+        Reference request is not a payment receipt. Submission of payment
+        proof is not payment approval. Access is activated only through the
+        WBMCC authorized payment verification process. Do not make a payment
+        unless the recipient and payment instructions have been independently
+        verified.
+      </p>
+    </section>
 
-function showPage(index) {
-  currentPage = Math.max(0, Math.min(index, pages.length - 1));
-  pages.forEach((page, i) => {
-    page.classList.toggle("hidden", i !== currentPage);
-  });
+    <section class="panel" id="gate" aria-labelledby="access-heading">
+      <p class="section-number">02 · Applicant access</p>
+      <h2 id="access-heading">Applicant Access Verification</h2>
+      <p class="intro">
+        Enter the applicant access token issued through the authorized
+        process. Administrator credentials must not be used here.
+      </p>
 
-  const percent = Math.round(((currentPage + 1) / pages.length) * 100);
-  progressBar.style.width = percent + "%";
-  progressTitle.textContent = "Section " + (currentPage + 1) + " of " + pages.length;
-  progressLabel.textContent = percent + "% through the form";
-  document.getElementById("backButton").disabled = currentPage === 0;
-  document.getElementById("nextButton").textContent =
-    currentPage === pages.length - 1 ? "Review all information" : "Next section";
+      <form id="accessForm">
+        <label for="accessToken">Applicant Access Password *</label>
+        <input
+          id="accessToken"
+          name="token"
+          type="password"
+          autocomplete="off"
+          autocapitalize="none"
+          spellcheck="false"
+          required
+          maxlength="4096"
+          placeholder="Enter your applicant access token"
+          aria-describedby="tokenHint"
+        >
+        <p class="hint" id="tokenHint">
+          The server must validate the token before granting access.
+          Never enter or share an administrator password.
+        </p>
 
-  message("Section " + (currentPage + 1) + " of " + pages.length);
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
+        <div class="actions">
+          <button class="primary" id="verifyButton" type="submit">
+            Verify Applicant Access
+          </button>
+        </div>
+      </form>
 
-function clearErrors() {
-  form.querySelectorAll(".field.invalid").forEach(el => el.classList.remove("invalid"));
-  form.querySelectorAll(".error").forEach(el => el.remove());
-}
+      <p id="gateStatus" class="message" role="status" aria-live="polite"></p>
+    </section>
 
-function validatePage(index) {
-  clearErrors();
-  let valid = true;
-  const page = pages[index];
-  const fields = Array.from(page.querySelectorAll("input, select, textarea"));
+    <section class="panel" id="welcome" hidden aria-labelledby="welcome-heading">
+      <p class="section-number">03 · Preparation workspace</p>
+      <h2 id="welcome-heading">Applicant Preparation Workspace</h2>
+      <p class="intro">
+        Review the instructions and prepare the required information before
+        proceeding. Confirm all requirements against the relevant official
+        admission notice.
+      </p>
 
-  fields.forEach(el => {
-    if (el.type === "file" || el.disabled) return;
-    if (!el.checkValidity()) {
-      valid = false;
-      const wrapper = el.closest(".field");
-      if (wrapper) {
-        wrapper.classList.add("invalid");
-        const error = document.createElement("div");
-        error.className = "error";
-        error.textContent = el.validity.valueMissing
-          ? "This field is required."
-          : "Please check this value.";
-        wrapper.appendChild(error);
+      <div class="resource-list">
+        <a class="resource" href="applicant-instructions.html">
+          <strong>Applicant Instructions</strong>
+          <span>Review the preparation procedure</span>
+        </a>
+        <a class="resource" href="privacy-notice.html">
+          <strong>Privacy Notice</strong>
+          <span>Review data-handling information</span>
+        </a>
+        <a class="resource" href="cover-letter.html">
+          <strong>Cover Letter Draft</strong>
+          <span>Open the separate draft document</span>
+        </a>
+        <a
+          class="resource"
+          href="https://wbmcc.nic.in/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <strong>WBMCC Official Website ↗</strong>
+          <span>Consult official notices independently</span>
+        </a>
+      </div>
+
+      <h2 style="font-size:20px">Application Preparation Stages</h2>
+      <ol class="steps">
+        <li><b>Stage 01</b>Applicant Information</li>
+        <li><b>Stage 02</b>Contact Information</li>
+        <li><b>Stage 03</b>Eligibility Details</li>
+        <li><b>Stage 04</b>Photograph and Signature</li>
+        <li><b>Stage 05</b>Supporting Documents</li>
+        <li><b>Stage 06</b>Declarations and Consent</li>
+        <li><b>Stage 07</b>Review and Final Actions</li>
+      </ol>
+
+      <div class="actions">
+        <a class="button primary" href="page-1-applicant.html">
+          Begin Application Preparation
+        </a>
+      </div>
+
+      <p class="fineprint">
+        This workspace is for preparation purposes. Access approval, a saved
+        Application Form, an exported document or a payment record does not constitute
+         gaurantee of a seat in any institution. Subjected to WBMCC norms and recomendation.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <span>WBMCC Authorised · Independent Application-Preparation Service - On Demand - Non Transferable</span>
+      <span>WBMCC reserved full rights.</span>
+    </div>
+    <button type="button" data-build-single-file>
+  Download Single HTML Application
+</button>
+
+<p data-build-status role="status" aria-live="polite"></p>
+
+<p data-build-status role="status" aria-live="polite"></p>
+
+<script src="/single-file.js" defer></script>>
+  </footer>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const $ = (id) => document.getElementById(id);
+
+      const form = $("accessForm");
+      const tokenInput = $("accessToken");
+      const verifyButton = $("verifyButton");
+      const gate = $("gate");
+      const welcome = $("welcome");
+      const gateStatus = $("gateStatus");
+
+      const generateReferenceButton = $("generateReferenceButton");
+      const paymentDetails = $("paymentDetails");
+      const paymentReference = $("paymentReference");
+      const paymentRecipient = $("paymentRecipient");
+      const paymentInstructions = $("paymentInstructions");
+      const paymentProofForm = $("paymentProofForm");
+      const submitProofButton = $("submitProofButton");
+      const checkPaymentStatusButton = $("checkPaymentStatusButton");
+      const paymentStatusPanel = $("paymentStatusPanel");
+      const paymentStatusMessage = $("paymentStatusMessage");
+      const applicantTokenMessage = $("applicantTokenMessage");
+      const issuedTokenBox = $("issuedTokenBox");
+      const issuedTokenValue = $("issuedTokenValue");
+
+      let currentPaymentReference = "";
+      let issuedApplicantToken = "";
+
+      function setPaymentMessage(message) {
+        paymentStatusPanel.hidden = false;
+        paymentStatusMessage.textContent = message;
       }
-    }
-  });
 
-  if (!valid) {
-    const first = page.querySelector(".field.invalid input, .field.invalid select, .field.invalid textarea");
-    if (first) first.focus();
-    message("Please correct the highlighted fields before continuing.");
-  }
+      async function requestJson(url, options = {}) {
+        const response = await fetch(url, {
+          credentials: "same-origin",
+          cache: "no-store",
+          ...options
+        });
 
-  return valid;
-}
+        let data;
 
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, ch => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;",
-    '"': "&quot;", "'": "&#39;"
-  })[ch]);
-}
+        try {
+          data = await response.json();
+        } catch {
+          throw new Error("The service returned an invalid response.");
+        }
 
-function labelFor(name) {
-  const el = form.querySelector('[name="' + CSS.escape(name) + '"]');
-  if (!el) return name;
-  const label = form.querySelector('label[for="' + CSS.escape(el.id) + '"]');
-  return label ? label.textContent.replace(/\s*\*$/, "") : name;
-}
+        if (!response.ok || data.ok !== true) {
+          throw new Error(
+            typeof data.error === "string"
+              ? data.error
+              : "The request could not be completed."
+          );
+        }
 
-function displayValue(el) {
-  if (el.type === "checkbox") return el.checked ? "Yes" : "No";
-  if (el.type === "file") return fileData[el.name]?.length ? "File attached in local form data" : "Not uploaded";
-  if (el.tagName === "SELECT") {
-    const option = el.options[el.selectedIndex];
-    return option ? option.textContent : "";
-  }
-  return el.value.trim() || "Not provided";
-}
-
-function buildReviewHtml() {
-  let html = "";
-  pages.forEach((page, index) => {
-    html += '<div class="review-section"><h3>' +
-      escapeHtml(page.querySelector("h2").textContent) + '</h3>';
-
-    const fields = Array.from(page.querySelectorAll("input[name], select[name], textarea[name]"));
-    fields.forEach(el => {
-      if (el.type === "file") {
-        const files = fileData[el.name] || [];
-        html += '<div class="review-item"><strong>' + escapeHtml(labelFor(el.name)) +
-          '</strong><span>' + escapeHtml(files.length ? files.map(f => f.name).join(", ") : "Not uploaded") +
-          '</span></div>';
-        return;
+        return data;
       }
 
-      html += '<div class="review-item"><strong>' + escapeHtml(labelFor(el.name)) +
-        '</strong><span>' + escapeHtml(displayValue(el)) + '</span></div>';
-    });
-    html += '</div>';
-  });
-
-  return html;
-}
-
-function showReview() {
-  reviewArea.innerHTML = "<h2>Review your information</h2>" + buildReviewHtml() +
-    '<p class="small">Review the details carefully. This copy does not submit your application.</p>';
-  reviewArea.classList.remove("hidden");
-  printReviewContent.innerHTML = buildReviewHtml();
-  document.getElementById("printReview").classList.remove("hidden");
-}
-
-function goNext() {
-  if (!validatePage(currentPage)) return;
-  saveData(false);
-  if (currentPage < pages.length - 1) {
-    showPage(currentPage + 1);
-  } else {
-    showReview();
-    reviewArea.scrollIntoView({ behavior: "smooth", block: "start" });
-    message("Review the information before printing or exporting.");
-  }
-}
-
-function downloadBlob(blob, filename) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1500);
-}
-
-function exportBackup() {
-  const blob = new Blob([JSON.stringify(makeBackup(), null, 2)], {
-    type: "application/json"
-  });
-  downloadBlob(blob, "mbbs-application-backup.json");
-  message("JSON backup download requested. Keep it in a secure location.");
-}
-
-function importBackupFile(file) {
-  const reader = new FileReader();
-  reader.onload = () => {
-    try {
-      const data = JSON.parse(reader.result);
-      if (!data || typeof data.values !== "object") {
-        throw new Error("Invalid backup format");
+      function validateReference(reference) {
+        return (
+          typeof reference === "string" &&
+          /^[A-Za-z0-9_-]{6,80}$/.test(reference)
+        );
       }
-      applyValues(data.values);
-      fileData = data.files && typeof data.files === "object" ? data.files : {};
-      updateFileStatuses();
-      saveData(false);
-      showReview();
-      message("Backup imported. Please review the information.");
-    } catch (err) {
-      message("The selected file is not a valid form backup.");
-    }
-  };
-  reader.readAsText(file);
-}
 
-function fileSummary(files) {
-  return files.length ? files.map(f => f.name).join(", ") : "No file selected.";
-}
+      async function copyText(value, successMessage) {
+        if (!value) return;
 
-function updateFileStatuses() {
-  ["photoUpload", "signatureUpload", "academicUpload", "neetUpload", "otherUpload"]
-    .forEach(id => {
-      const el = document.getElementById(id);
-      const status = document.getElementById(id + "Status");
-      if (!el || !status) return;
-      const saved = fileData[id] || [];
-      status.textContent = saved.length
-        ? "Saved file metadata: " + saved.map(f => f.name).join(", ") +
-          ". Re-select the original file if you need to attach it again."
-        : "No file selected.";
-    });
-}
+        if (navigator.clipboard && window.isSecureContext) {
+          try {
+            await navigator.clipboard.writeText(value);
+            setPaymentMessage(successMessage);
+          } catch {
+            setPaymentMessage(
+              "Copy was unavailable. Select and copy the text manually."
+            );
+          }
+        } else {
+          setPaymentMessage(
+            "Copy is unavailable in this browser context. Select and copy the text manually."
+          );
+        }
+      }
 
-function handleFiles(input) {
-  const selected = Array.from(input.files || []);
-  const status = document.getElementById(input.id + "Status");
+      generateReferenceButton.addEventListener("click", async () => {
+        generateReferenceButton.disabled = true;
+        generateReferenceButton.textContent = "Generating reference…";
 
-  if (!selected.length) {
-    fileData[input.id] = [];
-    if (status) status.textContent = "No file selected.";
-    saveData(false);
-    return;
-  }
+        try {
+          const data = await requestJson("/api/payment/reference", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            },
+            body: JSON.stringify({
+              purpose: "application_processing"
+            })
+          });
 
-  const validFiles = selected.filter(file => {
-    const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
-    const isImage = file.type.startsWith("image/");
-    return isPdf || isImage;
-  });
+          if (!validateReference(data.reference)) {
+            throw new Error("The server returned an invalid payment reference.");
+          }
 
-  if (validFiles.length !== selected.length) {
-    message("Some files were skipped. Choose PDF or image files only.");
-  }
+          currentPaymentReference = data.reference;
+          paymentReference.textContent = data.reference;
 
-  const oversized = validFiles.filter(file => file.size > 8 * 1024 * 1024);
-  if (oversized.length) {
-    message("Each file must be 8 MB or smaller. Large files were skipped.");
-  }
+          paymentRecipient.textContent =
+            typeof data.recipient === "string" && data.recipient.trim()
+              ? data.recipient
+              : "Confirm the recipient through independently verified instructions.";
 
-  const usable = validFiles.filter(file => file.size <= 8 * 1024 * 1024);
-  const total = usable.reduce((sum, file) => sum + file.size, 0);
+          paymentInstructions.textContent =
+            typeof data.instructions === "string" && data.instructions.trim()
+              ? data.instructions
+              : "No payment instructions were returned. Do not transfer funds until the recipient and payment method are verified.";
 
-  if (total > 12 * 1024 * 1024) {
-    message("The selected files exceed the 12 MB combined limit for this upload field.");
-    input.value = "";
-    return;
-  }
+          paymentDetails.hidden = false;
 
-  fileData[input.id] = usable.map(file => ({
-    name: file.name,
-    type: file.type,
-    size: file.size,
-    lastModified: file.lastModified
-  }));
+          setPaymentMessage(
+            "Payment reference generated. Verify the recipient and instructions before making any payment."
+          );
+        } catch (error) {
+          setPaymentMessage(
+            error instanceof Error
+              ? error.message
+              : "Unable to generate a payment reference."
+          );
+        } finally {
+          generateReferenceButton.disabled = false;
+          generateReferenceButton.textContent = "Generate Payment Reference";
+        }
+      });
 
-  if (status) status.textContent = fileSummary(usable);
-  saveData(false);
-  message("File names recorded. Files are not sent to any authority.");
-}
+      $("copyReferenceButton").addEventListener("click", () => {
+        copyText(currentPaymentReference, "Payment reference copied.");
+      });
 
-function downloadBlankHtml() {
-  const clone = document.documentElement.cloneNode(true);
-  clone.querySelectorAll("input, textarea").forEach(el => {
-    if (el.type === "checkbox" || el.type === "radio") {
-      el.removeAttribute("checked");
-      el.checked = false;
-    } else if (el.type !== "file") {
-      el.removeAttribute("value");
-      el.value = "";
-    }
-  });
-  clone.querySelectorAll("select").forEach(el => {
-    el.selectedIndex = 0;
-  });
-  clone.querySelectorAll(".error").forEach(el => el.remove());
-  clone.querySelectorAll(".field.invalid").forEach(el => el.classList.remove("invalid"));
-  clone.querySelectorAll(".review-item").forEach(el => el.remove());
-  clone.querySelectorAll(".hidden").forEach(el => {
-    if (el.classList.contains("page")) return;
-  });
+      paymentProofForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
 
-  const blob = new Blob(["<!DOCTYPE html>\n" + clone.outerHTML], {
-    type: "text/html;charset=utf-8"
-  });
-  downloadBlob(blob, "mbbs-application-blank.html");
-}
+        if (!currentPaymentReference) {
+          setPaymentMessage("Generate a payment reference first.");
+          return;
+        }
 
-document.getElementById("backButton").addEventListener("click", () => {
-  if (currentPage > 0) showPage(currentPage - 1);
-});
+        const transactionReference =
+          $("transactionReference").value.trim();
+        const file = $("paymentProofFile").files[0];
+        const accuracyConfirmed = $("paymentAccuracy").checked;
 
-document.getElementById("nextButton").addEventListener("click", goNext);
+        if (!transactionReference || !file || !accuracyConfirmed) {
+          setPaymentMessage(
+            "Enter the transaction reference, select payment proof and confirm the declaration."
+          );
+          return;
+        }
 
-document.getElementById("saveButton").addEventListener("click", () => saveData(true));
+        const allowedTypes = [
+          "application/pdf",
+          "image/jpeg",
+          "image/png"
+        ];
 
-document.getElementById("exportButton").addEventListener("click", exportBackup);
+        if (!allowedTypes.includes(file.type) ||
+            file.size > 5 * 1024 * 1024) {
+          setPaymentMessage(
+            "Select a PDF, JPG or PNG file no larger than 5 MB."
+          );
+          return;
+        }
 
-document.getElementById("importButton").addEventListener("click", () => {
-  document.getElementById("importFile").click();
-});
+        const body = new FormData();
+        body.append("reference", currentPaymentReference);
+        body.append("transactionReference", transactionReference);
+        body.append("paymentProof", file);
+        body.append("accuracyConfirmed", "true");
 
-document.getElementById("importFile").addEventListener("change", event => {
-  const file = event.target.files?.[0];
-  if (file) importBackupFile(file);
-  event.target.value = "";
-});
+        submitProofButton.disabled = true;
+        applicantTokenMessage.hidden = true;
+        issuedTokenBox.hidden = true;
+        setPaymentMessage("Submitting payment proof for review…");
 
-document.getElementById("reviewButton").addEventListener("click", () => {
-  showReview();
-  reviewArea.scrollIntoView({ behavior: "smooth", block: "start" });
-});
+        try {
+          const data = await requestJson("/api/payment/proof", {
+            method: "POST",
+            body
+          });
 
-document.getElementById("printButton").addEventListener("click", () => {
-  showReview();
-  window.print();
-});
+          setPaymentMessage(
+            typeof data.message === "string"
+              ? data.message
+              : "Payment proof received for review. Access remains restricted pending approval."
+          );
+        } catch (error) {
+          setPaymentMessage(
+            error instanceof Error
+              ? error.message
+              : "Unable to submit payment proof."
+          );
+        } finally {
+          submitProofButton.disabled = false;
+        }
+      });
 
-document.getElementById("downloadHtmlButton").addEventListener("click", downloadBlankHtml);
+      checkPaymentStatusButton.addEventListener("click", async () => {
+        if (!currentPaymentReference) {
+          setPaymentMessage("Generate a payment reference first.");
+          return;
+        }
 
-document.getElementById("resetButton").addEventListener("click", () => {
-  const confirmed = window.confirm(
-    "Reset this form and delete its saved information from this browser? Download a backup first if you need to keep your information."
-  );
-  if (!confirmed) return;
+        checkPaymentStatusButton.disabled = true;
+        applicantTokenMessage.hidden = true;
+        issuedTokenBox.hidden = true;
+        issuedApplicantToken = "";
+        issuedTokenValue.textContent = "";
 
-  form.reset();
-  fileData = {};
-  currentPage = 0;
-  reviewArea.innerHTML = "";
-  reviewArea.classList.add("hidden");
-  printReviewContent.innerHTML = "";
-  document.getElementById("printReview").classList.add("hidden");
+        setPaymentMessage("Checking verification status…");
 
-  try {
-    localStorage.removeItem(STORAGE_KEY);
-  } catch (err) {}
+        try {
+          const data = await requestJson("/api/payment/status", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            },
+            body: JSON.stringify({
+              reference: currentPaymentReference
+            })
+          });
 
-  updateFileStatuses();
-  clearErrors();
-  showPage(0);
-  message("Form reset. Saved information was removed from this browser where possible.");
-});
+          if (data.status === "approved") {
+            setPaymentMessage(
+              "The server reports that payment has been approved."
+            );
 
-allFields().forEach(el => {
-  if (el.type === "file") {
-    el.addEventListener("change", () => handleFiles(el));
-  } else {
-    el.addEventListener("input", scheduleSave);
-    el.addEventListener("change", scheduleSave);
-  }
-});
+            applicantTokenMessage.hidden = false;
 
-window.addEventListener("beforeprint", () => {
-  printReviewContent.innerHTML = buildReviewHtml();
-});
+            if (
+              typeof data.accessToken === "string" &&
+              data.accessToken.length >= 16 &&
+              data.accessToken.length <= 4096
+            ) {
+              issuedApplicantToken = data.accessToken;
+              issuedTokenValue.textContent = issuedApplicantToken;
+              issuedTokenBox.hidden = false;
+            } else {
+              applicantTokenMessage.textContent =
+                "Approval is recorded, but no access token was returned. Contact the authorized service administrator.";
+            }
+          } else if (data.status === "rejected") {
+            setPaymentMessage(
+              "Payment proof was not approved. Follow the review instructions provided by the authorized service."
+            );
+          } else if (data.status === "pending") {
+            setPaymentMessage(
+              "Verification is pending. Applicant access remains restricted."
+            );
+          } else {
+            setPaymentMessage(
+              "The server returned an unrecognized status. Contact the service administrator."
+            );
+          }
+        } catch (error) {
+          setPaymentMessage(
+            error instanceof Error
+              ? error.message
+              : "Unable to check verification status."
+          );
+        } finally {
+          checkPaymentStatusButton.disabled = false;
+        }
+      });
 
-window.addEventListener("afterprint", () => {
-  document.getElementById("printReview").classList.add("hidden");
-});
+      $("copyTokenButton").addEventListener("click", () => {
+        copyText(issuedApplicantToken, "Applicant access token copied.");
+      });
 
-loadData();
-showPage(0);
-</script>
+      $("useTokenButton").addEventListener("click", () => {
+        if (!issuedApplicantToken) return;
+
+        tokenInput.value = issuedApplicantToken;
+        tokenInput.type = "password";
+        tokenInput.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+        tokenInput.focus();
+
+        gateStatus.textContent =
+          "Token entered. Select Verify Applicant Access to continue.";
+      });
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const token = tokenInput.value.trim();
+
+        if (!token) {
+          gateStatus.textContent = "Enter your applicant access token.";
+          tokenInput.focus();
+          return;
+        }
+
+        verifyButton.disabled = true;
+        gateStatus.textContent = "Verifying applicant access…";
+
+        try {
+          await requestJson("/api/access", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            },
+            body: JSON.stringify({ token })
+          });
+
+          gate.hidden = true;
+          welcome.hidden = false;
+          gateStatus.textContent = "";
+
+          welcome.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+        } catch (error) {
+          gateStatus.textContent =
+            error instanceof Error
+              ? error.message
+              : "Access could not be verified. Check your token and try again.";
+        } finally {
+          verifyButton.disabled = false;
+        }
+      });
+    })();
+
 </body>
 </html>
