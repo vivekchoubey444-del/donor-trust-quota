@@ -1,78 +1,92 @@
-============================================================
 
-Donor Trust Quota Application
-
-Render Blueprint
-
-File: render.yaml
-
-============================================================
+# Render Blueprint
+# Project: Donor Trust Quota Application
+# File: render.yaml
+#
+# Keep secrets in Render Environment settings.
+# Do not commit .env or credentials to GitHub.
 
 services:
-
-* type: web
+  - type: web
     name: donor-trust-quota
     runtime: node
     plan: free
-    Build and start
+
     buildCommand: npm ci
     startCommand: npm start
-    Health monitoring
+
     healthCheckPath: /health
-    Automatic deployment settings
     autoDeploy: true
+
     envVars:
-    Application
-    * key: NODE_ENV
+      # Runtime
+      - key: NODE_ENV
         value: production
-    * key: PORT
-        value: "10000"
-    * key: HOST
+
+      - key: NODE_VERSION
+        value: "22"
+
+      # Render assigns PORT automatically.
+      - key: HOST
         value: "0.0.0.0"
-    Database and authentication secrets
-    Set these privately in the Render dashboard.
-    * key: DATABASE_URL
+
+      # Database and authentication
+      - key: DATABASE_URL
         sync: false
-    * key: ADMIN_API_TOKEN
+
+      - key: ADMIN_API_TOKEN
         sync: false
-    Frontend security
-    Replace this with your actual deployed frontend origin.
-    Do not include a trailing slash.
-    * key: CORS_ORIGIN
-        value: https://your-frontend-domain.example
-    PostgreSQL connection security
-    * key: PGSSL
+
+      - key: PGSSL
         value: "true"
-    Reverse proxy configuration
-    * key: TRUST_PROXY
+
+      # Set the exact browser origin allowed to call the API.
+      # Enter this privately in Render after deciding the frontend URL.
+      - key: CORS_ORIGIN
+        sync: false
+
+      # Reverse proxy
+      - key: TRUST_PROXY
         value: "true"
-    Request validation and limits
-    * key: JSON_BODY_LIMIT
+
+      # Request limits
+      - key: JSON_BODY_LIMIT
         value: 100kb
-    * key: REQUEST_TIMEOUT_MS
+
+      - key: REQUEST_TIMEOUT_MS
         value: "30000"
-    General rate limiting
-    * key: RATE_LIMIT_WINDOW_MS
+
+      # General rate limiting
+      - key: RATE_LIMIT_WINDOW_MS
         value: "900000"
-    * key: RATE_LIMIT_MAX_REQUESTS
+
+      - key: RATE_LIMIT_MAX_REQUESTS
         value: "60"
-    Authentication rate limiting
-    * key: AUTH_RATE_LIMIT_MAX_REQUESTS
+
+      # Authentication rate limiting
+      - key: AUTH_RATE_LIMIT_MAX_REQUESTS
         value: "10"
-    Logging and privacy
-    * key: LOG_LEVEL
+
+      # Privacy-conscious logging
+      - key: LOG_LEVEL
         value: warn
-    * key: LOG_REDACT_SENSITIVE_DATA
+
+      - key: LOG_REDACT_SENSITIVE_DATA
         value: "true"
-    * key: LOG_REQUEST_BODIES
+
+      - key: LOG_REQUEST_BODIES
         value: "false"
-    * key: LOG_RESPONSE_BODIES
+
+      - key: LOG_RESPONSE_BODIES
         value: "false"
-    Document and application security
-    * key: UPLOADS_PUBLICLY_ACCESSIBLE
+
+      # Application and document safeguards
+      - key: UPLOADS_PUBLICLY_ACCESSIBLE
         value: "false"
-    * key: REQUIRE_CONSENT_BEFORE_SUBMISSION
+
+      - key: REQUIRE_CONSENT_BEFORE_SUBMISSION
         value: "true"
-    Health endpoint
-    * key: HEALTH_CHECK_ENABLED
+
+      # Health monitoring
+      - key: HEALTH_CHECK_ENABLED
         value: "true"
