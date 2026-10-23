@@ -2,7 +2,7 @@
 "use strict";
 
 const express = require("express");
-const crypto = require("crypto");
+const crypto = require("node:crypto");
 
 const router = express.Router();
 
@@ -16,25 +16,29 @@ const LIMITS = Object.freeze({
   maxReferenceAttempts: 3
 });
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PHONE_REGEX = /^\+?[0-9\s().-]{7,32}$/;
 const REFERENCE_PREFIX = "DTQ";
 
-function cleanText(value, maxLength) {
-  if (typeof value !== "string") return "";
+// Update this when the published consent notice changes.
+// Ensure this version corresponds to the actual notice shown to applicants.
+const CONSENT_VERSION = "v1";
 
-  return value
+const EMAIL_REGEX =
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const PHONE_REGEX =
+  /^\+?[0-9\s().-]{7,32}$/;
+
+function cleanText(value, maxLength) {
+  if (typeof value !== "string") return null;
+
+  const cleaned = value
     .normalize("NFKC")
     .trim()
-    .replace(/\s+/g, " ")
-    .slice(0, maxLength);
-}
+    .replace(/\s+/g, " ");
 
-function makeApplicationReference() {
-  const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-  const random = crypto.randomBytes(12).toString("hex").toUpperCase();
+  if (!cleaned || cleaned.length > maxLength) return null;
 
-  return `${REFERENCE_PREFIX}-${date}-${random}`;
+  return cleaned;
 }
 
 function sendError(res, status, code, message, requestId) {
@@ -43,6 +47,18 @@ function sendError(res, status, code, message, requestId) {
     error: { code, message },
     ...(requestId ? { requestId } : {})
   });
+}
+
+function makeApplicationReference() {
+  const date = new Date().toISOString()
+    .slice(0, 10)
+    .replace(/-/g, "");
+
+  const random = crypto.randomBytes(12)
+    .toString("hex")
+    .toUpperCase();
+
+  return `${REFERENCE_PREFIX}-${date}-${random}`;
 }
 
 function parseAdmissionYear(value) {
@@ -70,8 +86,14 @@ function parseAdmissionYear(value) {
   return { valid: true, value: year };
 }
 
-function isUniqueViolation(error) {
-  return error && error.code === "23505";
+function isReferenceCollision(error) {
+  // PostgreSQL unique_violation.
+  // Only retry when the named constraint identifies application_ref.
+  return (
+    error?.code === "23505" &&
+    typeof error.constraint === "string" &&
+    /application_ref/i.test(error.constraint)
+  );
 }
 
 router.post("/", async (req, res) => {
@@ -79,14 +101,21 @@ router.post("/", async (req, res) => {
     typeof req.requestId === "string" ? req.requestId : undefined;
 
   try {
-    if (!req.body || typeof req.body !== "object" || Array.isArray(req.body)) {
+    const body = req.body;
+
+    if (
+      !body ||
+      typeof body !== "object" ||
+      Array.isArray(body)
+    ) {
       return sendError(
-        res, 400, "INVALID_BODY",
-        "A valid JSON object is required.", requestId
+        res,
+        400,
+        "INVALID_BODY",
+        "A valid JSON object is required.",
+        requestId
       );
     }
-
-    const body = req.body;
 
     const applicantName = cleanText(
       body.applicant_name ?? body.applicantName,
@@ -96,41 +125,48 @@ router.post("/", async (req, res) => {
     const applicantEmail = cleanText(
       body.applicant_email ?? body.applicantEmail,
       LIMITS.email
-    ).toLowerCase();
+    )?.toLowerCase();
 
     const applicantPhone = cleanText(
       body.applicant_phone ?? body.applicantPhone,
       LIMITS.phone
     );
 
-    const rawConsent = body.consent_accepted ?? body.consentAccepted;
-    const consentAccepted = rawConsent === true;
-
     if (!applicantName || applicantName.length < 2) {
       return sendError(
         res, 400, "INVALID_APPLICANT_NAME",
-        "Enter the applicant's full name.", requestId
+        "Enter a valid applicant name.", requestId
       );
     }
 
-    if (!applicantEmail || !EMAIL_REGEX.test(applicantEmail)) {
+    if (
+      !applicantEmail ||
+      !EMAIL_REGEX.test(applicantEmail)
+    ) {
       return sendError(
         res, 400, "INVALID_EMAIL",
         "Enter a valid email address.", requestId
       );
     }
 
-    if (!applicantPhone || !PHONE_REGEX.test(applicantPhone)) {
+    if (
+      !applicantPhone ||
+      !PHONE_REGEX.test(applicantPhone)
+    ) {
       return sendError(
         res, 400, "INVALID_PHONE",
         "Enter a valid contact phone number.", requestId
       );
     }
 
-    if (!consentAccepted) {
+    const rawConsent =
+      body.consent_accepted ?? body.consentAccepted;
+
+    if (rawConsent !== true) {
       return sendError(
         res, 400, "CONSENT_REQUIRED",
-        "Consent must be accepted before submitting.", requestId
+        "Consent must be accepted before submission.",
+        requestId
       );
     }
 
@@ -141,41 +177,52 @@ router.post("/", async (req, res) => {
     if (!yearResult.valid) {
       return sendError(
         res, 400, "INVALID_ADMISSION_YEAR",
-        "Admission year must be a valid four-digit year between 2000 and 2200.",
+        "Admission year must be between 2000 and 2200.",
         requestId
       );
     }
 
-    const rawType = body.application_type ?? body.applicationType ?? "donor_quota";
-    const applicationType = cleanText(rawType, LIMITS.applicationType);
+    const rawType =
+      body.application_type ??
+      body.applicationType ??
+      "donor_quota";
 
-    if (!applicationType || applicationType !== "donor_quota") {
+    const applicationType = cleanText(
+      rawType,
+      LIMITS.applicationType
+    );
+
+    if (applicationType !== "donor_quota") {
       return sendError(
         res, 400, "INVALID_APPLICATION_TYPE",
-        "The application type is not supported.", requestId
+        "The application type is not supported.",
+        requestId
       );
     }
 
-    const pool = req.app.locals.db;
+    const pool = req.app?.locals?.db;
 
     if (!pool || typeof pool.query !== "function") {
       return sendError(
         res, 503, "DATABASE_UNAVAILABLE",
-        "The application service is temporarily unavailable.", requestId
+        "The application service is temporarily unavailable.",
+        requestId
       );
     }
 
-    /*
-     * Store only explicitly permitted fields.
-     * Do not persist arbitrary request properties, uploaded file paths,
-     * tokens, or client-supplied application statuses.
-     */
+    // Persist only fields explicitly approved for this endpoint.
+    // Never trust client-provided status, IDs, or file paths.
     const applicantData = {
       application_type: applicationType,
-      admission_year: yearResult.value
+      admission_year: yearResult.value,
+      consent_version: CONSENT_VERSION
     };
 
-    for (let attempt = 1; attempt <= LIMITS.maxReferenceAttempts; attempt++) {
+    for (
+      let attempt = 1;
+      attempt <= LIMITS.maxReferenceAttempts;
+      attempt++
+    ) {
       const applicationRef = makeApplicationReference();
 
       try {
@@ -203,21 +250,26 @@ router.post("/", async (req, res) => {
         );
 
         if (!result.rows || result.rows.length !== 1) {
-          throw new Error("Unexpected application insert result.");
+          throw new Error("Unexpected insert result.");
         }
+
+        const saved = result.rows[0];
 
         return res.status(201).json({
           success: true,
           message: "Application received successfully.",
           application: {
-            reference: result.rows[0].application_ref,
-            status: result.rows[0].status,
-            submitted_at: result.rows[0].submitted_at
+            reference: saved.application_ref,
+            status: saved.status,
+            submitted_at: saved.submitted_at
           },
           ...(requestId ? { requestId } : {})
         });
       } catch (error) {
-        if (isUniqueViolation(error) && attempt < LIMITS.maxReferenceAttempts) {
+        if (
+          isReferenceCollision(error) &&
+          attempt < LIMITS.maxReferenceAttempts
+        ) {
           continue;
         }
 
@@ -231,9 +283,15 @@ router.post("/", async (req, res) => {
       requestId
     );
   } catch (error) {
-    console.error("Application submission failed:", {
+    // Do not log applicant names, emails, phone numbers, or request bodies.
+    // Keep detailed database diagnostics in restricted server-side logs.
+    console.error("Application submission failed.", {
       requestId,
-      code: error.code || "INTERNAL_ERROR"
+      databaseCode:
+        typeof error?.code === "string" &&
+        /^[A-Z0-9_]{1,32}$/.test(error.code)
+          ? error.code
+          : "INTERNAL_ERROR"
     });
 
     return sendError(
