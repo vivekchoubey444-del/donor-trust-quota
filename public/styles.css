@@ -1,4 +1,5 @@
-/* =========================================================MEDORBITS | APPLICATION PREPARATION PORTAL
+/* =========================================================
+MEDORBITS | APPLICATION PREPARATION PORTAL
   Responsive monochrome design system
   File: styles.css
 
@@ -1379,40 +1380,171 @@ pre {
   }
 }
 
+
 /* 26. Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   html {
-  scroll-behavior: auto;
+    scroll-behavior: auto;
   }
-  *, *::before, *::after {
-  animation-duration: .01ms !important;
-  animation-iteration-count: 1 !important;
-  transition-duration: .01ms !important;
-  scroll-behavior: auto !important;
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
 /* 27. Stability rules */
-.container, .page-container, .form-container, form, form > section,
-.official-heading, .application-heading, .document-heading, .heading-text,
-.reference-panel, .form-grid, .grid, .form-row, .actions, .panel, .card, .notice {
+.container,
+.page-container,
+.form-container,
+form,
+form > section,
+.official-heading,
+.application-heading,
+.document-heading,
+.heading-text,
+.reference-panel,
+.form-grid,
+.grid,
+.form-row,
+.actions,
+.panel,
+.card,
+.notice {
   min-width: 0;
   max-width: 100%;
 }
-body, header, main, footer, .container, form, label, input, select, textarea,
-button, .btn, p, li, small, strong, span {
+
+body,
+header,
+main,
+footer,
+.container,
+form,
+label,
+input,
+select,
+textarea,
+button,
+.btn,
+p,
+li,
+small,
+strong,
+span {
   letter-spacing: normal;
 }
-.official-heading, .application-heading, .document-heading, .panel, .card,
-.form-card, .document-panel, .form-section, .application-section, .document-section,
-.notice, .reference-box, .fee-box, .step-link, .resource, .steps li, #letter {
+
+.official-heading,
+.application-heading,
+.document-heading,
+.panel,
+.card,
+.form-card,
+.document-panel,
+.form-section,
+.application-section,
+.document-section,
+.notice,
+.reference-box,
+.fee-box,
+.step-link,
+.resource,
+.steps li,
+#letter {
   border-radius: 0;
   box-shadow: none;
 }
-img, picture, video, canvas, svg {
+
+img,
+picture,
+video,
+canvas,
+svg {
   max-width: 100%;
 }
-button, .btn, input, select, textarea {
+
+button,
+.btn,
+input,
+select,
+textarea {
   animation: none;
   transform: none;
+}
+
+/* 28. Subtle sun and twinkle accents */
+.sun-twinkle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  color: var(--ink);
+  vertical-align: middle;
+}
+
+.sun-twinkle .sun-icon {
+  display: inline-block;
+  font-size: 1.15em;
+  line-height: 1;
+  transform-origin: center;
+  animation: sun-gentle-turn 12s linear infinite;
+}
+
+.sun-twinkle .twinkle {
+  display: inline-block;
+  font-size: 0.9em;
+  line-height: 1;
+  animation: sparkle-twinkle 2.4s ease-in-out infinite;
+}
+
+.sun-twinkle .twinkle:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.sun-twinkle .twinkle:nth-child(3) {
+  animation-delay: 1.1s;
+}
+
+@keyframes sun-gentle-turn {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes sparkle-twinkle {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.8);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* 29. Print: keep decorative accents static */
+@media print {
+  .sun-twinkle .sun-icon,
+  .sun-twinkle .twinkle {
+    animation: none !important;
+  }
+}
+
+/* 30. Accessibility: respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .sun-twinkle .sun-icon,
+  .sun-twinkle .twinkle {
+    animation: none !important;
+  }
 }

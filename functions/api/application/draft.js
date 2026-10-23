@@ -2,50 +2,107 @@
 "use strict";
 
 /**
- * Donor Quota Trust -- Hardened Draft API
+ * Donor Trust Quota -- Secure Application Reference API
+ *
  * File: functions/api/application/draft.js
  * Endpoint: POST /api/application/draft
  *
- * Required binding: APP_DB (Cloudflare D1)
+ * Required Cloudflare Pages binding:
+ *   APP_DB -- Cloudflare D1 database
  *
- * Creates a draft once and returns its access token only at creation.
- * Existing drafts require the original application token.
+ * Request JSON:
+ *   { "ref": "APP-2026-ABCDEF123456" }
+ *
+ * Existing integrations may also send:
+ *   { "applicationRef": "APP-2026-ABCDEF123456" }
+ *
+ * Existing reference access:
+ *   Header: x-application-token: <original token>
+ *
+ * SECURITY:
+ * - Returns the original access token only upon successful creation.
+ * - Stores only a SHA-256 hash of the token.
+ * - Never replaces an existing reference's token.
+ * - Uses a conditional atomic insert to handle concurrent requests.
+ * - Does not expose database errors or stored token hashes.
+ *
+ * IMPORTANT:
+ * - The application_ref column must have a UNIQUE constraint.
+ * - This endpoint assumes the existing applications table schema.
+ * - The endpoint does not submit an application to WBMCC.
  */
 
 const MAX_BODY_BYTES = 8 * 1024;
 const MAX_TOKEN_LENGTH = 512;
+const MIN_TOKEN_LENGTH = 32;
+const REF_PATTERN = /^APP-[0-9]{4}-[A-F0-9]{12}$/;
+const TOKEN_PATTERN = /^[A-Za-z0-9_-]+$/;
 
-const HEADERS = {
+const HEADERS = Object.freeze({
   "Content-Type": "application/json; charset=utf-8",
   "Cache-Control": "private, no-store, no-cache, max-age=0, must-revalidate",
   "Pragma": "no-cache",
+  "Expires": "0",
   "X-Content-Type-Options": "nosniff",
   "X-Frame-Options": "DENY",
   "Referrer-Policy": "no-referrer",
-  "X-Robots-Tag": "noindex, nofollow, noarchive"
-};
+  "X-Robots-Tag": "noindex, nofollow, noarchive",
+  "Cross-Origin-Resource-Policy": "same-origin",
+  "Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'",
+  "Permissions-Policy": "camera=(), microphone=(), geolocation=()"
+});
 
-function json(data, status = 200) {
+function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: HEADERS
+    headers: {
+      ...HEADERS,
+      ...extraHeaders
+    }
   });
 }
 
 function fail(message, status) {
-  return json({ ok: false, error: message }, status);
+  return json({
+    ok: false,
+    error: { message }
+  }, status);
 }
 
-function validApplicationRef(value) {
-  return typeof value === "string" &&
-    /^APP-[0-9]{4}-[A-F0-9]{12}$/.test(value);
+function validRef(value) {
+  return (
+    typeof value === "string" &&
+    REF_PATTERN.test(value)
+  );
 }
 
 function validToken(value) {
-  return typeof value === "string" &&
-    value.length >= 1 &&
+  return (
+    typeof value === "string" &&
+    value.length >= MIN_TOKEN_LENGTH &&
     value.length <= MAX_TOKEN_LENGTH &&
-    /^[A-Za-z0-9_-]+$/.test(value);
+    TOKEN_PATTERN.test(value)
+  );
+}
+
+/**
+ * Generate a cryptographically secure token using Web Crypto.
+ * The resulting token contains 256 bits of randomness.
+ */
+function createToken() {
+  const bytes = new Uint8Array(32);
+  crypto.getRandomValues(bytes);
+
+  let binary = "";
+
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte);
+  }
+
+  return btoa(binary)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
 }
 
 async function sha256(value) {
@@ -56,113 +113,330 @@ async function sha256(value) {
 
   return Array.from(new Uint8Array(digest))
     .map(byte => byte.toString(16).padStart(2, "0"))
-    .join("")
-    .toUpperCase();
+    .join("");
 }
 
-function constantTimeEqual(a, b) {
-  if (typeof a !== "string" || typeof b !== "string") {
-    return false;
-  }
-
-  if (a.length !== b.length) {
+/**
+ * Best-effort constant-work comparison.
+ * Both inputs should be fixed-length SHA-256 hex digests.
+ * JavaScript does not guarantee formally constant-time execution.
+ */
+function constantTimeEqual(left, right) {
+  if (
+    typeof left !== "string" ||
+    typeof right !== "string" ||
+    left.length !== 64 ||
+    right.length !== 64
+  ) {
     return false;
   }
 
   let difference = 0;
 
-  for (let i = 0; i < a.length; i++) {
-    difference |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  for (let i = 0; i < 64; i++) {
+    difference |= left.charCodeAt(i) ^ right.charCodeAt(i);
   }
 
   return difference === 0;
 }
 
-function createToken() {
-  // 256 bits of randomness from the Web Crypto API.
-  return crypto.randomUUID() + crypto.randomUUID();
+async function readLimitedBody(request) {
+  if (!request.body) {
+    return "";
+  }
+
+  const reader = request.body.getReader();
+  const chunks = [];
+  let totalBytes = 0;
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+
+      if (done) break;
+
+      totalBytes += value.byteLength;
+
+      if (totalBytes > MAX_BODY_BYTES) {
+        try {
+          await reader.cancel();
+        } catch {
+          // Best-effort cancellation.
+        }
+
+        throw new RangeError("BODY_TOO_LARGE");
+      }
+
+      chunks.push(value);
+    }
+  } catch (error) {
+    if (error instanceof RangeError) {
+      throw error;
+    }
+
+    throw new Error("BODY_READ_FAILED");
+  }
+
+  const combined = new Uint8Array(totalBytes);
+  let offset = 0;
+
+  for (const chunk of chunks) {
+    combined.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+
+  try {
+    return new TextDecoder("utf-8", {
+      fatal: true
+    }).decode(combined);
+  } catch {
+    throw new Error("INVALID_UTF8");
+  }
 }
 
-export async function onRequestPost({ request, env }) {
-  // 1. Require JSON.
+function validRequestBody(body) {
+  if (
+    body === null ||
+    typeof body !== "object" ||
+    Array.isArray(body)
+  ) {
+    return false;
+  }
+
+  const keys = Object.keys(body);
+
+  // Accept "ref" as the preferred field and "applicationRef"
+  // for backward compatibility. Do not silently accept other fields.
+  if (
+    !keys.every(key =>
+      key === "ref" || key === "applicationRef"
+    )
+  ) {
+    return false;
+  }
+
+  if (
+    body.ref !== undefined &&
+    body.applicationRef !== undefined &&
+    body.ref !== body.applicationRef
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
+async function parseBody(request) {
   const contentType = request.headers.get("Content-Type") || "";
 
   if (!/^application\/json(?:\s*;|$)/i.test(contentType)) {
-    return fail("Content-Type must be application/json.", 415);
+    return {
+      ok: false,
+      response: fail(
+        "Content-Type must be application/json.",
+        415
+      )
+    };
   }
 
-  // 2. Enforce a small request limit.
   const contentLength = request.headers.get("Content-Length");
 
   if (contentLength !== null) {
-    if (!/^\d+$/.test(contentLength)) {
-      return fail("Invalid Content-Length header.", 400);
+    if (!/^\d+$/.test(contentLength.trim())) {
+      return {
+        ok: false,
+        response: fail("Invalid request length.", 400)
+      };
     }
 
     const length = Number(contentLength);
 
     if (!Number.isSafeInteger(length)) {
-      return fail("Invalid Content-Length header.", 400);
+      return {
+        ok: false,
+        response: fail("Invalid request length.", 400)
+      };
     }
 
     if (length > MAX_BODY_BYTES) {
-      return fail("Request body is too large.", 413);
+      return {
+        ok: false,
+        response: fail("Request body is too large.", 413)
+      };
     }
   }
 
-  let rawBody;
+  let raw;
 
   try {
-    rawBody = await request.text();
-  } catch {
-    return fail("Could not read the request body.", 400);
+    raw = await readLimitedBody(request);
+  } catch (error) {
+    if (error instanceof RangeError) {
+      return {
+        ok: false,
+        response: fail("Request body is too large.", 413)
+      };
+    }
+
+    if (error.message === "INVALID_UTF8") {
+      return {
+        ok: false,
+        response: fail(
+          "Request body must contain valid UTF-8.",
+          400
+        )
+      };
+    }
+
+    return {
+      ok: false,
+      response: fail("Unable to read request body.", 400)
+    };
   }
 
-  if (new TextEncoder().encode(rawBody).byteLength > MAX_BODY_BYTES) {
-    return fail("Request body is too large.", 413);
-  }
-
-  // 3. Parse the request.
   let body;
 
   try {
-    body = JSON.parse(rawBody);
+    body = JSON.parse(raw);
   } catch {
-    return fail("Request body must contain valid JSON.", 400);
+    return {
+      ok: false,
+      response: fail(
+        "Request body must contain valid JSON.",
+        400
+      )
+    };
+  }
+
+  if (!validRequestBody(body)) {
+    return {
+      ok: false,
+      response: fail("Invalid reference request.", 422)
+    };
+  }
+
+  const ref = body.ref ?? body.applicationRef;
+
+  if (!validRef(ref)) {
+    return {
+      ok: false,
+      response: fail("Invalid application reference.", 400)
+    };
+  }
+
+  return {
+    ok: true,
+    ref
+  };
+}
+
+function validDatabaseBinding(db) {
+  return (
+    db &&
+    typeof db.prepare === "function"
+  );
+}
+
+/**
+ * Verify access to an existing reference.
+ * The original token is never returned again.
+ */
+async function verifyExistingReference(db, ref, suppliedToken) {
+  if (!validToken(suppliedToken)) {
+    return fail(
+      "This reference already exists. The original access token is required.",
+      403
+    );
+  }
+
+  const existing = await db.prepare(`
+    SELECT token_hash, status
+    FROM applications
+    WHERE application_ref = ?
+    LIMIT 1
+  `).bind(ref).first();
+
+  if (!existing) {
+    return fail(
+      "The reference could not be confirmed. Please retry.",
+      503
+    );
   }
 
   if (
-    !body ||
-    typeof body !== "object" ||
-    Array.isArray(body)
+    typeof existing.token_hash !== "string" ||
+    !/^[a-f0-9]{64}$/.test(existing.token_hash)
   ) {
-    return fail("A valid draft object is required.", 422);
+    return fail(
+      "Reference verification is temporarily unavailable.",
+      503
+    );
   }
 
-  const applicationRef = body.applicationRef;
+  const suppliedHash = await sha256(suppliedToken);
 
-  if (!validApplicationRef(applicationRef)) {
-    return fail("Invalid application reference.", 400);
+  if (!constantTimeEqual(suppliedHash, existing.token_hash)) {
+    return fail("Reference access was not verified.", 403);
   }
 
-  // 4. Check D1 configuration.
-  if (!env.APP_DB || typeof env.APP_DB.prepare !== "function") {
-    return fail("Draft database is unavailable.", 503);
+  if (existing.status === "submitted") {
+    return fail(
+      "This reference is locked after submission.",
+      409
+    );
   }
+
+  const updatedAt = new Date().toISOString();
+
+  // Update activity only after token verification.
+  // Do not change the reference status or access token.
+  await db.prepare(`
+    UPDATE applications
+    SET updated_at = ?
+    WHERE application_ref = ?
+      AND status != 'submitted'
+  `).bind(updatedAt, ref).run();
+
+  return json({
+    ok: true,
+    created: false,
+    ref,
+    status: existing.status,
+    updatedAt,
+    message: "Reference verified. The original access token remains unchanged."
+  });
+}
+
+export async function onRequestPost({ request, env }) {
+  if (!(request instanceof Request)) {
+    return fail("Invalid request.", 400);
+  }
+
+  if (!validDatabaseBinding(env?.APP_DB)) {
+    return fail("Reference service is not configured.", 503);
+  }
+
+  const parsed = await parseBody(request);
+
+  if (!parsed.ok) {
+    return parsed.response;
+  }
+
+  const ref = parsed.ref;
+  const db = env.APP_DB;
 
   try {
     /*
-     * 5. Attempt a single atomic insert.
+     * Create a candidate token and store only its hash.
      *
-     * INSERT OR IGNORE avoids the check-then-insert race.
-     * A new token is returned only when this request actually
-     * created the record.
+     * INSERT OR IGNORE prevents a check-then-insert race.
+     * The applications.application_ref column MUST be UNIQUE.
      */
     const token = createToken();
     const tokenHash = await sha256(token);
     const now = new Date().toISOString();
 
-    const inserted = await env.APP_DB.prepare(`
+    const inserted = await db.prepare(`
       INSERT OR IGNORE INTO applications (
         application_ref,
         token_hash,
@@ -172,85 +446,41 @@ export async function onRequestPost({ request, env }) {
       )
       VALUES (?, ?, 'draft', ?, ?)
     `).bind(
-      applicationRef,
+      ref,
       tokenHash,
       now,
       now
     ).run();
 
     if ((inserted.meta?.changes ?? 0) === 1) {
+      // The raw token is returned only for the successful creator.
       return json({
         ok: true,
         created: true,
-        applicationRef,
+        ref,
         token,
         status: "draft",
         createdAt: now,
-        message: "Draft created. Save this token securely; it will not be returned again."
+        message: "Reference created successfully. Save the access token securely; it will not be shown again."
       }, 201);
     }
 
-    // 6. The record already exists, including when another request
-    // created it concurrently. Never replace its token.
-    const existing = await env.APP_DB.prepare(`
-      SELECT token_hash, status
-      FROM applications
-      WHERE application_ref = ?
-      LIMIT 1
-    `).bind(applicationRef).first();
-
-    if (!existing) {
-      return fail(
-        "The draft could not be confirmed. Please retry.",
-        503
-      );
-    }
-
+    /*
+     * The insert was ignored, normally because the reference exists.
+     * Do not return the candidate token or overwrite the stored hash.
+     */
     const suppliedToken =
       request.headers.get("x-application-token") || "";
 
-    if (!validToken(suppliedToken)) {
-      return fail(
-        "This draft already exists. Restore the original application token or start a new draft.",
-        403
-      );
-    }
-
-    const suppliedHash = await sha256(suppliedToken);
-
-    if (!constantTimeEqual(suppliedHash, existing.token_hash)) {
-      return fail("Application token was not accepted.", 403);
-    }
-
-    if (existing.status === "submitted") {
-      return fail(
-        "This preparation set has already been submitted and is locked.",
-        409
-      );
-    }
-
-    // 7. Update activity only after authentication.
-    const updatedAt = new Date().toISOString();
-
-    await env.APP_DB.prepare(`
-      UPDATE applications
-      SET updated_at = ?
-      WHERE application_ref = ?
-        AND status != 'submitted'
-    `).bind(updatedAt, applicationRef).run();
-
-    return json({
-      ok: true,
-      created: false,
-      applicationRef,
-      status: existing.status,
-      updatedAt,
-      message: "Existing draft verified. The original token remains unchanged."
-    });
+    return await verifyExistingReference(
+      db,
+      ref,
+      suppliedToken
+    );
   } catch {
-    // Do not expose SQL errors, stack traces, or secrets.
+    // Never expose SQL errors, stack traces, hashes, or tokens.
     return fail(
-      "Draft service unavailable. Check the APP_DB binding and database schema.",
+      "Reference service is temporarily unavailable. Check the database configuration and schema.",
       500
     );
   }
